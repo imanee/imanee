@@ -8,8 +8,14 @@
         {
             "name": "Erika Heidi",
             "email": "erika@erikaheidi.com"
+        },{
+            "name": "Hugo Reinaldo",
+            "email": "hugo.reinaldo@gmail.com"
         }
     ],
+    "require": {
+        "pimple/pimple": "1.0.*@dev"
+    },
     "autoload": {
         "psr-0": { "Imanee": "src/" }
     }

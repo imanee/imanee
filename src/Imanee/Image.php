@@ -2,7 +2,9 @@
 
 namespace Imanee;
 
-abstract class AbstractImage {
+use Imanee\Exception\ImageNotFoundException;
+
+abstract class Image {
 	
 	protected $mime;
 	protected $width;
@@ -14,17 +16,17 @@ abstract class AbstractImage {
 	public static function createResource($image_path)
 	{
 		if (!is_file($image_path))
-			throw new exception("File not Found.");
+			throw new ImageNotFoundException("File not Found.");
 
 		/** TODO: checks image format and returns the appropriate handler or exception **/
-		$info = $this->getImageInfo($image_path);
+		$info = self::getImageInfo($image_path);
 
 		if (!in_array($info['mime'], self::$accepted))
 			throw new exception("Image format not supported.");
-
+/*
 		$this->mime   = $info['mime'];
 		$this->width  = $info[0];
-		$this->height = $info[1];
+		$this->height = $info[1];*/
 	}
 
 	public static function getImageInfo($image_path)
