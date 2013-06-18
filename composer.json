@@ -1,0 +1,16 @@
+{
+    "name": "imanee/imanee",
+    "description": "A PHP Image Manipulation Library based on GD",
+    "keywords": ["image", "php", "manipulation", "gd"],
+    "homepage": "http://imanee.github.com/imanee",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Erika Heidi",
+            "email": "erika@erikaheidi.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": { "Imanee": "src/" }
+    }
+}
