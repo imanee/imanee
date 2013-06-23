@@ -2,14 +2,23 @@
 
 include __DIR__ . '/../vendor/autoload.php';
 
-$iman = new Imanee\Imanee();
+/* imanee new image */
+$imanee = new Imanee\Imanee();
+$imanee->setSize(640, 480);
 
-$img = new \Imanee\Drawer();
+/* prepare the drawer */
+$drawer = new \Imanee\Drawer();
+$drawer->foreground_color = "#000000";
+$drawer->font_size = 23;
+/*
+$imanee->drawText($drawer, 100, 100, "Teste");
 
-$img->background_color = "teste";
+$image_content = $imanee->renderAsJpg();
 
-var_dump($img);
+header("Content-type: image/jpeg");
+echo $image_content;*/
 
+var_dump($imanee);
 echo "just checking.";
 
 /*

@@ -12,6 +12,13 @@ use Imanee\Imanee;
 
 class ImaneeTest extends PHPUnit_Framework_TestCase {
 
+    protected $test_jpg;
+
+    public function setup()
+    {
+        $this->test_jpg = __DIR__ . '/resources/img01.jpg';
+    }
+
     public function testConstruct()
     {
         /*$img = (new Imanee())
@@ -27,15 +34,31 @@ class ImaneeTest extends PHPUnit_Framework_TestCase {
         $img['frames']->addFrame((new \Imanee\Imanee())->setSize(640, 480));
 
         $img = (new Imanee())->setSize(320, 240)->getDrawer()->writeText("test", [0,0])->save('test.png');
-        */
+
 
         $img = (new \Imanee\Imanee())
             ->setSize()
             ->setBackground()
             ->setDrawer((new \Imanee\Drawer())->set('background_color', 0)->set('stroke', 1))
             ->writeText();
+        */
+        $this->assertNotNull('foo');
+    }
 
-        $this->assertNotNull($img);
+    public function testCreateJpg()
+    {
+        $image = Imanee::load($this->test_jpg);
+
+        $this->assertInstanceOf('\Imanee\Image\Jpg', $image);
+        $this->assertSame('image/jpeg', $image->mime);
+    }
+
+    public function testCreateNew()
+    {
+        $image = Imanee::createNew(200,200);
+
+        $this->assertInstanceOf('\Imanee\Image\Blank', $image);
+        $this->assertSame(200, $image->width);
     }
 
 }

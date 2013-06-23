@@ -1,16 +1,12 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: erika
- * Date: 6/18/13
- * Time: 10:50 PM
- * To change this template use File | Settings | File Templates.
+Imanee Config Container
  */
 
 namespace Imanee;
 
 
-class ConfigContainer {
+abstract class ConfigContainer {
 
     protected $config;
 

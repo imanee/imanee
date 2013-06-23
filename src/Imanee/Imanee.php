@@ -2,58 +2,63 @@
 
 namespace Imanee;
 
-class Imanee extends \Pimple {
+use Imanee\Layer\LayerController;
 
-	public function __construct(array $values = null)
+class Imanee extends ConfigContainer {
+
+	public function __construct(array $values = [])
 	{
-		if ($values['image_path'] !== null) {
-			/* GET IMAGE INFO */
-			$this->image_info = getimagesize($image_path);
-
-			/* CREATE THE HANDLER - IMPLEMENT FACTORY PATTERN */
-			$this->image_path = $image_path;
-			$this->image_resource = Image::createResource($image_path);	
-		}
-
-        $app = $this;
-
-        $this['drawer'] = $this->share(function() use($app) {
-            return new Drawer();
-        });
-
-        if ($values !== null) {
-            foreach ($values as $key => $value) {
-                $this[$key] = $value;
-            }
-        }
+        parent::__construct($values, [
+            'drawer' => new Drawer(),
+            'layers' => new LayerController()
+        ]);
 
         return $this;
 	}
 
-    public function loadImage($image_path)
+    public static function load($image_path)
     {
-
+        return Image::loadFromFile($image_path);
     }
 
-    public function setSize()
+    public static function createNew($width, $height)
     {
+        return Image::createNew($width, $height);
+    }
+
+    public function setSize($width, $height)
+    {
+        $this->width  = $width;
+        $this->height = $height;
+
         return $this;
     }
 
-    public function setBackground()
+    public function setBackground($background)
     {
+        $this->background = $background;
+
         return $this;
     }
 
-    public function writeText()
+    public function drawText(Drawer $drawer, $text)
     {
+        /** save for later rendering, as a layer with text */
+        return $this;
+    }
+
+    public function draw(Drawer $drawer)
+    {
+        $drawer->draw();
+
         return $this;
     }
 
     public function setDrawer(Drawer $drawer)
     {
-        $this['drawer'] = $drawer;
+        $this->drawer = $drawer;
 
         return $this;
     }
+
 }

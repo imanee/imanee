@@ -1,17 +1,30 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: erika
- * Date: 6/18/13
- * Time: 8:43 PM
- * To change this template use File | Settings | File Templates.
+ * Image Test
  */
+
 include __DIR__ . '/../vendor/autoload.php';
 
 class ImageTest extends PHPUnit_Framework_TestCase{
 
-    public function testConstruct()
+    protected $test_jpg;
+
+    public function setup()
     {
-        $this->assertNotNull('foo');
+        $this->test_jpg = __DIR__ . '/resources/img01.jpg';
+    }
+
+    public function testCreateJpg()
+    {
+        $image = \Imanee\Image::loadFromFile($this->test_jpg);
+
+        $this->assertInstanceOf('Imanee\\Image\\Jpg', $image);
+    }
+
+    public function testCreateBlank()
+    {
+        $image = \Imanee\Image::createNew(100, 100);
+
+        $this->assertSame(100, $image->width);
     }
 }

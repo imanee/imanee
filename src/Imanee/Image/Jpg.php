@@ -2,9 +2,25 @@
 
 namespace Imanee\Image;
 
-class Jpg extends \Imanee\AbstractImage {
+use Imanee\Image;
 
-	public function factoryMethod()
+class Jpg extends Image {
+
+    public function __construct($image_path = null, $width = 0, $height = 0)
+    {
+        if ($image_path !== null) {
+            $this->resource = imagecreatefromjpeg($image_path);
+        }
+
+        parent::__construct($image_path);
+    }
+
+    public function getResource()
+    {
+        return $this->resource;
+    }
+
+    public function factoryMethod()
 	{
 
 	}
