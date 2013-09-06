@@ -39,7 +39,7 @@ class Image {
     public function resize($width, $height)
     {
         $this->resource->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
-        $newsize = $this->resource->getImageSize();
+        $newsize = $this->resource->getImageGeometry();
 
         $this->width  = $newsize['width'];
         $this->height = $newsize['height'];
