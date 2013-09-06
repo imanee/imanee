@@ -10,7 +10,7 @@ abstract class ConfigContainer {
 
     protected $config;
 
-    public function __construct(array $values = [], array $defaults = [])
+    public function __construct(array $defaults = [], array $values = [])
     {
         $this->config = array_merge($defaults, $values);
     }

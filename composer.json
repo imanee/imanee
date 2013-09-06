@@ -1,7 +1,7 @@
 {
     "name": "imanee/imanee",
-    "description": "A PHP Image Manipulation Library based on GD",
-    "keywords": ["image", "php", "manipulation", "gd"],
+    "description": "A PHP Image Manipulation Library based on Imagemagick",
+    "keywords": ["image", "php", "manipulation", "imagick", "imagemagick"],
     "homepage": "http://imanee.github.com/imanee",
     "license": "MIT",
     "authors": [
@@ -14,7 +14,11 @@
         }
     ],
     "require": {
-        "pimple/pimple": "1.0.*@dev"
+        "php": ">=5.4.0",
+        "ext-imagick": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*"
     },
     "autoload": {
         "psr-0": { "Imanee": "src/" }
