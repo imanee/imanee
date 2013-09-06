@@ -2,28 +2,48 @@
 
 namespace Imanee;
 
+use Imanee\Layer\ImageLayer;
 use Imanee\Layer\LayerController;
 
 class Imanee extends ConfigContainer {
 
-	public function __construct(array $values = [])
+	protected $resource;
+
+    public function __construct($path = null)
 	{
-        parent::__construct($values, [
+        if ($path !== null)
+            $this->load($path);
+
+        parent::__construct([
             'drawer' => new Drawer(),
-            'layers' => new LayerController()
+            'layer'  => new LayerController()
         ]);
 
         return $this;
 	}
 
-    public static function load($image_path)
+    public function load($image_path)
     {
-        return Image::loadFromFile($image_path);
+        $this->resource = new Image($image_path);
+
+        return $this;
     }
 
-    public static function createNew($width, $height)
+    public function getMime()
     {
-        return Image::createNew($width, $height);
+        return $this->resource->mime;
+    }
+
+    public function resize($width, $height)
+    {
+        $this->resource->resize($width, $height);
+    }
+
+    public function add($image_path)
+    {
+        $this->layer->add(new ImageLayer($image_path));
+
+        return $this;
     }
 
     public function setSize($width, $height)
@@ -61,4 +81,8 @@ class Imanee extends ConfigContainer {
         return $this;
     }
 
+    public function output()
+    {
+        return $this->resource->output();
+    }
 }

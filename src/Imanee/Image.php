@@ -3,9 +3,8 @@
 namespace Imanee;
 
 use Imanee\Exception\ImageNotFoundException;
-use Imanee\Image\Blank;
 
-abstract class Image {
+class Image {
 
     protected $resource;
     public $image_path;
@@ -19,36 +18,31 @@ abstract class Image {
     {
         if ($image_path !== null) {
             $this->image_path = $image_path;
-            $this->loadImageInfo();
+            $this->load();
         } else {
             $this->width  = $width;
             $this->height = $height;
         }
     }
 
-	public static function loadFromFile($image_path)
+	public function load()
 	{
-		self::$supported = [
-            'image/jpg'  => 'Imanee\\Image\\Jpg',
-            'image/jpeg' => 'Imanee\\Image\\Jpg',
-        ];
-
-        if (!is_file($image_path))
+        if (!is_file($this->image_path))
             throw new ImageNotFoundException("File not Found.");
 
-        $info = getimagesize($image_path);
-        $mime = $info['mime'];
+        $this->loadImageInfo();
+        $this->resource = new \Imagick($this->image_path);
 
-        if (!isset(self::$supported[$mime]))
-            throw new exception("Image format not supported.");
-
-        return new self::$supported[$mime]($image_path);
-
+        return $this;
 	}
 
-    public static function createNew($width, $height)
+    public function resize($width, $height)
     {
-        return new Blank(null, $width, $height);
+        $this->resource->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
+        $newsize = $this->resource->getImageGeometry();
+
+        $this->width  = $newsize['width'];
+        $this->height = $newsize['height'];
     }
 
 	public function loadImageInfo()
@@ -64,4 +58,8 @@ abstract class Image {
 
 	}
 
+    public function output($format = null)
+    {
+        return $this->resource->getImageBlob();
+    }
 }

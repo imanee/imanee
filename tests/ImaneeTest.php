@@ -21,6 +21,9 @@ class ImaneeTest extends PHPUnit_Framework_TestCase {
 
     public function testConstruct()
     {
+        //$im = new Imanee();
+        //$im->load($this->test_jpg)->resize(200,200)->output();
+
         /*$img = (new Imanee())
         ->setSize(640, 480)
         ->setBackground(\Imanee\Image::COLOR_BLACK)
@@ -47,18 +50,10 @@ class ImaneeTest extends PHPUnit_Framework_TestCase {
 
     public function testCreateJpg()
     {
-        $image = Imanee::load($this->test_jpg);
+        $im = new Imanee($this->test_jpg);
 
-        $this->assertInstanceOf('\Imanee\Image\Jpg', $image);
-        $this->assertSame('image/jpeg', $image->mime);
+        $this->assertSame('image/jpeg', $im->getMime());
     }
 
-    public function testCreateNew()
-    {
-        $image = Imanee::createNew(200,200);
-
-        $this->assertInstanceOf('\Imanee\Image\Blank', $image);
-        $this->assertSame(200, $image->width);
-    }
 
 }
