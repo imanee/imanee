@@ -14,18 +14,40 @@ class ImageTest extends PHPUnit_Framework_TestCase{
         $this->test_jpg = __DIR__ . '/resources/img01.jpg';
     }
 
-    public function testCreateJpg()
+    public function testLoadJpg()
     {
         $image = new \Imanee\Image($this->test_jpg);
 
         $this->assertSame('image/jpeg', $image->mime);
     }
 
-    public function testCreateBlank()
+    public function testCreate()
     {
-        $image = new \Imanee\Image(null, 100, 100);
+        $image = new \Imanee\Image();
+        $image->createNew(100, 100);
 
+        $this->assertNotNull($image->getResource());
         $this->assertSame(100, $image->width);
+    }
+
+    public function testSetFormat()
+    {
+        $image = new \Imanee\Image();
+        $image->createNew(200,200);
+        $image->setFormat('jpeg');
+
+        $this->assertSame('jpeg', $image->getFormat());
+    }
+
+    public function testBlank()
+    {
+        $image = new \Imanee\Image();
+
+        $this->assertTrue($image->isBlank());
+
+        $image->createNew(50, 50);
+
+        $this->assertFalse($image->isBlank());
     }
 
     public function testResize()
@@ -46,5 +68,13 @@ class ImageTest extends PHPUnit_Framework_TestCase{
         $output = $image->output();
 
         $this->assertNotNull($output);
+    }
+
+    public function testSetBackground()
+    {
+        $image = new \Imanee\Image();
+        $image->createNew(100, 100, 'black');
+
+        $this->assertSame('black', $image->getBackground());
     }
 }
