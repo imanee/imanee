@@ -2,30 +2,26 @@
 
 include __DIR__ . '/../vendor/autoload.php';
 
-/* imanee new image */
-$imanee = new Imanee\Imanee();
-$imanee->setSize(640, 480);
+$res_jpg = __DIR__ . '/resources/img01.jpg';
+$res_png = __DIR__ . '/resources/cat01.png';
+$res_png2 = __DIR__ . '/resources/cat02.png';
 
-/* prepare the drawer */
-$drawer = new \Imanee\Drawer();
-$drawer->foreground_color = "#000000";
-$drawer->font_size = 23;
-/*
-$imanee->drawText($drawer, 100, 100, "Teste");
+$output = __DIR__ . '/output/output.jpg';
 
-$image_content = $imanee->renderAsJpg();
+/* imanee load jpg */
+header("Content-type: image/jpg");
 
-header("Content-type: image/jpeg");
-echo $image_content;*/
+$imanee = new Imanee\Imanee($res_jpg);
+//$imanee = new Imanee\Imanee();
 
-var_dump($imanee);
-echo "just checking.";
 
-/*
+echo $imanee
+        ->annotate("testando", 10, 30, 30)
+        ->placeText("teste2", 20, \Imanee\Imanee::IM_POS_BOTTOM_CENTER)
+        ->placeImage($res_png, \Imanee\Imanee::IM_POS_TOP_RIGHT)
+        ->placeImage($res_png2, \Imanee\Imanee::IM_POS_BOTTOM_RIGHT)
+        ->setFormat('jpeg')
+        ->output();
 
-$img = (new \Imanee\Imanee())
-    ->setSize()
-    ->setBackground()
-    ->setDrawer((new \Imanee\Drawer())->set('background_color', 0)->set('stroke', 1))
-    ->writeText();
-*/
+//echo $imanee->resize(100, 100)->output();
+
