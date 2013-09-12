@@ -210,13 +210,22 @@ class Image {
      * @param int    $place_constant Where to place the image - one of the \Imanee:IM_POS constants
      * @param int    $width          (optional) Width of the placed image, if resize is desirable
      * @param int    $height         (optional) Height of the placed image, if resize is desirable
+     * @param int    $opacity        (optional) Opacity in percentage - 100 for fully opaque (default), 0 for fully transparent (use with caution, see note below).
+     *
+     * Note about opacity: the opacity is changed pixel per pixel, so using this will require more processing and more loading time depending on the image size.
      */
-    public function placeImage($image_path, $place_constant, $width = 0, $height = 0)
+    public function placeImage($image_path, $place_constant, $width = 0, $height = 0, $opacity = 100)
     {
         $img = new \Imagick($image_path);
+        $img->setimagebackgroundcolor(new \ImagickPixel('transparent'));
 
         if ($width AND $height) {
             $img->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
+        }
+
+        if ($opacity != 100) {
+            /** calls the internal setOpacity method, since the Imagick::setImageOpacity doesn't handle well png transparency */
+            $this->setOpacity($img, $opacity);
         }
 
         list($coordX, $coordY) = $this->getPlacementCoordinates($img->getimagegeometry(), $place_constant);
@@ -308,5 +317,39 @@ class Image {
         }
 
         return [$x, $y];
+    }
+
+    /**
+     * Manually sets the opacity pixel per pixel.
+     *
+     * This method properly sets the opacity on a png with transparency, by iterating pixel per pixel. It's a substitute
+     * for the Imagick::setImageOpacity, since it doesn't handle well transparent backgrounds.
+     *
+     * @param \Imagick  $resource The imagick resource to set opacity
+     * @param int       $opacity  The opacity percentage, 0 to 100 - where 100 is fully opaque
+     * @return \Imagick Returns the Imagick object with changed opacity
+     */
+    public function setOpacity(\Imagick $resource, $opacity)
+    {
+        $alpha = $opacity / 100;
+
+        if ($alpha >= 1) {
+            return true;
+        }
+
+        $rows = $resource->getPixelIterator();
+
+        foreach ($rows as $cols) {
+            foreach($cols as $pixel) {
+
+                $current = $pixel->getColorValue(\Imagick::COLOR_ALPHA);
+
+                $pixel->setColorValue(\Imagick::COLOR_ALPHA, (($current - $alpha > 0) ? ($current - $alpha) : (0)));
+
+                $rows->syncIterator();
+            }
+        }
+
+        return true;
     }
 }

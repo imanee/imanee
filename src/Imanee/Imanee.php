@@ -188,11 +188,29 @@ class Imanee {
      * @param int    $place_constant One of the Imanee::IM_POS constants, defaults to IM_POS_TOP_LEFT (top left corner)
      * @param int    $width          (optional) specifies a width for the placement
      * @param int    $height         (optional) specifies a height for the placement
+     * @param int    $opacity        (optional) specifies the opacity of the placed image. 100 for fully opaque (default), 0 for fully transparent
+     *
      * @return $this
      */
-    public function placeImage($image_path, $place_constant = Imanee::IM_POS_TOP_LEFT, $width = null, $height = null)
+    public function placeImage($image_path, $place_constant = Imanee::IM_POS_TOP_LEFT, $width = null, $height = null, $opacity = 100)
     {
-        $this->resource->placeImage($image_path, $place_constant, $width, $height);
+        $this->resource->placeImage($image_path, $place_constant, $width, $height, $opacity);
+
+        return $this;
+    }
+
+    /**
+     * Convenient method to place a watermark image on top of the current resource
+     *
+     * @param string $image_path     The path to the watermark image file
+     * @param int    $place_constant One of the Imanee::IM_POS constants, defaults to IM_POS_BOTTOM_RIGHT
+     * @param int    $opacity        Watermark opacity percentage. Defaults to 100 (fully opaque)
+     *
+     * @return $this
+     */
+    public function watermark($image_path, $place_constant = Imanee::IM_POS_BOTTOM_RIGHT, $opacity = 100)
+    {
+        $this->resource->placeImage($image_path, $place_constant, 0, 0, $opacity);
 
         return $this;
     }
