@@ -100,6 +100,16 @@ class Imanee {
     }
 
     /**
+     * Convenient method for cloning the current Imanee object
+     *
+     * @return \Imanee\Imanee
+     */
+    function cloneImage()
+    {
+        return clone $this;
+    }
+
+    /**
      * Resizes the current image resource
      *
      * @param int $width  The new width
@@ -211,6 +221,55 @@ class Imanee {
     public function watermark($image_path, $place_constant = Imanee::IM_POS_BOTTOM_RIGHT, $opacity = 100)
     {
         $this->resource->placeImage($image_path, $place_constant, 0, 0, $opacity);
+
+        return $this;
+    }
+
+    /**
+     * Rotates the image resource in the given degrees
+     *
+     * @param float     $degrees Degrees to rotate the image. Negative values will rotate the image anti-clockwise
+     * @param string $background Background to fill the empty spaces, default is transparent - will render as black for jpg format (use png if you want it transparent)
+     *
+     * @return $this
+     */
+    public function rotate($degrees, $background = 'transparent')
+    {
+        $this->resource->rotate($degrees, $background);
+
+        return $this;
+    }
+
+    /**
+     * Crops a portion of the image
+     *
+     * @param int $width  The width
+     * @param int $height The height
+     * @param int $coordX The X coordinate
+     * @param int $coordY The Y coordinate
+     *
+     * @return $this
+     */
+    public function crop($width, $height, $coordX, $coordY)
+    {
+        $this->resource->crop($width, $height, $coordX, $coordY);
+
+        return $this;
+    }
+
+    /**
+     * Creates a thumbnail of the current resource. If crop is true, the result will be a perfect fit thumbnail with the
+     * given dimensions, cropped by the center. If crop is false, the thumbnail will use the best fit for the dimensions.
+     *
+     * @param int  $width  Width of the thumbnail
+     * @param int  $height Height of the thumbnail
+     * @param bool $crop   When set to true, the thumbnail will be cropped from the center to match the given size
+     *
+     * @return $this
+     */
+    public function thumbnail($width, $height, $crop = false)
+    {
+        $this->resource->thumbnail($width, $height, $crop);
 
         return $this;
     }

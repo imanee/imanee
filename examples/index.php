@@ -15,14 +15,20 @@ $imanee = new Imanee\Imanee($res_jpg);
 //$imanee = new Imanee\Imanee();
 //$imanee->newImage(640,480);
 
-echo $imanee
+$imanee
         ->annotate("testando", 10, 30, 30)
         ->placeText("teste2", 20, \Imanee\Imanee::IM_POS_BOTTOM_CENTER)
         ->placeImage($res_png, \Imanee\Imanee::IM_POS_TOP_RIGHT)
-        ->watermark($res_png2, \Imanee\Imanee::IM_POS_BOTTOM_RIGHT, 40)
+        ->watermark($res_png2, \Imanee\Imanee::IM_POS_BOTTOM_RIGHT, 40);
+        //->setFormat('png')
         //->setFormat('jpeg') //this is only necessary for outputting the image directly to the browser and when its a new image
-        ->write($output, 60)
-        ->output();
+        //->rotate(40, 'pink')
+        //->write($output, 60)
+        //->thumbnail(300,300);
+
+$im2 = $imanee->cloneImage();
+
+echo $im2->output();
 
 //echo $imanee->resize(100, 100)->output();
 

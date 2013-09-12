@@ -210,9 +210,9 @@ class Image {
      * @param int    $place_constant Where to place the image - one of the \Imanee:IM_POS constants
      * @param int    $width          (optional) Width of the placed image, if resize is desirable
      * @param int    $height         (optional) Height of the placed image, if resize is desirable
-     * @param int    $opacity        (optional) Opacity in percentage - 100 for fully opaque (default), 0 for fully transparent (use with caution, see note below).
+     * @param int    $opacity        (optional) Opacity in percentage - 100 for fully opaque (default), 0 for fully transparent.
      *
-     * Note about opacity: the opacity is changed pixel per pixel, so using this will require more processing and more loading time depending on the image size.
+     * Note about opacity: the opacity is changed pixel per pixel, so using this will require more processing depending on the image size.
      */
     public function placeImage($image_path, $place_constant, $width = 0, $height = 0, $opacity = 100)
     {
@@ -224,12 +224,55 @@ class Image {
         }
 
         if ($opacity != 100) {
-            /** calls the internal setOpacity method, since the Imagick::setImageOpacity doesn't handle well png transparency */
             $this->setOpacity($img, $opacity);
         }
 
         list($coordX, $coordY) = $this->getPlacementCoordinates($img->getimagegeometry(), $place_constant);
         $this->resource->compositeimage($img, \Imagick::COMPOSITE_OVER, $coordX, $coordY);
+    }
+
+    /**
+     * Rotates the image resource in the given degrees
+     *
+     * @param float     $degrees Degrees to rotate the image. Negative values will rotate the image anti-clockwise
+     * @param string $background Background to fill the empty spaces, default is transparent - will render as black for jpg format (use png if you want it transparent)
+     */
+    public function rotate($degrees = 90, $background = 'transparent')
+    {
+        $this->resource->rotateimage(new \ImagickPixel($background), $degrees);
+    }
+
+    /**
+     * Crops a portion of the image
+     *
+     * @param int $width  The width
+     * @param int $height The height
+     * @param int $coordX The X coordinate
+     * @param int $coordY The Y coordinate
+     */
+    public function crop($width, $height, $coordX, $coordY)
+    {
+        $this->width = $width;
+        $this->height = $height;
+
+        $this->resource->cropimage($width, $height, $coordX, $coordY);
+    }
+
+    /**
+     * Creates a thumbnail of the current resource. If crop is true, the result will be a perfect fit thumbnail with the
+     * given dimensions, cropped by the center. If crop is false, the thumbnail will use the best fit for the dimensions.
+     *
+     * @param int  $width  Width of the thumbnail
+     * @param int  $height Height of the thumbnail
+     * @param bool $crop   When set to true, the thumbnail will be cropped from the center to match the given size
+     */
+    public function thumbnail($width, $height, $crop = false)
+    {
+        if ($crop) {
+            $this->resource->cropthumbnailimage($width, $height);
+        } else {
+            $this->resource->thumbnailimage($width, $height, true);
+        }
     }
 
     /**
@@ -294,6 +337,7 @@ class Image {
         $y = 0;
 
         $size = $this->resource->getImageGeometry();
+        //$size = ['width' => $this->width, 'height' => $this->height];
 
         switch ($place_constant) {
 
