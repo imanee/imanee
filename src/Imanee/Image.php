@@ -254,6 +254,24 @@ class Image {
     }
 
     /**
+     * Saves the image to disk. If the second param is provided, will try to compress the image using JPEG compression.
+     *
+     * The format will be decided based on the extension used for the filename. If, for instance, a "img.png" is provided,
+     * the image will be saved as PNG and the compression will not take affect.
+     *
+     * @param string $file         The file path to save the image
+     * @param int    $jpeg_quality (optional) the quality for JPEG files, 1 to 100 where 100 means no compression (higher quality and bigger file)
+     */
+    public function write($file, $jpeg_quality = 0)
+    {
+        if ($jpeg_quality) {
+            $this->resource->setimagecompression(\Imagick::COMPRESSION_JPEG);
+            $this->resource->setimagecompressionquality($jpeg_quality);
+        }
+        $this->resource->writeimage($file);
+    }
+
+    /**
      * Checks if the current resource is empty
      * @return bool Returns true if the resource is empty (no file was loaded or no new image created)
      */
