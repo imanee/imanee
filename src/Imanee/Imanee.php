@@ -217,15 +217,15 @@ class Imanee {
     /**
      * Convenient method to place a watermark image on top of the current resource
      *
-     * @param string $image_path     The path to the watermark image file
+     * @param mixed  $image          The path to the watermark image file or an Imanee object
      * @param int    $place_constant One of the Imanee::IM_POS constants, defaults to IM_POS_BOTTOM_RIGHT
      * @param int    $opacity        Watermark opacity percentage. Defaults to 100 (fully opaque)
      *
      * @return $this
      */
-    public function watermark($image_path, $place_constant = Imanee::IM_POS_BOTTOM_RIGHT, $opacity = 100)
+    public function watermark($image, $place_constant = Imanee::IM_POS_BOTTOM_RIGHT, $opacity = 100)
     {
-        $this->resource->placeImage($image_path, $place_constant, 0, 0, $opacity);
+        $this->resource->placeImage($image, $place_constant, 0, 0, $opacity);
 
         return $this;
     }
