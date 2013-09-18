@@ -50,6 +50,14 @@ class Image {
     }
 
     /**
+     * @inheritdoc
+     */
+    public function __clone()
+    {
+        $this->resource = clone $this->resource;
+    }
+
+    /**
      * Creates a new "blank" image for this image resource
      *
      * @param int $width  The width for the image
@@ -204,20 +212,28 @@ class Image {
     }
 
     /**
-     * Places an image on top of the current image resource using relative positioning.
+     * Places an image on top of the current image resource.
      *
-     * @param string $image_path     The path on the filesystem for the image to be placed
-     * @param int    $place_constant Where to place the image - one of the \Imanee:IM_POS constants
-     * @param int    $width          (optional) Width of the placed image, if resize is desirable
-     * @param int    $height         (optional) Height of the placed image, if resize is desirable
-     * @param int    $opacity        (optional) Opacity in percentage - 100 for fully opaque (default), 0 for fully transparent.
+     * @param mixed $image   The path for an image on the filesystem or an Imanee object
+     * @param int   $coordX  X coord to place the image
+     * @param int   $coordY  Y coord to place the image
+     * @param int   $width   (optional) Width of the placed image, if resize is desirable
+     * @param int   $height  (optional) Height of the placed image, if resize is desirable
+     * @param int   $opacity (optional) Opacity in percentage - 100 for fully opaque (default), 0 for fully transparent.
      *
      * Note about opacity: the opacity is changed pixel per pixel, so using this will require more processing depending on the image size.
+     * @throws \Exception
      */
-    public function placeImage($image_path, $place_constant, $width = 0, $height = 0, $opacity = 100)
+    public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $opacity = 100)
     {
-        $img = new \Imagick($image_path);
-        $img->setimagebackgroundcolor(new \ImagickPixel('transparent'));
+        if (!is_object($image)) {
+            $img = new \Imagick($image);
+        } else {
+            if (! ($image instanceof \Imanee\Imanee) )
+                throw new \Exception('Object not supported. It must be an instance of Imanee');
+
+            $img = $image->getIMResource();
+        }
 
         if ($width AND $height) {
             $img->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
@@ -227,8 +243,37 @@ class Image {
             $this->setOpacity($img, $opacity);
         }
 
-        list($coordX, $coordY) = $this->getPlacementCoordinates($img->getimagegeometry(), $place_constant);
         $this->resource->compositeimage($img, \Imagick::COMPOSITE_OVER, $coordX, $coordY);
+    }
+
+    /**
+     * Places an image on top of the current image resource using relative positioning.
+     *
+     * @param mixed  $image          The path for an image on the filesystem or an Imanee object
+     * @param int    $place_constant Where to place the image - one of the \Imanee:IM_POS constants
+     * @param int    $width          (optional) Width of the placed image, if resize is desirable
+     * @param int    $height         (optional) Height of the placed image, if resize is desirable
+     * @param int    $opacity        (optional) Opacity in percentage - 100 for fully opaque (default), 0 for fully transparent.
+     *
+     * Note about opacity: the opacity is changed pixel per pixel, so using this will require more processing depending on the image size.
+     */
+    public function placeImage($image, $place_constant, $width = 0, $height = 0, $opacity = 100)
+    {
+        if (!is_object($image)) {
+            $img = new \Imagick($image);
+        } else {
+            if (! ($image instanceof \Imanee\Imanee) )
+                throw new \Exception('Object not supported. It must be an instance of Imanee');
+
+            $img = $image->getIMResource();
+        }
+
+        if ($width AND $height) {
+            $img->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
+        }
+
+        list($coordX, $coordY) = $this->getPlacementCoordinates($img->getimagegeometry(), $place_constant);
+        $this->compositeImage($image, $coordX, $coordY, 0, 0, $opacity);
     }
 
     /**

@@ -37,6 +37,14 @@ class Imanee {
 	}
 
     /**
+     * @inheritdoc
+     */
+    function __clone()
+    {
+        $this->resource = clone $this->resource;
+    }
+
+    /**
      * Loads an image from a file
      * @param string $image_path  The path to the image
      *
@@ -97,16 +105,6 @@ class Imanee {
     public function getFormat()
     {
         return $this->resource->getFormat();
-    }
-
-    /**
-     * Convenient method for cloning the current Imanee object
-     *
-     * @return \Imanee\Imanee
-     */
-    function cloneImage()
-    {
-        return clone $this;
     }
 
     /**
@@ -190,11 +188,18 @@ class Imanee {
         return $this->drawer;
     }
 
+    public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $opacity = 100)
+    {
+        $this->resource->compositeImage($image, $coordX, $coordY, $width, $height, $opacity);
+
+        return $this;
+    }
+
     /**
      * Places an image on top of the current resource. If the width and height are supplied,
      * will perform a resize before placing the image.
      *
-     * @param string $image_path     The path to the image to be placed
+     * @param mixed  $image          Path to an image on filesystem or an Imanee Object
      * @param int    $place_constant One of the Imanee::IM_POS constants, defaults to IM_POS_TOP_LEFT (top left corner)
      * @param int    $width          (optional) specifies a width for the placement
      * @param int    $height         (optional) specifies a height for the placement
@@ -202,9 +207,9 @@ class Imanee {
      *
      * @return $this
      */
-    public function placeImage($image_path, $place_constant = Imanee::IM_POS_TOP_LEFT, $width = null, $height = null, $opacity = 100)
+    public function placeImage($image, $place_constant = Imanee::IM_POS_TOP_LEFT, $width = null, $height = null, $opacity = 100)
     {
-        $this->resource->placeImage($image_path, $place_constant, $width, $height, $opacity);
+        $this->resource->placeImage($image, $place_constant, $width, $height, $opacity);
 
         return $this;
     }
@@ -320,5 +325,10 @@ class Imanee {
         $this->resource->write($path, $jpeg_quality);
 
         return $this;
+    }
+
+    public function getIMResource()
+    {
+        return $this->resource->getResource();
     }
 }
