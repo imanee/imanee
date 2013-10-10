@@ -382,7 +382,6 @@ class Image {
         $y = 0;
 
         $size = $this->resource->getImageGeometry();
-        //$size = ['width' => $this->width, 'height' => $this->height];
 
         switch ($place_constant) {
 
@@ -459,4 +458,5 @@ class Image {
 
         return true;
     }
+
 }
