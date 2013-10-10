@@ -2,6 +2,12 @@
 
 namespace Imanee;
 
+use Imanee\Exception\FilterNotFoundException;
+use Imanee\Filter\BWFilter;
+use Imanee\Filter\ColorFilter;
+use Imanee\Filter\ModulateFilter;
+use Imanee\Filter\SepiaFilter;
+
 class Imanee {
 
     /** @var \Imanee\Image Resource */
@@ -9,6 +15,9 @@ class Imanee {
 
     /** @var \Imanee\Drawer The drawer settings */
     protected $drawer;
+
+    /** @var  \Imanee\FilterResolver The filter Resolver */
+    protected $filterResolver;
 
     const IM_POS_CENTER        = 1;
     const IM_POS_LEFT          = 2;
@@ -25,11 +34,12 @@ class Imanee {
     const IM_POS_BOTTOM_CENTER = 18;
 
     /**
-     * @param string $path a path to a image file - convenient way open an image without using the load() method
+     * @param string $path a path to a image file - convenient way to open an image without using the load() method
      */
     public function __construct($path = null)
 	{
         $this->drawer = new Drawer();
+        $this->filterResolver = new FilterResolver($this->getFilters());
 
         $this->load($path);
 
@@ -37,7 +47,7 @@ class Imanee {
 	}
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     function __clone()
     {
@@ -327,8 +337,55 @@ class Imanee {
         return $this;
     }
 
+    /**
+     * Gets the ImageMagick Resource from the loaded Image Object
+     *
+     * @return \Imagick
+     */
     public function getIMResource()
     {
         return $this->resource->getResource();
+    }
+
+    /**
+     * Gets the default filters
+     *
+     * @return array Return an array with the default filters
+     */
+    public function getFilters()
+    {
+        return [
+            new ModulateFilter(),
+            new BWFilter(),
+            new SepiaFilter(),
+            new ColorFilter(),
+        ];
+    }
+
+    /**
+     * Adds a custom filter to the FilterResolver
+     *
+     * @param FilterInterface $filter The Filter
+     */
+    public function addFilters(FilterInterface $filter)
+    {
+        $this->filterResolver->addFilter($filter);
+    }
+
+    /**
+     * Tries to apply the specified filter to the current resource
+     * @param string $filter The filter identifier, e.g. "filter_bw"
+     * @return $this
+     */
+    public function applyFilter($filter, array $options = [])
+    {
+        $filter = $this->filterResolver->resolve($filter);
+
+        if (!$filter)
+            throw new FilterNotFoundException();
+
+        $filter->apply($this->getIMResource(), $options);
+
+        return $this;
     }
 }
