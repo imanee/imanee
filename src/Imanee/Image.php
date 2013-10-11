@@ -111,8 +111,8 @@ class Image {
             throw new EmptyImageException("You are trying to resize an empty image.");
 
         $this->resource->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
-        $newsize = $this->resource->getImageGeometry();
 
+        $newsize = $this->resource->getImageGeometry();
         $this->width  = $newsize['width'];
         $this->height = $newsize['height'];
     }
@@ -318,6 +318,10 @@ class Image {
         } else {
             $this->resource->thumbnailimage($width, $height, true);
         }
+
+        $newsize = $this->resource->getImageGeometry();
+        $this->width  = $newsize['width'];
+        $this->height = $newsize['height'];
     }
 
     /**
