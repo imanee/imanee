@@ -137,16 +137,18 @@ class Imanee {
      * To overwrite the current Drawer settings, create a custom Drawer object and use the method ->setDrawer before
      *
      * @param string $text           Text to be written
-     * @param int    $size           Font size
      * @param int    $place_constant One of the Imanee:IM_POS constants - defaults to IM_POS_TOP_LEFT
+     * @param int    $fitWidth       If a positive value is provided, will change the font size to fit the text in this width
+     * @param int    $fontSize       The font size. Defaults to the current font size defined in the Drawer
      *
      * @return $this
      */
-    public function placeText($text, $size = 12, $place_constant = Imanee::IM_POS_TOP_LEFT)
+    public function placeText($text, $place_constant = Imanee::IM_POS_TOP_LEFT, $fitWidth = 0, $fontSize = 0)
     {
-        $this->drawer->setFontSize($size);
+        if ($fontSize)
+            $this->drawer->setFontSize($fontSize);
 
-        $this->resource->placeText($text, $place_constant, $this->drawer);
+        $this->resource->placeText($text, $place_constant, $this->drawer, $fitWidth);
 
         return $this;
     }

@@ -197,14 +197,41 @@ class Image {
     }
 
     /**
-     * Places a text on top of the current image resource using relative positioning and the provided Drawer object
+     * Adjusts the font size of the Drawer object to fit a text in the desired width
+     * @param $text
+     * @param Drawer $drawer
+     * @param $width
+     * @return int
+     */
+    public function adjustFontSize($text, Drawer $drawer, $width)
+    {
+        $fontSize = 0;
+        $metrics['width'] = 0;
+
+        while($metrics['width'] <= $width) {
+            $drawer->setFontSize($fontSize);
+            $metrics = $this->getTextGeometry($text, $drawer);
+            $fontSize++;
+        }
+
+        return $drawer;
+    }
+
+    /**
+     * Places a text on top of the current image resource using relative positioning and the provided Drawer object.
+     * If fitWidth is provided, will calculate the correct font size to fit in the provided width.
      *
      * @param string $text           The text to be written.
      * @param int    $place_constant Where to place the image - one of the \Imanee:IM_POS constants
      * @param Drawer $drawer         The drawer object
+     * @param int    $fitWidth       If provided and different than zero, will calculate a new font size to fit text in the provided width
      */
-    public function placeText($text, $place_constant, Drawer $drawer)
+    public function placeText($text, $place_constant, Drawer $drawer, $fitWidth = 0)
     {
+        if ($fitWidth > 0) {
+            $drawer = $this->adjustFontSize($text, $drawer, $fitWidth);
+        }
+
         $textsize = $this->getTextGeometry($text, $drawer);
         list($coordX, $coordY) = $this->getPlacementCoordinates($textsize, $place_constant);
 
