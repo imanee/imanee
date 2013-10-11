@@ -208,7 +208,7 @@ class Image {
         $textsize = $this->getTextGeometry($text, $drawer);
         list($coordX, $coordY) = $this->getPlacementCoordinates($textsize, $place_constant);
 
-        $this->resource->annotateimage($drawer->getDrawer(),$coordX, $coordY, 0, $text);
+        $this->resource->annotateimage($drawer->getDrawer(),$coordX, $coordY + $drawer->getFontSize(), 0, $text);
     }
 
     /**
