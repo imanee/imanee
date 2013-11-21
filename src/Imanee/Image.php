@@ -81,7 +81,7 @@ class Image {
     public function load($image_path)
 	{
         if (!is_file($image_path))
-            throw new ImageNotFoundException("File not Found.");
+            throw new ImageNotFoundException(sprintf("File '%s' not found. Are you sure this is the right path?", $image_path));
 
         $this->image_path = $image_path;
         $this->loadImageInfo();
@@ -125,7 +125,7 @@ class Image {
     public function loadImageInfo()
 	{
         if (!is_file($this->image_path))
-            throw new ImageNotFoundException("File not Found.");
+            throw new ImageNotFoundException(sprintf("File '%s' not found. Are you sure this is the right path?", $this->image_path));
 
         $info = getimagesize($this->image_path);
 
