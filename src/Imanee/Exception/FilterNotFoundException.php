@@ -1,11 +1,8 @@
 <?php
-/**
-* FiltereNotFoundException
- */
 
 namespace Imanee\Exception;
 
-
-class FilterNotFoundException extends \Exception {
+class FilterNotFoundException extends \Exception
+{
 
 }

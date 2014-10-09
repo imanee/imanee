@@ -3,12 +3,10 @@
 namespace Imanee;
 
 /**
- * Class Drawer
  * Saves Drawing settings
- * @package Imanee
  */
-class Drawer extends ConfigContainer {
-
+class Drawer extends ConfigContainer
+{
     private $drawer;
 
     const TEXT_ALIGN_LEFT   = 1;
@@ -20,11 +18,11 @@ class Drawer extends ConfigContainer {
         $this->drawer = new \ImagickDraw();
 
         parent::__construct($values, [
-                'font'  => 'Bookman-Demi',
-                'size'  => 22,
-                'color' => '#000000',
-                'align' => Drawer::TEXT_ALIGN_LEFT
-            ]);
+            'font'  => 'Bookman-Demi',
+            'size'  => 22,
+            'color' => '#000000',
+            'align' => Drawer::TEXT_ALIGN_LEFT,
+        ]);
     }
 
     /**
@@ -73,6 +71,7 @@ class Drawer extends ConfigContainer {
     /**
      * Sets the font
      * @param string $font The name/path to the font
+     * @return $this
      */
     public function setFont($font)
     {

@@ -1,22 +1,15 @@
 <?php
-/**
- * Imanee Image Class
- * @author Erika Heidi<erika@erikaheidi.com>
- */
+
 namespace Imanee;
 
 use Imanee\Exception\EmptyImageException;
 use Imanee\Exception\ImageNotFoundException;
 
 /**
- * Class Image
- *
  * Works as a wrapper for the ImageMagick objects and provides convenient methods for working with them
- *
- * @package Imanee
  */
-class Image {
-
+class Image
+{
     /** @var \Imagick the image resource */
     private $resource;
 
@@ -46,7 +39,6 @@ class Image {
         if ($image_path !== null) {
             $this->load($image_path);
         }
-
     }
 
     /**
@@ -132,7 +124,6 @@ class Image {
         $this->mime   = $info['mime'];
         $this->width  = $info[0];
         $this->height = $info[1];
-
 	}
 
     /**
@@ -190,10 +181,10 @@ class Image {
     {
         $metrics = $this->resource->queryFontMetrics($drawer->getDrawer(), $text);
 
-        return array(
+        return [
             'width'  => $metrics['textWidth'],
             'height' => $metrics['textHeight'],
-        );
+        ];
     }
 
     /**
@@ -256,8 +247,9 @@ class Image {
         if (!is_object($image)) {
             $img = new \Imagick($image);
         } else {
-            if (! ($image instanceof \Imanee\Imanee) )
+            if (! ($image instanceof \Imanee\Imanee)) {
                 throw new \Exception('Object not supported. It must be an instance of Imanee');
+            }
 
             $img = $image->getIMResource();
         }
@@ -299,7 +291,7 @@ class Image {
             $img->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
         }
 
-        list($coordX, $coordY) = $this->getPlacementCoordinates($img->getimagegeometry(), $place_constant);
+        list ($coordX, $coordY) = $this->getPlacementCoordinates($img->getimagegeometry(), $place_constant);
         $this->compositeImage($image, $coordX, $coordY, 0, 0, $opacity);
     }
 
@@ -309,7 +301,7 @@ class Image {
      * @param float     $degrees Degrees to rotate the image. Negative values will rotate the image anti-clockwise
      * @param string $background Background to fill the empty spaces, default is transparent - will render as black for jpg format (use png if you want it transparent)
      */
-    public function rotate($degrees = 90, $background = 'transparent')
+    public function rotate($degrees = 90.00, $background = 'transparent')
     {
         $this->resource->rotateimage(new \ImagickPixel($background), $degrees);
     }
@@ -355,15 +347,16 @@ class Image {
      * Outputs the image data as a string.
      *
      * @param string $format (optional) overwrites the current image format.
-     *  use it if you didn't explicitly set the format on new images before calling output
+     *  use it if you did not explicitly set the format on new images before calling output
      *
      * @return string The image data as a string
      * @throws Exception\EmptyImageException
      */
     public function output($format = null)
     {
-        if ($this->isBlank())
+        if ($this->isBlank()) {
             throw new EmptyImageException("You are trying to output an empty image.");
+        }
 
         if ($format !== null) {
             $this->resource->setimageformat($format);
@@ -489,5 +482,4 @@ class Image {
 
         return true;
     }
-
 }

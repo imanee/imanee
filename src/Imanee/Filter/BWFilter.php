@@ -1,17 +1,15 @@
 <?php
+
+namespace Imanee\Filter;
+
+use Imanee\FilterInterface;
+
 /**
  * Black and White Filter
  * Convenient way to modulate the image for removing saturation
  */
-
-namespace Imanee\Filter;
-
-
-use Imanee\FilterInterface;
-use Imanee\Imanee;
-
-class BWFilter implements FilterInterface{
-
+class BWFilter implements FilterInterface
+{
     /**
      * {@inheritdoc}
      */
@@ -27,5 +25,4 @@ class BWFilter implements FilterInterface{
     {
         return 'filter_bw';
     }
-
 }

@@ -1,13 +1,12 @@
 <?php
-/**
- * Filter Resolver class
- */
 
 namespace Imanee;
 
-
-class FilterResolver {
-
+class FilterResolver
+{
+    /**
+     * @var FilterInterface[]
+     */
     protected $filters;
 
     public function __construct(array $filters = [])
@@ -42,5 +41,4 @@ class FilterResolver {
     {
         return $this->filters;
     }
-
 }

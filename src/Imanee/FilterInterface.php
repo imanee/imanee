@@ -1,17 +1,13 @@
 <?php
-/**
- * Filter Interface.
- */
 
 namespace Imanee;
 
-use Imanee\Imanee;
-
-interface FilterInterface {
-
+interface FilterInterface
+{
     /**
      * Apply the filter to the Imagick resource
      * @param \Imagick $resource
+     * @param array $options
      * @return \Imagick The modified resource
      */
     public function apply(\Imagick $resource, array $options = []);
