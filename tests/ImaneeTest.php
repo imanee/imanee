@@ -1,17 +1,11 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: erika
- * Date: 6/18/13
- * Time: 8:45 PM
- * To change this template use File | Settings | File Templates.
- */
-include __DIR__ . '/../vendor/autoload.php';
+
+namespace Imanee\Tests;
 
 use Imanee\Imanee;
 
-class ImaneeTest extends PHPUnit_Framework_TestCase {
-
+class ImaneeTest extends \PHPUnit_Framework_TestCase
+{
     protected $test_jpg;
 
     public function setup()
@@ -54,6 +48,4 @@ class ImaneeTest extends PHPUnit_Framework_TestCase {
 
         $this->assertSame('image/jpeg', $im->getMime());
     }
-
-
 }

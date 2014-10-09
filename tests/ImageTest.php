@@ -1,12 +1,9 @@
 <?php
-/**
- * Image Test
- */
 
-include __DIR__ . '/../vendor/autoload.php';
+namespace Imanee\Tests;
 
-class ImageTest extends PHPUnit_Framework_TestCase{
-
+class ImageTest extends \PHPUnit_Framework_TestCase
+{
     protected $test_jpg;
 
     public function setup()
