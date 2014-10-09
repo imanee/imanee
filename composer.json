@@ -24,6 +24,11 @@
         "psr-0": { "Imanee": "src/" }
     },
     "autoload-dev": {
-        "psr-0": { "Imanee\\Tests\\": "tests/" }
+        "psr-0": {"Imanee\\Tests\\": "tests/"}
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
     }
 }
