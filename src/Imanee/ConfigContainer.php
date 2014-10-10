@@ -13,7 +13,7 @@ abstract class ConfigContainer
 
     public function __get($param)
     {
-        return isset($this->config[$param]) ? $this->config[$param] : null;
+        $this->get($param);
     }
 
     public function __set($name, $value)
