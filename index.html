@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <title>Imanee by imanee</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Imanee</h1>
+        <h2>php image manipulation library based on Imagemagick</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/imanee/imanee/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/imanee/imanee/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/imanee/imanee" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a name="imanee" class="anchor" href="#imanee"><span class="octicon octicon-link"></span></a>imanee</h1>
+
+<p>Imanee is a simple wrapper library for Imagemagick. It provides an easy flow for editing images and performing common tasks such as thumbnails, watermarks and text writing.
+This is an experimental project under development.</p>
+
+<h2>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
+
+<p>Imanee requires the <em>imagick</em> PHP extension, and PHP &gt;= 5.4 .</p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Installation can be made through composer.</p>
+
+<div class="highlight highlight-json"><pre>    <span class="s2">"require"</span><span class="err">:</span> <span class="p">{</span>
+        <span class="nt">"imanee/imanee"</span><span class="p">:</span> <span class="s2">"dev-master@dev"</span>
+    <span class="p">}</span>
+</pre></div>
+
+<h2>
+<a name="usage-examples" class="anchor" href="#usage-examples"><span class="octicon octicon-link"></span></a>Usage examples</h2>
+
+<ol>
+<li>Thumbnail output</li>
+</ol>
+
+<div class="highlight highlight-php"><pre><span class="nb">header</span><span class="p">(</span><span class="s2">"Content-type: image/jpg"</span><span class="p">);</span>
+
+<span class="nv">$imanee</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Imanee</span><span class="p">(</span><span class="s1">'path/to/my/image.jpg'</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nv">$imanee</span><span class="o">-&gt;</span><span class="na">thumbnail</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">output</span><span class="p">();</span>
+</pre></div>
+
+<ol>
+<li>Image composition</li>
+</ol>
+
+<div class="highlight highlight-php"><pre><span class="nb">header</span><span class="p">(</span><span class="s2">"Content-type: image/jpg"</span><span class="p">);</span>
+
+<span class="nv">$imanee</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Imanee</span><span class="p">(</span><span class="s1">'path/to/my/image.jpg'</span><span class="p">);</span>
+
+<span class="cm">/* places 4 different png images on the 4 corners of the original image */</span>
+
+<span class="k">echo</span> <span class="nv">$imanee</span><span class="o">-&gt;</span><span class="na">placeImage</span><span class="p">(</span><span class="s1">'img1.png'</span><span class="p">,</span> <span class="nx">\Imanee\Imanee</span><span class="o">::</span><span class="na">IM_POS_TOP_LEFT</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">placeImage</span><span class="p">(</span><span class="s1">'img2.png'</span><span class="p">,</span> <span class="nx">\Imanee\Imanee</span><span class="o">::</span><span class="na">IM_POS_TOP_RIGHT</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">placeImage</span><span class="p">(</span><span class="s1">'img3.png'</span><span class="p">,</span> <span class="nx">\Imanee\Imanee</span><span class="o">::</span><span class="na">IM_POS_BOTTOM_LEFT</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">placeImage</span><span class="p">(</span><span class="s1">'img4.png'</span><span class="p">,</span> <span class="nx">\Imanee\Imanee</span><span class="o">::</span><span class="na">IM_POS_BOTTOM_RIGHT</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">output</span><span class="p">()</span>
+<span class="p">;</span>
+</pre></div>
+
+<p>For more (and complete) examples see: <a href="https://github.com/imanee/demos"></a><a href="https://github.com/imanee/demos">https://github.com/imanee/demos</a></p>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
