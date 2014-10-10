@@ -13,6 +13,9 @@ class Drawer extends ConfigContainer
     const TEXT_ALIGN_CENTER = 2;
     const TEXT_ALIGN_RIGHT  = 3;
 
+    /**
+     * @param array $values
+     */
     public function __construct(array $values = [])
     {
         $this->drawer = new \ImagickDraw();
