@@ -22,5 +22,8 @@
     },
     "autoload": {
         "psr-0": { "Imanee": "src/" }
+    },
+    "autoload-dev": {
+        "psr-0": { "Imanee\\Tests\\": "tests/" }
     }
 }
