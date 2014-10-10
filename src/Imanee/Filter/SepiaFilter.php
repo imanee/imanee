@@ -1,16 +1,11 @@
 <?php
-/**
- * Sepia Filter
- */
 
 namespace Imanee\Filter;
 
-
 use Imanee\FilterInterface;
-use Imanee\Imanee;
 
-class SepiaFilter implements FilterInterface{
-
+class SepiaFilter implements FilterInterface
+{
     /**
      * {@inheritdoc}
      */
@@ -30,5 +25,4 @@ class SepiaFilter implements FilterInterface{
     {
         return 'filter_sepia';
     }
-
 }

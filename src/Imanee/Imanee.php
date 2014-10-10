@@ -8,8 +8,8 @@ use Imanee\Filter\ColorFilter;
 use Imanee\Filter\ModulateFilter;
 use Imanee\Filter\SepiaFilter;
 
-class Imanee {
-
+class Imanee
+{
     /** @var \Imanee\Image Resource */
     protected $resource;
 
@@ -377,14 +377,17 @@ class Imanee {
     /**
      * Tries to apply the specified filter to the current resource
      * @param string $filter The filter identifier, e.g. "filter_bw"
+     * @param array $options
+     * @throws FilterNotFoundException
      * @return $this
      */
     public function applyFilter($filter, array $options = [])
     {
         $filter = $this->filterResolver->resolve($filter);
 
-        if (!$filter)
+        if (!$filter) {
             throw new FilterNotFoundException();
+        }
 
         $filter->apply($this->getIMResource(), $options);
 

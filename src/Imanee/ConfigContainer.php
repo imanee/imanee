@@ -1,13 +1,9 @@
 <?php
-/**
-Imanee Config Container
- */
 
 namespace Imanee;
 
-
-abstract class ConfigContainer {
-
+abstract class ConfigContainer
+{
     protected $config;
 
     public function __construct(array $defaults = [], array $values = [])
@@ -33,6 +29,7 @@ abstract class ConfigContainer {
     public function set($name, $value)
     {
         $this->config[$name] = $value;
+
         return $this;
     }
 }
