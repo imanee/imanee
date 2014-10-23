@@ -21,10 +21,10 @@
         "phpunit/phpunit": "3.7.*"
     },
     "autoload": {
-        "psr-0": { "Imanee": "src/" }
+        "psr-4": { "Imanee\\": "src/" }
     },
     "autoload-dev": {
-        "psr-0": { "Imanee\\Tests\\": "tests/" }
+        "psr-4": { "Imanee\\Tests\\": "tests/" }
     },
     "extra": {
         "branch-alias": {
