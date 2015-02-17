@@ -14,19 +14,19 @@ class Image
     private $resource;
 
     /** @var string the path to the current image resource if loaded from file */
-    public  $image_path;
+    public $image_path;
 
     /** @var string the image mime type */
-    public  $mime;
+    public $mime;
 
     /** @var  int the image width */
-    public  $width;
+    public $width;
 
     /** @var int the image height */
-	public  $height;
+    public $height;
 
     /** @var string the image background if defined */
-    public  $background;
+    public $background;
 
     /**
      * Creates a new Image object
@@ -71,16 +71,19 @@ class Image
      * @throws Exception\ImageNotFoundException
      */
     public function load($image_path)
-	{
-        if (!is_file($image_path))
-            throw new ImageNotFoundException(sprintf("File '%s' not found. Are you sure this is the right path?", $image_path));
+    {
+        if (!is_file($image_path)) {
+            throw new ImageNotFoundException(
+                sprintf("File '%s' not found. Are you sure this is the right path?", $image_path)
+            );
+        }
 
         $this->image_path = $image_path;
         $this->loadImageInfo();
         $this->resource = new \Imagick($this->image_path);
 
         return $this;
-	}
+    }
 
     /**
      * @return \Imagick The imagick resource
@@ -99,8 +102,9 @@ class Image
      */
     public function resize($width, $height)
     {
-        if ($this->isBlank())
+        if ($this->isBlank()) {
             throw new EmptyImageException("You are trying to resize an empty image.");
+        }
 
         $this->resource->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
 
@@ -115,16 +119,19 @@ class Image
      * @throws Exception\ImageNotFoundException
      */
     public function loadImageInfo()
-	{
-        if (!is_file($this->image_path))
-            throw new ImageNotFoundException(sprintf("File '%s' not found. Are you sure this is the right path?", $this->image_path));
+    {
+        if (!is_file($this->image_path)) {
+            throw new ImageNotFoundException(
+                sprintf("File '%s' not found. Are you sure this is the right path?", $this->image_path)
+            );
+        }
 
         $info = getimagesize($this->image_path);
 
         $this->mime   = $info['mime'];
         $this->width  = $info[0];
         $this->height = $info[1];
-	}
+    }
 
     /**
      * Sets the image format. Mandatory before outputting a new blank image
@@ -167,7 +174,7 @@ class Image
      */
     public function annotate($text, $coordX, $coordY, $angle, Drawer $drawer)
     {
-        $this->resource->annotateimage($drawer->getDrawer(),$coordX, $coordY, $angle, $text );
+        $this->resource->annotateimage($drawer->getDrawer(), $coordX, $coordY, $angle, $text);
     }
 
     /**
@@ -199,7 +206,7 @@ class Image
         $fontSize = 0;
         $metrics['width'] = 0;
 
-        while($metrics['width'] <= $width) {
+        while ($metrics['width'] <= $width) {
             $drawer->setFontSize($fontSize);
             $metrics = $this->getTextGeometry($text, $drawer);
             $fontSize++;
@@ -215,7 +222,8 @@ class Image
      * @param string $text           The text to be written.
      * @param int    $place_constant Where to place the image - one of the \Imanee:IM_POS constants
      * @param Drawer $drawer         The drawer object
-     * @param int    $fitWidth       If provided and different than zero, will calculate a new font size to fit text in the provided width
+     * @param int    $fitWidth       If provided and different than zero, will calculate a new font size
+     * to fit text in the provided width
      */
     public function placeText($text, $place_constant, Drawer $drawer, $fitWidth = 0)
     {
@@ -226,7 +234,7 @@ class Image
         $textsize = $this->getTextGeometry($text, $drawer);
         list($coordX, $coordY) = $this->getPlacementCoordinates($textsize, $place_constant);
 
-        $this->resource->annotateimage($drawer->getDrawer(),$coordX, $coordY + $drawer->getFontSize(), 0, $text);
+        $this->resource->annotateimage($drawer->getDrawer(), $coordX, $coordY + $drawer->getFontSize(), 0, $text);
     }
 
     /**
@@ -239,7 +247,8 @@ class Image
      * @param int   $height  (optional) Height of the placed image, if resize is desirable
      * @param int   $opacity (optional) Opacity in percentage - 100 for fully opaque (default), 0 for fully transparent.
      *
-     * Note about opacity: the opacity is changed pixel per pixel, so using this will require more processing depending on the image size.
+     * Note about opacity: the opacity is changed pixel per pixel, so using this will require more processing
+     * depending on the image size.
      * @throws \Exception
      */
     public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $opacity = 100)
@@ -254,7 +263,7 @@ class Image
             $img = $image->getIMResource();
         }
 
-        if ($width AND $height) {
+        if ($width and $height) {
             $img->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
         }
 
@@ -272,22 +281,26 @@ class Image
      * @param int    $place_constant Where to place the image - one of the \Imanee:IM_POS constants
      * @param int    $width          (optional) Width of the placed image, if resize is desirable
      * @param int    $height         (optional) Height of the placed image, if resize is desirable
-     * @param int    $opacity        (optional) Opacity in percentage - 100 for fully opaque (default), 0 for fully transparent.
+     * @param int    $opacity        (optional) Opacity in percentage - 100 for fully opaque (default),
+     * 0 for fully transparent.
+     * @throws \Exception
      *
-     * Note about opacity: the opacity is changed pixel per pixel, so using this will require more processing depending on the image size.
+     * Note about opacity: the opacity is changed pixel per pixel, so using this will require more processing
+     * depending on the image size.
      */
     public function placeImage($image, $place_constant, $width = 0, $height = 0, $opacity = 100)
     {
         if (!is_object($image)) {
             $img = new \Imagick($image);
         } else {
-            if (! ($image instanceof \Imanee\Imanee) )
+            if (!($image instanceof \Imanee\Imanee)) {
                 throw new \Exception('Object not supported. It must be an instance of Imanee');
+            }
 
             $img = $image->getIMResource();
         }
 
-        if ($width AND $height) {
+        if ($width and $height) {
             $img->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
         }
 
@@ -299,7 +312,8 @@ class Image
      * Rotates the image resource in the given degrees
      *
      * @param float     $degrees Degrees to rotate the image. Negative values will rotate the image anti-clockwise
-     * @param string $background Background to fill the empty spaces, default is transparent - will render as black for jpg format (use png if you want it transparent)
+     * @param string $background Background to fill the empty spaces, default is transparent.
+     * will render as black for jpg format (use png if you want it transparent)
      */
     public function rotate($degrees = 90.00, $background = 'transparent')
     {
@@ -324,7 +338,7 @@ class Image
 
     /**
      * Creates a thumbnail of the current resource. If crop is true, the result will be a perfect fit thumbnail with the
-     * given dimensions, cropped by the center. If crop is false, the thumbnail will use the best fit for the dimensions.
+     * given dimensions, cropped by the center. If crop is false, the thumbnail will use the best fit for the dimensions
      *
      * @param int  $width  Width of the thumbnail
      * @param int  $height Height of the thumbnail
@@ -368,11 +382,12 @@ class Image
     /**
      * Saves the image to disk. If the second param is provided, will try to compress the image using JPEG compression.
      *
-     * The format will be decided based on the extension used for the filename. If, for instance, a "img.png" is provided,
-     * the image will be saved as PNG and the compression will not take affect.
+     * The format will be decided based on the extension used for the filename. If, for instance,
+     * a "img.png" is provided, the image will be saved as PNG and the compression will not take affect.
      *
      * @param string $file         The file path to save the image
-     * @param int    $jpeg_quality (optional) the quality for JPEG files, 1 to 100 where 100 means no compression (higher quality and bigger file)
+     * @param int    $jpeg_quality (optional) the quality for JPEG files, 1 to 100 where 100 means no compression
+     * (higher quality and bigger file)
      */
     public function write($file, $jpeg_quality = 0)
     {
@@ -398,7 +413,8 @@ class Image
      *
      * @param array $resource_size  an array with the keys 'width' and 'height' from the image to be placed
      * @param int   $place_constant one of the \Imanee::IM_POS constant (default is IM_POS_TOP_LEFT)
-     * @return array Returns an array with the first position representing the X coordinate and the second position representing the Y coordinate for placing the image
+     * @return array Returns an array with the first position representing the X coordinate and the second position
+     * representing the Y coordinate for placing the image
      */
     public function getPlacementCoordinates($resource_size = [], $place_constant = Imanee::IM_POS_TOP_LEFT)
     {
@@ -470,7 +486,7 @@ class Image
         $rows = $resource->getPixelIterator();
 
         foreach ($rows as $cols) {
-            foreach($cols as $pixel) {
+            foreach ($cols as $pixel) {
 
                 $current = $pixel->getColorValue(\Imagick::COLOR_ALPHA);
 

@@ -37,19 +37,19 @@ class Imanee
      * @param string $path a path to a image file - convenient way to open an image without using the load() method
      */
     public function __construct($path = null)
-	{
+    {
         $this->drawer = new Drawer();
         $this->filterResolver = new FilterResolver($this->getFilters());
 
         $this->load($path);
 
         return $this;
-	}
+    }
 
     /**
      * {@inheritdoc}
      */
-    function __clone()
+    public function __clone()
     {
         $this->resource = clone $this->resource;
     }
@@ -138,16 +138,17 @@ class Imanee
      *
      * @param string $text           Text to be written
      * @param int    $place_constant One of the Imanee:IM_POS constants - defaults to IM_POS_TOP_LEFT
-     * @param int    $fitWidth       If a positive value is provided, will change the font size to fit the text in this width
+     * @param int    $fitWidth       If a positive value is provided, will change the font size to fit
+     * the text in this width
      * @param int    $fontSize       The font size. Defaults to the current font size defined in the Drawer
      *
      * @return $this
      */
     public function placeText($text, $place_constant = Imanee::IM_POS_TOP_LEFT, $fitWidth = 0, $fontSize = 0)
     {
-        if ($fontSize)
+        if ($fontSize) {
             $this->drawer->setFontSize($fontSize);
-
+        }
         $this->resource->placeText($text, $place_constant, $this->drawer, $fitWidth);
 
         return $this;
@@ -169,9 +170,9 @@ class Imanee
     {
         $drawer = $custom_drawer ?: $this->drawer;
 
-        if ($size)
+        if ($size) {
             $drawer->setFontSize($size);
-
+        }
         $this->resource->annotate($text, $coordX, $coordY, $angle, $drawer);
 
         return $this;
@@ -215,12 +216,18 @@ class Imanee
      * @param int    $place_constant One of the Imanee::IM_POS constants, defaults to IM_POS_TOP_LEFT (top left corner)
      * @param int    $width          (optional) specifies a width for the placement
      * @param int    $height         (optional) specifies a height for the placement
-     * @param int    $opacity        (optional) specifies the opacity of the placed image. 100 for fully opaque (default), 0 for fully transparent
+     * @param int    $opacity        (optional) specifies the opacity of the placed image.
+     * 100 for fully opaque (default), 0 for fully transparent
      *
      * @return $this
      */
-    public function placeImage($image, $place_constant = Imanee::IM_POS_TOP_LEFT, $width = null, $height = null, $opacity = 100)
-    {
+    public function placeImage(
+        $image,
+        $place_constant = Imanee::IM_POS_TOP_LEFT,
+        $width = null,
+        $height = null,
+        $opacity = 100
+    ) {
         $this->resource->placeImage($image, $place_constant, $width, $height, $opacity);
 
         return $this;
@@ -246,7 +253,8 @@ class Imanee
      * Rotates the image resource in the given degrees
      *
      * @param float     $degrees Degrees to rotate the image. Negative values will rotate the image anti-clockwise
-     * @param string $background Background to fill the empty spaces, default is transparent - will render as black for jpg format (use png if you want it transparent)
+     * @param string $background Background to fill the empty spaces, default is transparent -
+     * will render as black for jpg format (use png if you want it transparent)
      *
      * @return $this
      */
@@ -276,7 +284,7 @@ class Imanee
 
     /**
      * Creates a thumbnail of the current resource. If crop is true, the result will be a perfect fit thumbnail with the
-     * given dimensions, cropped by the center. If crop is false, the thumbnail will use the best fit for the dimensions.
+     * given dimensions, cropped by the center. If crop is false, the thumbnail will use the best fit for the dimensions
      *
      * @param int  $width  Width of the thumbnail
      * @param int  $height Height of the thumbnail
@@ -326,11 +334,14 @@ class Imanee
     /**
      * Saves the image to disk. If the second param is provided, will try to compress the image using JPEG compression.
      *
-     * The format will be decided based on the extension used for the filename. If, for instance, a "img.png" is provided,
-     * the image will be saved as PNG and the compression will not take affect.
+     * The format will be decided based on the extension used for the filename. If, for instance,
+     * a "img.png" is provided, the image will be saved as PNG and the compression will not take affect.
      *
-     * @param string $file         The file path to save the image
-     * @param int    $jpeg_quality (optional) the quality for JPEG files, 1 to 100 where 100 means no compression (higher quality and bigger file)
+     * @param string $path         The file path to save the image
+     * @param int    $jpeg_quality (optional) the quality for JPEG files, 1 to 100 where 100 means no compression
+     * (higher quality and bigger file)
+     *
+     * @return Imanee $this
      */
     public function write($path, $jpeg_quality = 0)
     {

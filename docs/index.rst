@@ -21,16 +21,17 @@ Installation
 ------------
 Installation can be made through composer::
 
-    "require": {
-        "imanee/imanee": "dev-master@dev"
-    }
+    $ composer require imanee/imanee "~0.2"
 
 
-Usage examples
---------------
+Getting Started
+---------------
+
+A few simple examples to get you started
 
 1. Thumbnail output::
 
+        <?php
         header("Content-type: image/jpg");
 
         $imanee = new \Imanee('path/to/my/image.jpg');
@@ -38,16 +39,20 @@ Usage examples
 
 2. Image composition::
 
+    <?php
+
+    use Imanee\Imanee;
+
     header("Content-type: image/jpg");
 
-    $imanee = new \Imanee('path/to/my/image.jpg');
+    $imanee = new Imanee('path/to/my/image.jpg');
 
     /* places 4 different png images on the 4 corners of the original image */
 
-    echo $imanee->placeImage('img1.png', \Imanee\Imanee::IM_POS_TOP_LEFT)
-        ->placeImage('img2.png', \Imanee\Imanee::IM_POS_TOP_RIGHT)
-        ->placeImage('img3.png', \Imanee\Imanee::IM_POS_BOTTOM_LEFT)
-        ->placeImage('img4.png', \Imanee\Imanee::IM_POS_BOTTOM_RIGHT)
+    echo $imanee->placeImage('img1.png', Imanee::IM_POS_TOP_LEFT)
+        ->placeImage('img2.png', Imanee::IM_POS_TOP_RIGHT)
+        ->placeImage('img3.png', Imanee::IM_POS_BOTTOM_LEFT)
+        ->placeImage('img4.png', Imanee::IM_POS_BOTTOM_RIGHT)
         ->output()
     ;
 
