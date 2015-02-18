@@ -13,6 +13,11 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   constants.rst
+   examples.rst
+   examples/text.rst
+   examples/thumbnails.rst
+
 Requirements
 ------------
 Imanee requires the *imagick* PHP extension, and PHP >= 5.4 .

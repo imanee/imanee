@@ -162,13 +162,12 @@ class Imanee
      * @param int            $coordY The Y coordinate for text placement
      * @param int            $size   The font size
      * @param int            $angle  The angle (defaults to 0, plain)
-     * @param \Imanee\Drawer $custom_drawer A custom drawer object to overwrite the default text settings
      *
      * @return $this
      */
-    public function annotate($text, $coordX, $coordY, $size = 12, $angle = 0, $custom_drawer = null)
+    public function annotate($text, $coordX, $coordY, $size = 12, $angle = 0)
     {
-        $drawer = $custom_drawer ?: $this->drawer;
+        $drawer = $this->getDrawer();
 
         if ($size) {
             $drawer->setFontSize($size);
