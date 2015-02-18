@@ -96,17 +96,19 @@ class Image
     /**
      * Resizes an image
      *
-     * @param int $width  The new width
-     * @param int $height The new height
+     * @param int $width   The new width
+     * @param int $height  The new height
+     * @param int $bestfit When set to 0, will force resize to the provided dimensions. Default is 1, which means the
+     * resize will be proportional to fit in the provided dimensions, keeping the image always proportional.
      * @throws Exception\EmptyImageException
      */
-    public function resize($width, $height)
+    public function resize($width, $height, $bestfit = 1)
     {
         if ($this->isBlank()) {
             throw new EmptyImageException("You are trying to resize an empty image.");
         }
 
-        $this->resource->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
+        $this->resource->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1, $bestfit);
 
         $newsize = $this->resource->getImageGeometry();
         $this->width  = $newsize['width'];

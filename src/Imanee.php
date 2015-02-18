@@ -120,14 +120,17 @@ class Imanee
     /**
      * Resizes the current image resource
      *
-     * @param int $width  The new width
-     * @param int $height The new height
+     * @param int $width   The new width
+     * @param int $height  The new height
+     * @param int $bestfit When set to 1 (default), will fit the image inside the provided box dimensions.
+     * When set to 0, will force resize to the specified dimensions, which may cause the resulting image to be
+     * out of proportion.
      *
      * @return $this
      */
-    public function resize($width, $height)
+    public function resize($width, $height, $bestfit = 1)
     {
-        $this->resource->resize($width, $height);
+        $this->resource->resize($width, $height, $bestfit);
 
         return $this;
     }
