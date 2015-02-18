@@ -240,18 +240,20 @@ class Image
     /**
      * Places an image on top of the current image resource.
      *
-     * @param mixed $image   The path for an image on the filesystem or an Imanee object
-     * @param int   $coordX  X coord to place the image
-     * @param int   $coordY  Y coord to place the image
-     * @param int   $width   (optional) Width of the placed image, if resize is desirable
-     * @param int   $height  (optional) Height of the placed image, if resize is desirable
-     * @param int   $opacity (optional) Opacity in percentage - 100 for fully opaque (default), 0 for fully transparent.
+     * @param mixed $image        The path for an image on the filesystem or an Imanee object
+     * @param int   $coordX       X coord to place the image
+     * @param int   $coordY       Y coord to place the image
+     * @param int   $width        (optional) Width of the placed image, if resize is desirable
+     * @param int   $height       (optional) Height of the placed image, if resize is desirable
+     * @param int   $transparency (optional) Transparency in percentage - 0 for fully opaque (default),
+     * 100 for fully transparent.
      *
-     * Note about opacity: the opacity is changed pixel per pixel, so using this will require more processing
-     * depending on the image size.
      * @throws \Exception
+     *
+     * Note about transparency: the change is made pixel per pixel, so using this will require more processing
+     * depending on the image size.
      */
-    public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $opacity = 100)
+    public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $transparency = 0)
     {
         if (!is_object($image)) {
             $img = new \Imagick($image);
@@ -267,8 +269,8 @@ class Image
             $img->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
         }
 
-        if ($opacity != 100) {
-            $this->setOpacity($img, $opacity);
+        if ($transparency > 0) {
+            $this->setOpacity($img, $transparency);
         }
 
         $this->resource->compositeimage($img, \Imagick::COMPOSITE_OVER, $coordX, $coordY);
@@ -281,14 +283,14 @@ class Image
      * @param int    $place_constant Where to place the image - one of the \Imanee:IM_POS constants
      * @param int    $width          (optional) Width of the placed image, if resize is desirable
      * @param int    $height         (optional) Height of the placed image, if resize is desirable
-     * @param int    $opacity        (optional) Opacity in percentage - 100 for fully opaque (default),
+     * @param int   $transparency    (optional) Transparency in percentage - 0 for fully opaque (default),
      * 0 for fully transparent.
      * @throws \Exception
      *
-     * Note about opacity: the opacity is changed pixel per pixel, so using this will require more processing
+     * Note about transparency: change is made pixel per pixel, so using this will require more processing
      * depending on the image size.
      */
-    public function placeImage($image, $place_constant, $width = 0, $height = 0, $opacity = 100)
+    public function placeImage($image, $place_constant, $width = 0, $height = 0, $transparency = 100)
     {
         if (!is_object($image)) {
             $img = new \Imagick($image);
@@ -305,7 +307,7 @@ class Image
         }
 
         list ($coordX, $coordY) = $this->getPlacementCoordinates($img->getimagegeometry(), $place_constant);
-        $this->compositeImage($image, $coordX, $coordY, 0, 0, $opacity);
+        $this->compositeImage($image, $coordX, $coordY, 0, 0, $transparency);
     }
 
     /**
@@ -466,18 +468,18 @@ class Image
     }
 
     /**
-     * Manually sets the opacity pixel per pixel.
+     * Manually sets the transparency pixel per pixel.
      *
      * This method properly sets the opacity on a png with transparency, by iterating pixel per pixel. It's a substitute
      * for the Imagick::setImageOpacity, since it doesn't handle well transparent backgrounds.
      *
-     * @param \Imagick  $resource The imagick resource to set opacity
-     * @param int       $opacity  The opacity percentage, 0 to 100 - where 100 is fully opaque
-     * @return \Imagick Returns the Imagick object with changed opacity
+     * @param \Imagick  $resource      The imagick resource to set opacity
+     * @param int       $transparency  The transparency percentage, 0 to 100 - where 100 is fully transparent
+     * @return \Imagick Returns        the Imagick object with changed opacity
      */
-    public function setOpacity(\Imagick $resource, $opacity)
+    public function setOpacity(\Imagick $resource, $transparency)
     {
-        $alpha = $opacity / 100;
+        $alpha = $transparency / 100;
 
         if ($alpha >= 1) {
             return true;

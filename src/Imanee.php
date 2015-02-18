@@ -200,9 +200,18 @@ class Imanee
         return $this->drawer;
     }
 
-    public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $opacity = 100)
+    /**
+     * @param mixed $image         Path to an image on filesystem or an Imanee Object
+     * @param int   $coordX        Coord X for placement
+     * @param int   $coordY        Coord Y for placement
+     * @param int   $width        (optional) specifies a width for the placement
+     * @param int   $height       (optional) specifies a height for the placement
+     * @param int   $transparency (optional) specifies the transparency of the placed image, in percentage
+     * @return $this
+     */
+    public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $transparency = 0)
     {
-        $this->resource->compositeImage($image, $coordX, $coordY, $width, $height, $opacity);
+        $this->resource->compositeImage($image, $coordX, $coordY, $width, $height, $transparency);
 
         return $this;
     }
@@ -215,8 +224,8 @@ class Imanee
      * @param int    $place_constant One of the Imanee::IM_POS constants, defaults to IM_POS_TOP_LEFT (top left corner)
      * @param int    $width          (optional) specifies a width for the placement
      * @param int    $height         (optional) specifies a height for the placement
-     * @param int    $opacity        (optional) specifies the opacity of the placed image.
-     * 100 for fully opaque (default), 0 for fully transparent
+     * @param int    $transparency   (optional) specifies the transparency of the placed image.
+     * 0 for fully opaque (default), 100 for fully transparent
      *
      * @return $this
      */
@@ -225,9 +234,9 @@ class Imanee
         $place_constant = Imanee::IM_POS_TOP_LEFT,
         $width = null,
         $height = null,
-        $opacity = 100
+        $transparency = 0
     ) {
-        $this->resource->placeImage($image, $place_constant, $width, $height, $opacity);
+        $this->resource->placeImage($image, $place_constant, $width, $height, $transparency);
 
         return $this;
     }
@@ -237,13 +246,13 @@ class Imanee
      *
      * @param mixed  $image          The path to the watermark image file or an Imanee object
      * @param int    $place_constant One of the Imanee::IM_POS constants, defaults to IM_POS_BOTTOM_RIGHT
-     * @param int    $opacity        Watermark opacity percentage. Defaults to 100 (fully opaque)
+     * @param int    $transparency   Watermark transparency percentage. Defaults to 0 (fully opaque)
      *
      * @return $this
      */
-    public function watermark($image, $place_constant = Imanee::IM_POS_BOTTOM_RIGHT, $opacity = 100)
+    public function watermark($image, $place_constant = Imanee::IM_POS_BOTTOM_RIGHT, $transparency = 0)
     {
-        $this->resource->placeImage($image, $place_constant, 0, 0, $opacity);
+        $this->resource->placeImage($image, $place_constant, 0, 0, $transparency);
 
         return $this;
     }
