@@ -4,6 +4,7 @@ namespace Imanee;
 
 use Imanee\Exception\EmptyImageException;
 use Imanee\Exception\ImageNotFoundException;
+use Imanee\Exception\UndefinedFormatException;
 
 /**
  * Works as a wrapper for the ImageMagick objects and provides convenient methods for working with them
@@ -96,13 +97,13 @@ class Image
     /**
      * Resizes an image
      *
-     * @param int $width   The new width
-     * @param int $height  The new height
-     * @param int $bestfit When set to 0, will force resize to the provided dimensions. Default is 1, which means the
-     * resize will be proportional to fit in the provided dimensions, keeping the image always proportional.
+     * @param int  $width   The new width
+     * @param int  $height  The new height
+     * @param bool $bestfit When set to false, will force resize to specified dimensions. Default is true, which means
+     * the resize will be proportional to fit in the provided dimensions, keeping the image always proportional.
      * @throws Exception\EmptyImageException
      */
-    public function resize($width, $height, $bestfit = 1)
+    public function resize($width, $height, $bestfit = true)
     {
         if ($this->isBlank()) {
             throw new EmptyImageException("You are trying to resize an empty image.");
@@ -365,7 +366,8 @@ class Image
      * Outputs the image data as a string.
      *
      * @param string $format (optional) overwrites the current image format.
-     *  use it if you did not explicitly set the format on new images before calling output
+     * use it if you did not explicitly set the format on new images before calling output.
+     * if no format was previously defined, it will use jpg
      *
      * @return string The image data as a string
      * @throws Exception\EmptyImageException
@@ -374,6 +376,12 @@ class Image
     {
         if ($this->isBlank()) {
             throw new EmptyImageException("You are trying to output an empty image.");
+        }
+
+        try {
+            $format = $this->getFormat();
+        } catch (\ImagickException $e) {
+            $this->setFormat('jpg');
         }
 
         if ($format !== null) {

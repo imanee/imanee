@@ -122,13 +122,13 @@ class Imanee
      *
      * @param int $width   The new width
      * @param int $height  The new height
-     * @param int $bestfit When set to 1 (default), will fit the image inside the provided box dimensions.
-     * When set to 0, will force resize to the specified dimensions, which may cause the resulting image to be
+     * @param bool $bestfit When set to true (default), will fit the image inside the provided box dimensions.
+     * When set to false, will force resize to the specified dimensions, which may cause the resulting image to be
      * out of proportion.
      *
      * @return $this
      */
-    public function resize($width, $height, $bestfit = 1)
+    public function resize($width, $height, $bestfit = true)
     {
         $this->resource->resize($width, $height, $bestfit);
 
@@ -414,5 +414,26 @@ class Imanee
         $filter->apply($this->getIMResource(), $options);
 
         return $this;
+    }
+
+    /**
+     * Convenient method for animating a series of images using the same delay between frames.
+     *
+     * @param array $images
+     * @param int $delay
+     * @return string
+     */
+    public static function animate(array $images, $delay = 20)
+    {
+        $gif = new \Imagick();
+        $gif->setFormat('gif');
+
+        foreach ($images as $image) {
+            $frame = new \Imagick($image);
+            $frame->setImageDelay($delay);
+            $gif->addImage($frame);
+        }
+
+        return $gif->getImagesBlob();
     }
 }
