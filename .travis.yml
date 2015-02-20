@@ -12,5 +12,8 @@ before_install:
 install:
     - composer install --no-interaction
 
+before_script:
+    - echo "extension = imagick.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+
 script:
     - phpunit
