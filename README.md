@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/imanee/imanee.svg?branch=master)](https://travis-ci.org/imanee/imanee)
+[![Documentation Status](https://readthedocs.org/projects/imanee/badge/?version=latest)](https://readthedocs.org/projects/imanee/?badge=latest)
+
 # imanee
 
 Imanee is a simple wrapper library for Imagemagick on PHP (using the Imagick PHP extension). 
