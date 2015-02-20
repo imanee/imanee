@@ -8,5 +8,8 @@ php:
 install:
     - composer install
 
+before_script:
+    - printf "\n" | pecl install imagick
+
 script:
     - phpunit
