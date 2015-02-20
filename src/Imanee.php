@@ -16,21 +16,24 @@ class Imanee
     /** @var \Imanee\Drawer The drawer settings */
     protected $drawer;
 
+    /** @var  Imanee[] Frames */
+    protected $frames;
+
     /** @var  \Imanee\FilterResolver The filter Resolver */
     protected $filterResolver;
 
-    const IM_POS_CENTER        = 1;
-    const IM_POS_LEFT          = 2;
-    const IM_POS_RIGHT         = 3;
+    const IM_POS_CENTER = 1;
+    const IM_POS_LEFT = 2;
+    const IM_POS_RIGHT = 3;
 
-    const IM_POS_TOP_LEFT      = 10;
-    const IM_POS_TOP_RIGHT     = 11;
-    const IM_POS_TOP_CENTER    = 12;
-    const IM_POS_MID_LEFT      = 13;
-    const IM_POS_MID_RIGHT     = 14;
-    const IM_POS_MID_CENTER    = 15;
-    const IM_POS_BOTTOM_LEFT   = 16;
-    const IM_POS_BOTTOM_RIGHT  = 17;
+    const IM_POS_TOP_LEFT = 10;
+    const IM_POS_TOP_RIGHT = 11;
+    const IM_POS_TOP_CENTER = 12;
+    const IM_POS_MID_LEFT = 13;
+    const IM_POS_MID_RIGHT = 14;
+    const IM_POS_MID_CENTER = 15;
+    const IM_POS_BOTTOM_LEFT = 16;
+    const IM_POS_BOTTOM_RIGHT = 17;
     const IM_POS_BOTTOM_CENTER = 18;
 
     /**
@@ -56,7 +59,7 @@ class Imanee
 
     /**
      * Loads an image from a file
-     * @param string $image_path  The path to the image
+     * @param string $image_path The path to the image
      *
      * @return $this
      */
@@ -70,8 +73,8 @@ class Imanee
     /**
      * Creates a new "blank" image
      *
-     * @param int    $width  The width of the image
-     * @param int    $height The height of the image
+     * @param int $width The width of the image
+     * @param int $height The height of the image
      * @param string $background The image background, Defaults to white
      *
      * @return $this
@@ -120,8 +123,8 @@ class Imanee
     /**
      * Resizes the current image resource
      *
-     * @param int $width   The new width
-     * @param int $height  The new height
+     * @param int $width The new width
+     * @param int $height The new height
      * @param bool $bestfit When set to true (default), will fit the image inside the provided box dimensions.
      * When set to false, will force resize to the specified dimensions, which may cause the resulting image to be
      * out of proportion.
@@ -139,11 +142,11 @@ class Imanee
      * Places a text on top of the current image - convenient way to write text using relative positioning.
      * To overwrite the current Drawer settings, create a custom Drawer object and use the method ->setDrawer before
      *
-     * @param string $text           Text to be written
-     * @param int    $place_constant One of the Imanee:IM_POS constants - defaults to IM_POS_TOP_LEFT
-     * @param int    $fitWidth       If a positive value is provided, will change the font size to fit
+     * @param string $text Text to be written
+     * @param int $place_constant One of the Imanee:IM_POS constants - defaults to IM_POS_TOP_LEFT
+     * @param int $fitWidth If a positive value is provided, will change the font size to fit
      * the text in this width
-     * @param int    $fontSize       The font size. Defaults to the current font size defined in the Drawer
+     * @param int $fontSize The font size. Defaults to the current font size defined in the Drawer
      *
      * @return $this
      */
@@ -160,15 +163,15 @@ class Imanee
     /**
      * Writes text to an image
      *
-     * @param string         $text   The text to be written
-     * @param int            $coordX The X coordinate for text placement
-     * @param int            $coordY The Y coordinate for text placement
-     * @param int            $size   The font size
-     * @param int            $angle  The angle (defaults to 0, plain)
+     * @param string $text The text to be written
+     * @param int $coordX The X coordinate for text placement
+     * @param int $coordY The Y coordinate for text placement
+     * @param int $size The font size
+     * @param int $angle The angle (defaults to 0, plain)
      *
      * @return $this
      */
-    public function annotate($text, $coordX, $coordY, $size = 12, $angle = 0)
+    public function annotate($text, $coordX, $coordY, $size = null, $angle = 0)
     {
         $drawer = $this->getDrawer();
 
@@ -204,12 +207,12 @@ class Imanee
     }
 
     /**
-     * @param mixed $image         Path to an image on filesystem or an Imanee Object
-     * @param int   $coordX        Coord X for placement
-     * @param int   $coordY        Coord Y for placement
-     * @param int   $width        (optional) specifies a width for the placement
-     * @param int   $height       (optional) specifies a height for the placement
-     * @param int   $transparency (optional) specifies the transparency of the placed image, in percentage
+     * @param mixed $image Path to an image on filesystem or an Imanee Object
+     * @param int $coordX Coord X for placement
+     * @param int $coordY Coord Y for placement
+     * @param int $width (optional) specifies a width for the placement
+     * @param int $height (optional) specifies a height for the placement
+     * @param int $transparency (optional) specifies the transparency of the placed image, in percentage
      * @return $this
      */
     public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $transparency = 0)
@@ -223,11 +226,11 @@ class Imanee
      * Places an image on top of the current resource. If the width and height are supplied,
      * will perform a resize before placing the image.
      *
-     * @param mixed  $image          Path to an image on filesystem or an Imanee Object
-     * @param int    $place_constant One of the Imanee::IM_POS constants, defaults to IM_POS_TOP_LEFT (top left corner)
-     * @param int    $width          (optional) specifies a width for the placement
-     * @param int    $height         (optional) specifies a height for the placement
-     * @param int    $transparency   (optional) specifies the transparency of the placed image.
+     * @param mixed $image Path to an image on filesystem or an Imanee Object
+     * @param int $place_constant One of the Imanee::IM_POS constants, defaults to IM_POS_TOP_LEFT (top left corner)
+     * @param int $width (optional) specifies a width for the placement
+     * @param int $height (optional) specifies a height for the placement
+     * @param int $transparency (optional) specifies the transparency of the placed image.
      * 0 for fully opaque (default), 100 for fully transparent
      *
      * @return $this
@@ -247,9 +250,9 @@ class Imanee
     /**
      * Convenient method to place a watermark image on top of the current resource
      *
-     * @param mixed  $image          The path to the watermark image file or an Imanee object
-     * @param int    $place_constant One of the Imanee::IM_POS constants, defaults to IM_POS_BOTTOM_RIGHT
-     * @param int    $transparency   Watermark transparency percentage. Defaults to 0 (fully opaque)
+     * @param mixed $image The path to the watermark image file or an Imanee object
+     * @param int $place_constant One of the Imanee::IM_POS constants, defaults to IM_POS_BOTTOM_RIGHT
+     * @param int $transparency Watermark transparency percentage. Defaults to 0 (fully opaque)
      *
      * @return $this
      */
@@ -263,7 +266,7 @@ class Imanee
     /**
      * Rotates the image resource in the given degrees
      *
-     * @param float     $degrees Degrees to rotate the image. Negative values will rotate the image anti-clockwise
+     * @param float $degrees Degrees to rotate the image. Negative values will rotate the image anti-clockwise
      * @param string $background Background to fill the empty spaces, default is transparent -
      * will render as black for jpg format (use png if you want it transparent)
      *
@@ -279,7 +282,7 @@ class Imanee
     /**
      * Crops a portion of the image
      *
-     * @param int $width  The width
+     * @param int $width The width
      * @param int $height The height
      * @param int $coordX The X coordinate
      * @param int $coordY The Y coordinate
@@ -297,9 +300,9 @@ class Imanee
      * Creates a thumbnail of the current resource. If crop is true, the result will be a perfect fit thumbnail with the
      * given dimensions, cropped by the center. If crop is false, the thumbnail will use the best fit for the dimensions
      *
-     * @param int  $width  Width of the thumbnail
-     * @param int  $height Height of the thumbnail
-     * @param bool $crop   When set to true, the thumbnail will be cropped from the center to match the given size
+     * @param int $width Width of the thumbnail
+     * @param int $height Height of the thumbnail
+     * @param bool $crop When set to true, the thumbnail will be cropped from the center to match the given size
      *
      * @return $this
      */
@@ -348,8 +351,8 @@ class Imanee
      * The format will be decided based on the extension used for the filename. If, for instance,
      * a "img.png" is provided, the image will be saved as PNG and the compression will not take affect.
      *
-     * @param string $path         The file path to save the image
-     * @param int    $jpeg_quality (optional) the quality for JPEG files, 1 to 100 where 100 means no compression
+     * @param string $path The file path to save the image
+     * @param int $jpeg_quality (optional) the quality for JPEG files, 1 to 100 where 100 means no compression
      * (higher quality and bigger file)
      *
      * @return Imanee $this
@@ -416,14 +419,48 @@ class Imanee
         return $this;
     }
 
+    public function addFrame(Imanee $imanee)
+    {
+        $this->frames[] = $imanee;
+    }
+
+    public function animate($delay = 20)
+    {
+        $gif = new \Imagick();
+        $gif->setFormat('gif');
+
+        foreach ($this->frames as $imanee) {
+            $frame = $imanee->getIMResource();
+            $frame->setImageDelay($delay);
+            $gif->addImage($frame);
+        }
+
+        return $gif->getImagesBlob();
+    }
+
+    public static function textGen($text, Drawer $drawer, $format = 'png', $background = 'transparent')
+    {
+        $imanee = new Imanee();
+        $size = $imanee->resource->getTextGeometry($text, $drawer);
+
+        $imanee->newImage(ceil($size['width']), ceil($size['height']), $background);
+
+        $imanee->setFormat($format)
+            ->setDrawer($drawer);
+
+        $imanee->placeText($text, Imanee::IM_POS_TOP_LEFT);
+
+        return $imanee;
+    }
+
     /**
-     * Convenient method for animating a series of images.
+     * Convenient method for generating an animated gif from an array of images.
      *
      * @param array $images
      * @param int $delay
      * @return string
      */
-    public static function animate(array $images, $delay = 20)
+    public static function arrayAnimate(array $images, $delay = 20)
     {
         $gif = new \Imagick();
         $gif->setFormat('gif');
@@ -438,7 +475,7 @@ class Imanee
     }
 
     /**
-     * Convenient method for creating a gif animation from image files in a directory.
+     * Convenient method for generating an animated gif from image files in a directory.
      *
      * @param $pattern
      * @param int $delay
