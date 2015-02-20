@@ -6,6 +6,7 @@ php:
     - 5.6
 
 install:
+    - sudo apt-get install imagemagick php5-imagick
     - composer install
 
 before_script:
