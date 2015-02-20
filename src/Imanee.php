@@ -417,7 +417,7 @@ class Imanee
     }
 
     /**
-     * Convenient method for animating a series of images using the same delay between frames.
+     * Convenient method for animating a series of images.
      *
      * @param array $images
      * @param int $delay
@@ -429,6 +429,27 @@ class Imanee
         $gif->setFormat('gif');
 
         foreach ($images as $image) {
+            $frame = new \Imagick($image);
+            $frame->setImageDelay($delay);
+            $gif->addImage($frame);
+        }
+
+        return $gif->getImagesBlob();
+    }
+
+    /**
+     * Convenient method for creating a gif animation from image files in a directory.
+     *
+     * @param $pattern
+     * @param int $delay
+     * @return string
+     */
+    public static function globAnimate($pattern, $delay = 20)
+    {
+        $gif = new \Imagick();
+        $gif->setFormat('gif');
+
+        foreach (glob($pattern) as $image) {
             $frame = new \Imagick($image);
             $frame->setImageDelay($delay);
             $gif->addImage($frame);
