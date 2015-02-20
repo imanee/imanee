@@ -6,13 +6,11 @@ php:
     - 5.6
 
 before_install:
-    - printf "\n" | pecl install imagick
+    - sudo apt-get update
+    - sudo apt-get install php5-imagick
 
 install:
     - composer install --no-interaction
-
-before_script:
-    - printf "\n" | pecl install imagick
 
 script:
     - phpunit
