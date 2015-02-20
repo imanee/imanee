@@ -6,8 +6,7 @@ php:
     - 5.6
 
 before_install:
-    - sudo apt-get update
-    - sudo apt-get install imagemagick php5-imagick
+    - pecl install imagick
     - echo "extension = imagick.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
 install:
