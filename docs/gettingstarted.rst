@@ -12,7 +12,7 @@ Installation
 ------------
 Installation can be made easily through composer::
 
-    $ composer require imanee/imanee "~0.2"
+    $ composer require imanee/imanee
 
 
 Check the latest stable version on Packagist: `imanee/imanee <https://packagist.org/packages/imanee/imanee>`_
