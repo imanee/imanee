@@ -419,11 +419,19 @@ class Imanee
         return $this;
     }
 
+    /**
+     * Adds a frame for generating animated gifs with the animate() method
+     * @param Imanee $imanee
+     */
     public function addFrame(Imanee $imanee)
     {
         $this->frames[] = $imanee;
     }
 
+    /**
+     * @param int $delay
+     * @return string
+     */
     public function animate($delay = 20)
     {
         $gif = new \Imagick();
@@ -438,12 +446,21 @@ class Imanee
         return $gif->getImagesBlob();
     }
 
+    /**
+     * Convenient method for generating text-only images
+     *
+     * @param string $text
+     * @param Drawer $drawer
+     * @param string $format
+     * @param string $background
+     * @return Imanee
+     */
     public static function textGen($text, Drawer $drawer, $format = 'png', $background = 'transparent')
     {
         $imanee = new Imanee();
         $size = $imanee->resource->getTextGeometry($text, $drawer);
 
-        $imanee->newImage(ceil($size['width']), ceil($size['height']), $background);
+        $imanee->newImage($size['width'], $size['height'], $background);
 
         $imanee->setFormat($format)
             ->setDrawer($drawer);
