@@ -5,9 +5,11 @@ php:
     - 5.5
     - 5.6
 
+before_install:
+    - printf "\n" | pecl install imagick
+
 install:
-    - sudo apt-get install imagemagick php5-imagick
-    - composer install
+    - composer install --no-interaction
 
 before_script:
     - printf "\n" | pecl install imagick
