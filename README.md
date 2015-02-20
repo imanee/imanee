@@ -16,7 +16,7 @@ Imanee requires the *imagick* PHP extension, and PHP >= 5.4 .
 ## Installation
 Installation can easily be made through composer.
 
-    $ composer require imanee/imanee "~1.0"
+    $ composer require imanee/imanee
 
 ## Getting Started
 
