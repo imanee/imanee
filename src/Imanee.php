@@ -455,15 +455,17 @@ class Imanee
      * @param string $background
      * @return Imanee
      */
-    public static function textGen($text, Drawer $drawer, $format = 'png', $background = 'transparent')
+    public static function textGen($text, Drawer $drawer = null, $format = 'png', $background = 'transparent')
     {
         $imanee = new Imanee();
-        $size = $imanee->resource->getTextGeometry($text, $drawer);
 
+        if ($drawer !== null) {
+            $imanee->setDrawer($drawer);
+        }
+
+        $size = $imanee->resource->getTextGeometry($text, $imanee->getDrawer());
         $imanee->newImage($size['width'], $size['height'], $background);
-
-        $imanee->setFormat($format)
-            ->setDrawer($drawer);
+        $imanee->setFormat($format);
 
         $imanee->placeText($text, Imanee::IM_POS_TOP_LEFT);
 
