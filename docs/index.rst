@@ -13,11 +13,11 @@ Contents:
    :maxdepth: 2
 
    gettingstarted.rst
-   examples/resizes.rst
-   examples/thumbnails.rst
-   examples/text.rst
-   examples/watermarks.rst
-   examples/animatedgifs.rst
+   resizes.rst
+   thumbnails.rst
+   text.rst
+   watermarks.rst
+   animatedgifs.rst
    constants.rst
 
 
