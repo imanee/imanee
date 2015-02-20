@@ -13,15 +13,18 @@ class Drawer extends ConfigContainer
     const TEXT_ALIGN_CENTER = 2;
     const TEXT_ALIGN_RIGHT  = 3;
 
+    public static $DEFAULT_FONT = 'OpenSans-Regular.ttf';
+
     /**
      * @param array $values
      */
     public function __construct(array $values = [])
     {
         $this->drawer = new \ImagickDraw();
+        $defaultFont = __DIR__ . '/Resources/'. self::$DEFAULT_FONT;
 
         parent::__construct($values, [
-            'font'  => 'Bookman-Demi',
+            'font'  => $defaultFont,
             'size'  => 22,
             'color' => '#000000',
             'align' => Drawer::TEXT_ALIGN_LEFT,

@@ -11,9 +11,7 @@ class SepiaFilter implements FilterInterface
      */
     public function apply(\Imagick $resource, array $options = [])
     {
-        $options = array_merge( [
-            'threshold' => 80
-        ], $options);
+        $options = array_merge(['threshold' => 80], $options);
 
         return $resource->sepiatoneimage($options['threshold']);
     }

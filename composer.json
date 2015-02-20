@@ -1,16 +1,13 @@
 {
     "name": "imanee/imanee",
     "description": "A PHP Image Manipulation Library based on Imagemagick",
-    "keywords": ["image", "php", "manipulation", "imagick", "imagemagick"],
+    "keywords": ["image", "php", "processing", "imagick", "imagemagick"],
     "homepage": "http://imanee.github.com/imanee",
     "license": "MIT",
     "authors": [
         {
             "name": "Erika Heidi",
             "email": "erika@erikaheidi.com"
-        },{
-            "name": "Hugo Reinaldo",
-            "email": "hugo.reinaldo@gmail.com"
         }
     ],
     "require": {
