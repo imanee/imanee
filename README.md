@@ -28,12 +28,11 @@ echo $imanee->thumbnail(200, 200)->output();
 ###Writing centralized text on top of an image
 
 ```php
-$res_jpg = __DIR__ . '/../resources/img01.jpg';
 
 header("Content-type: image/jpg");
 
-$imanee = new Imanee($res_jpg);
-echo $imanee->placeText('imanee test', 40, \Imanee\Imanee::IM_POS_MID_CENTER)
+$imanee = new Imanee('path/to/my/image.jpg');
+echo $imanee->placeText('imanee test', 40, Imanee::IM_POS_MID_CENTER)
             ->output();
 ```
                     
@@ -54,11 +53,25 @@ echo $imanee->placeImage('img1.png', Imanee::IM_POS_TOP_LEFT)
 ;
 ```
 
+###Animated Gifs from an array of images
+
+```php
+$frames[] = 'img01.png';
+$frames[] = 'img02.png';
+$frames[] = 'img03.png';
+$frames[] = 'img04.png';
+
+header("Content-type: image/gif");
+
+echo Imanee::arrayAnimate($frames, 30);
+```
+
 ###Animated Gifs from files in a directory
  
 ```php
 header("Content-type: image/gif");
-echo Imanee::globAnimate(__DIR__ . '/../resources/*.png');
+
+echo Imanee::globAnimate('resources/*.jpg');
 ```
 
 For more (and complete) examples please have a look at the demos repository: <a href="https://github.com/imanee/demos">https://github.com/imanee/demos</a>
