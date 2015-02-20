@@ -8,4 +8,4 @@ In this section you can find common usage examples.
 
    Writing Text on Images <examples/text.rst>
    Generating Thumbnails <examples/thumbnails.rst>
-
+   Adding watermarks to images <examples/watermarks.rst>
