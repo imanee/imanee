@@ -1,46 +1,64 @@
 # imanee
 
-Imanee is a simple wrapper library for Imagemagick. It provides an easy flow for editing images and performing common tasks such as thumbnails, watermarks and text writing.
-This is an experimental project under development.
+Imanee is a simple wrapper library for Imagemagick on PHP (using the Imagick PHP extension). 
+It provides an easy flow and convenient methods for creating thumbnails, watermarks, text writing, animated gifs and more.
+
+Check [our documentation](http://imanee.readthedocs.org) for detailed instructions and usage examples.
 
 ## Requirements
 Imanee requires the *imagick* PHP extension, and PHP >= 5.4 .
 
 ## Installation
-Installation can be made through composer.
+Installation can easily be made through composer.
 
-```json
-    "require": {
-        "imanee/imanee": "dev-master@dev"
-    }
-```
+    $ composer require imanee/imanee "~1.0"
 
-## Usage examples
+## Getting Started
 
-1. Thumbnail output
+Some simple examples to get you started:
+
+###Thumbnail output
 
 ```php
 header("Content-type: image/jpg");
 
-$imanee = new \Imanee('path/to/my/image.jpg');
+$imanee = new Imanee('path/to/my/image.jpg');
 echo $imanee->thumbnail(200, 200)->output();
 ```
+###Writing centralized text on top of an image
 
-2. Image composition
+```php
+$res_jpg = __DIR__ . '/../resources/img01.jpg';
+
+header("Content-type: image/jpg");
+
+$imanee = new Imanee($res_jpg);
+echo $imanee->placeText('imanee test', 40, \Imanee\Imanee::IM_POS_MID_CENTER)
+            ->output();
+```
+                    
+###Image composition
 
 ```php
 header("Content-type: image/jpg");
 
-$imanee = new \Imanee('path/to/my/image.jpg');
+$imanee = new Imanee('path/to/my/image.jpg');
 
-/* places 4 different png images on the 4 corners of the original image */
+/** places 4 different png images on the 4 corners of the original image */
 
-echo $imanee->placeImage('img1.png', \Imanee\Imanee::IM_POS_TOP_LEFT)
-    ->placeImage('img2.png', \Imanee\Imanee::IM_POS_TOP_RIGHT)
-    ->placeImage('img3.png', \Imanee\Imanee::IM_POS_BOTTOM_LEFT)
-    ->placeImage('img4.png', \Imanee\Imanee::IM_POS_BOTTOM_RIGHT)
+echo $imanee->placeImage('img1.png', Imanee::IM_POS_TOP_LEFT)
+    ->placeImage('img2.png', Imanee::IM_POS_TOP_RIGHT)
+    ->placeImage('img3.png', Imanee::IM_POS_BOTTOM_LEFT)
+    ->placeImage('img4.png', Imanee::IM_POS_BOTTOM_RIGHT)
     ->output()
 ;
 ```
 
-For more (and complete) examples see: <a href="https://github.com/imanee/demos">https://github.com/imanee/demos</a>
+###Animated Gifs from files in a directory
+ 
+```php
+header("Content-type: image/gif");
+echo Imanee::globAnimate(__DIR__ . '/../resources/*.png');
+```
+
+For more (and complete) examples please have a look at the demos repository: <a href="https://github.com/imanee/demos">https://github.com/imanee/demos</a>
