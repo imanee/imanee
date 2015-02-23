@@ -531,4 +531,13 @@ class Imanee
             ->setIMResource($gif)
             ->setFormat('gif');
     }
+
+    /**
+     * Convenient way to output the image
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->output();
+    }
 }
