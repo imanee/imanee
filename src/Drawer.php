@@ -37,9 +37,9 @@ class Drawer extends ConfigContainer
     private function prepare()
     {
         $this->drawer->setFont($this->font);
-        $this->drawer->setfillcolor($this->color);
-        $this->drawer->setfontsize($this->size);
-        $this->drawer->settextalignment($this->align);
+        $this->drawer->setFillColor($this->color);
+        $this->drawer->setFontSize($this->size);
+        $this->drawer->setTextAlignment($this->align);
     }
 
     /**
