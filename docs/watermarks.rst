@@ -1,7 +1,7 @@
 Adding watermarks to images
 ===========================
 
-``Imanee Imanee::watermark($image, $place_constant = Imanee::IM_POS_BOTTOM_RIGHT, $transparency = 100)``
+``Imanee Imanee::watermark($image, $place_constant = Imanee::IM_POS_BOTTOM_RIGHT, $transparency = 0)``
 
 Use the method ``watermark`` to add watermarks on top of images::
 

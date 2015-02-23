@@ -7,6 +7,8 @@ Imanee documentation
 ====================
 Imanee is a simple wrapper library for Imagemagick (on top of Imagick PHP extension). It provides an easy flow for editing images and performing common tasks such as thumbnails, watermarks and text writing.
 
+For live demos, please visit our main website: `imanee.io <http://imanee.io>`_.
+
 Contents:
 
 .. toctree::
@@ -15,8 +17,10 @@ Contents:
    gettingstarted.rst
    resizes.rst
    thumbnails.rst
+   saving.rst
    text.rst
    watermarks.rst
+   collages.rst
    animatedgifs.rst
    constants.rst
 
