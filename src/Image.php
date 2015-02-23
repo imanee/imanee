@@ -95,6 +95,16 @@ class Image
     }
 
     /**
+     * Sets the current Imagick resource and updates the Image info
+     * @param \Imagick $resource
+     */
+    public function setResource(\Imagick $resource)
+    {
+        $this->resource = $resource;
+        $this->updateResourceDimensions();
+    }
+
+    /**
      * Resizes an image
      *
      * @param int  $width   The new width
@@ -111,6 +121,14 @@ class Image
 
         $this->resource->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1, $bestfit);
 
+        $this->updateResourceDimensions();
+    }
+
+    /**
+     * Updates the computed width and height for the current Imagick object
+     */
+    public function updateResourceDimensions()
+    {
         $newsize = $this->resource->getImageGeometry();
         $this->width  = $newsize['width'];
         $this->height = $newsize['height'];
@@ -143,7 +161,7 @@ class Image
      */
     public function setFormat($format)
     {
-        $this->resource->setimageformat($format);
+        $this->resource->setImageFormat($format);
     }
 
     /**
@@ -153,7 +171,7 @@ class Image
      */
     public function getFormat()
     {
-        return $this->resource->getimageformat();
+        return $this->resource->getImageFormat();
     }
 
     /**
@@ -177,7 +195,7 @@ class Image
      */
     public function annotate($text, $coordX, $coordY, $angle, Drawer $drawer)
     {
-        $this->resource->annotateimage($drawer->getDrawer(), $coordX, $coordY, $angle, $text);
+        $this->resource->annotateImage($drawer->getDrawer(), $coordX, $coordY, $angle, $text);
     }
 
     /**
@@ -237,7 +255,7 @@ class Image
         $textsize = $this->getTextGeometry($text, $drawer);
         list($coordX, $coordY) = $this->getPlacementCoordinates($textsize, $place_constant);
 
-        $this->resource->annotateimage($drawer->getDrawer(), $coordX, $coordY + $drawer->getFontSize(), 0, $text);
+        $this->resource->annotateImage($drawer->getDrawer(), $coordX, $coordY + $drawer->getFontSize(), 0, $text);
     }
 
     /**
@@ -276,7 +294,7 @@ class Image
             $this->setOpacity($img, $transparency);
         }
 
-        $this->resource->compositeimage($img, \Imagick::COMPOSITE_OVER, $coordX, $coordY);
+        $this->resource->compositeImage($img, \Imagick::COMPOSITE_OVER, $coordX, $coordY);
     }
 
     /**
@@ -309,7 +327,7 @@ class Image
             $img->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
         }
 
-        list ($coordX, $coordY) = $this->getPlacementCoordinates($img->getimagegeometry(), $place_constant);
+        list ($coordX, $coordY) = $this->getPlacementCoordinates($img->getImageGeometry(), $place_constant);
         $this->compositeImage($image, $coordX, $coordY, 0, 0, $transparency);
     }
 
@@ -338,7 +356,7 @@ class Image
         $this->width = $width;
         $this->height = $height;
 
-        $this->resource->cropimage($width, $height, $coordX, $coordY);
+        $this->resource->cropImage($width, $height, $coordX, $coordY);
     }
 
     /**
@@ -352,9 +370,9 @@ class Image
     public function thumbnail($width, $height, $crop = false)
     {
         if ($crop) {
-            $this->resource->cropthumbnailimage($width, $height);
+            $this->resource->cropThumbnailImage($width, $height);
         } else {
-            $this->resource->thumbnailimage($width, $height, true);
+            $this->resource->thumbnailImage($width, $height, true);
         }
 
         $newsize = $this->resource->getImageGeometry();
@@ -385,10 +403,10 @@ class Image
         }
 
         if ($format !== null) {
-            $this->resource->setimageformat($format);
+            $this->resource->setImageFormat($format);
         }
 
-        return $this->resource->getImageBlob();
+        return $this->resource->getImagesBlob();
     }
 
     /**
@@ -401,13 +419,14 @@ class Image
      * @param int    $jpeg_quality (optional) the quality for JPEG files, 1 to 100 where 100 means no compression
      * (higher quality and bigger file)
      */
-    public function write($file, $jpeg_quality = 0)
+    public function write($file, $jpeg_quality = null)
     {
         if ($jpeg_quality) {
-            $this->resource->setimagecompression(\Imagick::COMPRESSION_JPEG);
-            $this->resource->setimagecompressionquality($jpeg_quality);
+            $this->resource->setImageCompression(\Imagick::COMPRESSION_JPEG);
+            $this->resource->setImageCompressionQuality($jpeg_quality);
         }
-        $this->resource->writeimage($file);
+
+        $this->resource->writeImages($file, true);
     }
 
     /**
