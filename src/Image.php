@@ -68,6 +68,7 @@ class Image
 
     /**
      * Loads an existent image into the current image resource
+     * @param string $image_path The path to an image to load
      * @return $this
      * @throws Exception\ImageNotFoundException
      */
