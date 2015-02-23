@@ -357,7 +357,7 @@ class Imanee
      *
      * @return Imanee $this
      */
-    public function write($path, $jpeg_quality = 0)
+    public function write($path, $jpeg_quality = null)
     {
         $this->resource->write($path, $jpeg_quality);
 
@@ -365,13 +365,25 @@ class Imanee
     }
 
     /**
-     * Gets the ImageMagick Resource from the loaded Image Object
+     * Gets the Imagick Resource from the Image Object
      *
      * @return \Imagick
      */
     public function getIMResource()
     {
         return $this->resource->getResource();
+    }
+
+    /**
+     * Sets the Imagick resource in the Image Object
+     * @param \Imagick $imagick
+     * @return $this
+     */
+    public function setIMResource(\Imagick $imagick)
+    {
+        $this->resource->setResource($imagick);
+
+        return $this;
     }
 
     /**
@@ -443,7 +455,9 @@ class Imanee
             $gif->addImage($frame);
         }
 
-        return $gif->getImagesBlob();
+        return (new Imanee())
+            ->setIMResource($gif)
+            ->setFormat('gif');
     }
 
     /**
@@ -490,7 +504,9 @@ class Imanee
             $gif->addImage($frame);
         }
 
-        return $gif->getImagesBlob();
+        return (new Imanee())
+            ->setIMResource($gif)
+            ->setFormat('gif');
     }
 
     /**
@@ -511,6 +527,8 @@ class Imanee
             $gif->addImage($frame);
         }
 
-        return $gif->getImagesBlob();
+        return (new Imanee())
+            ->setIMResource($gif)
+            ->setFormat('gif');
     }
 }
