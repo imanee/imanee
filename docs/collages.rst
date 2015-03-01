@@ -7,7 +7,8 @@ Using relative positioning
 --------------------------
 
 ``Imanee Imanee::placeImage($image, $place_constant = Imanee::IM_POS_TOP_LEFT, $width = null, $height = null, $transparency = 0)``
-::
+
+.. code-block:: php
 
     $res_jpg = __DIR__ . '/../resources/img01.jpg';
 
@@ -33,7 +34,8 @@ Using absolute positioning
 --------------------------
 
 ``Imanee Imanee::compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $transparency = 0)``
-::
+
+.. code-block:: php
 
     $res_jpg = __DIR__ . '/../resources/img01.jpg';
     $res_png1 = __DIR__ . '/../resources/cat01.png';

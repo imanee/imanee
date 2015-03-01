@@ -10,7 +10,9 @@ Imanee requires the *imagick* PHP extension, and PHP >= 5.4 .
 
 Installation
 ------------
-Installation can be made easily through composer::
+Installation can be made easily through composer:
+
+.. code-block:: bash
 
     $ composer require imanee/imanee
 
@@ -22,32 +24,40 @@ Getting Started
 
 A few simple examples to get you started
 
-1. Thumbnail output::
+1. Thumbnail output:
 
-        header("Content-type: image/jpg");
+.. code-block:: php
 
-        $imanee = new Imanee('path/to/my/image.jpg');
-        echo $imanee->thumbnail(200, 200)->output();
+    header("Content-type: image/jpg");
 
-2. Resizing an image::
+    $imanee = new Imanee('path/to/my/image.jpg');
+    echo $imanee->thumbnail(200, 200)->output();
 
-        header("Content-type: image/jpg");
+2. Resizing an image:
 
-        $imanee = new Imanee('path/to/my/image.jpg');
-        echo $imanee->resize(200, 200)->output();
+.. code-block:: php
+
+    header("Content-type: image/jpg");
+
+    $imanee = new Imanee('path/to/my/image.jpg');
+    echo $imanee->resize(200, 200)->output();
 
 
-3. Writing centralized text on top of an image::
+3. Writing centralized text on top of an image:
 
-        header("Content-type: image/jpg");
+.. code-block:: php
 
-        $imanee = new Imanee('path/to/my/image.jpg');
-        echo $imanee->placeText('imanee test', Imanee::IM_POS_MID_CENTER)->output();
+    header("Content-type: image/jpg");
 
-4. Adding a translucid watermark::
+    $imanee = new Imanee('path/to/my/image.jpg');
+    echo $imanee->placeText('imanee test', Imanee::IM_POS_MID_CENTER)->output();
 
-        header("Content-type: image/jpg");
+4. Adding a translucid watermark:
 
-        $imanee = new Imanee('path/to/my/image.jpg');
-        echo $imanee->watermark('path/to/my/image.png', Imanee::IM_POS_BOTTOM_RIGHT, 50)->output();
+.. code-block:: php
+
+    header("Content-type: image/jpg");
+
+    $imanee = new Imanee('path/to/my/image.jpg');
+    echo $imanee->watermark('path/to/my/image.png', Imanee::IM_POS_BOTTOM_RIGHT, 50)->output();
 

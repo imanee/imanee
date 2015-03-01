@@ -3,7 +3,9 @@ Adding watermarks to images
 
 ``Imanee Imanee::watermark($image, $place_constant = Imanee::IM_POS_BOTTOM_RIGHT, $transparency = 0)``
 
-Use the method ``watermark`` to add watermarks on top of images::
+Use the method ``watermark`` to add watermarks on top of images:
+
+.. code-block:: php
 
     $res_jpg = __DIR__ . '/../resources/img01.jpg';
     $res_png = __DIR__ . '/../resources/cat01.png';
@@ -11,9 +13,7 @@ Use the method ``watermark`` to add watermarks on top of images::
     header("Content-type: image/jpg");
 
     $imanee = new Imanee($res_jpg);
-    echo $imanee->watermark($res_png, Imanee::IM_POS_BOTTOM_RIGHT, 30)
-                ->output();
-
+    echo $imanee->watermark($res_png, Imanee::IM_POS_BOTTOM_RIGHT, 30)->output();
 
 It's important to remember that only images with alpha channel can have transparency, so if you want to have a translucid watermark you need to use a PNG.
 
