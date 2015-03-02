@@ -6,7 +6,9 @@ Creating Thumbnails
 1. Creating a thumbnail to fit an area
 --------------------------------------
 
-The ``thumbnail`` method will generate a proportional thumbnail in a size that can fit in the specified dimensions::
+The ``thumbnail`` method will generate a proportional thumbnail in a size that can fit in the specified dimensions:
+
+.. code-block:: php
 
     $res_jpg = __DIR__ . '/../resources/img01.jpg';
 
@@ -17,12 +19,13 @@ The ``thumbnail`` method will generate a proportional thumbnail in a size that c
     echo $imanee->thumbnail(300, 300)
                 ->output();
 
-
 2. Creating a cropped thumbnail
 -------------------------------
 
 The ``thumbnail`` method can receive an additional argument that will create the thumbnail using a strict size, by cropping the image to keep proportion.
-Crop is centered.::
+Crop is centered.:
+
+.. code-block:: php
 
     $res_jpg = __DIR__ . '/../resources/img01.jpg';
 
@@ -33,7 +36,9 @@ Crop is centered.::
     echo $imanee->thumbnail(300, 200, true)
                 ->output();
 
-In order to create a square thumbnail, you just need to provide same width and height and the additional ``crop = true`` argument::
+In order to create a square thumbnail, you just need to provide same width and height and the additional ``crop = true`` argument:
+
+.. code-block:: php
 
     $res_jpg = __DIR__ . '/../resources/img01.jpg';
 

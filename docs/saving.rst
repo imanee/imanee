@@ -10,7 +10,9 @@ The format will be decided based on the extension used for the filename. The sec
 Examples
 --------
 
-Saving as JPG::
+Saving as JPG:
+
+.. code-block:: php
 
     $res_jpg = __DIR__ . '/../resources/img01.jpg';
 
@@ -23,7 +25,9 @@ Saving as JPG::
     ->write('path/to/save.jpg', 90);
 
 
-Saving as PNG::
+Saving as PNG:
+
+.. code-block:: php
 
     $res_jpg = __DIR__ . '/../resources/img01.jpg';
 
