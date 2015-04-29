@@ -1,4 +1,5 @@
 .idea
+build
 vendor
 examples
 composer.lock
