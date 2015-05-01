@@ -2,7 +2,7 @@
 
 namespace Imanee\Filter;
 
-use Imanee\FilterInterface;
+use Imanee\Model\FilterInterface;
 
 /**
  * Modulate Filter - changes image brightness, hue and saturation

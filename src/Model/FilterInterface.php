@@ -1,6 +1,6 @@
 <?php
 
-namespace Imanee;
+namespace Imanee\Model;
 
 interface FilterInterface
 {

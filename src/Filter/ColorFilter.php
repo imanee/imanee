@@ -2,7 +2,7 @@
 
 namespace Imanee\Filter;
 
-use Imanee\FilterInterface;
+use Imanee\Model\FilterInterface;
 
 class ColorFilter implements FilterInterface
 {

@@ -60,6 +60,6 @@ class FilterResolverTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($this->model->getFilters());
         $this->assertTrue(is_array($this->model->getFilters()));
         $this->assertCount(2, $this->model->getFilters());
-        $this->assertContainsOnlyInstancesOf('Imanee\FilterInterface', $this->model->getFilters());
+        $this->assertContainsOnlyInstancesOf('Imanee\Model\FilterInterface', $this->model->getFilters());
     }
 }

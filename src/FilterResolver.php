@@ -2,6 +2,8 @@
 
 namespace Imanee;
 
+use Imanee\Model\FilterInterface;
+
 class FilterResolver
 {
     /**
