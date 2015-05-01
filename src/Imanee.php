@@ -11,7 +11,7 @@ use Imanee\ResourceProvider\ImagickResource;
 
 class Imanee
 {
-    /** @var \Imanee\Image Resource */
+    /** @var \Imanee\Model\ResourceProviderInterface Resource */
     protected $resource;
 
     /** @var \Imanee\Drawer The drawer settings */
@@ -88,13 +88,13 @@ class Imanee
     }
 
     /**
-     * Gets the mime type associated with the current loaded resource
+     * Gets the mime type associated with the current resource (if available)
      *
      * @return string the mime type
      */
     public function getMime()
     {
-        return $this->resource->mime;
+        return $this->resource->getMime();
     }
 
     /**
@@ -321,7 +321,7 @@ class Imanee
      */
     public function getWidth()
     {
-        return $this->resource->width;
+        return $this->resource->getWidth();
     }
 
     /**
@@ -331,7 +331,7 @@ class Imanee
      */
     public function getHeight()
     {
-        return $this->resource->height;
+        return $this->resource->getHeight();
     }
 
     /**
