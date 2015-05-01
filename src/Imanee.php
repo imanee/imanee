@@ -7,6 +7,7 @@ use Imanee\Filter\BWFilter;
 use Imanee\Filter\ColorFilter;
 use Imanee\Filter\ModulateFilter;
 use Imanee\Filter\SepiaFilter;
+use Imanee\ResourceProvider\ImagickResource;
 
 class Imanee
 {
@@ -65,7 +66,7 @@ class Imanee
      */
     public function load($image_path)
     {
-        $this->resource = new Image($image_path);
+        $this->resource = new ImagickResource($image_path);
 
         return $this;
     }

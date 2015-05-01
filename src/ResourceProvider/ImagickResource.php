@@ -1,15 +1,17 @@
 <?php
+/**
+ * Default Imagick Provider for Imanee using the Imagick Extension
+ */
 
-namespace Imanee;
+namespace Imanee\ResourceProvider;
 
 use Imanee\Exception\EmptyImageException;
 use Imanee\Exception\ImageNotFoundException;
-use Imanee\Exception\UndefinedFormatException;
+use Imanee\Model\ResourceProviderInterface;
+use Imanee\Imanee;
+use Imanee\Drawer;
 
-/**
- * Works as a wrapper for the ImageMagick objects and provides convenient methods for working with them
- */
-class Image
+class ImagickResource implements ResourceProviderInterface
 {
     /** @var \Imagick the image resource */
     private $resource;
@@ -70,7 +72,7 @@ class Image
      * Loads an existent image into the current image resource
      * @param string $image_path The path to an image to load
      * @return $this
-     * @throws Exception\ImageNotFoundException
+     * @throws ImageNotFoundException
      */
     public function load($image_path)
     {
@@ -112,7 +114,7 @@ class Image
      * @param int  $height  The new height
      * @param bool $bestfit When set to false, will force resize to specified dimensions. Default is true, which means
      * the resize will be proportional to fit in the provided dimensions, keeping the image always proportional.
-     * @throws Exception\EmptyImageException
+     * @throws EmptyImageException
      */
     public function resize($width, $height, $bestfit = true)
     {
@@ -138,7 +140,7 @@ class Image
     /**
      * Loads information about the current image resource
      *
-     * @throws Exception\ImageNotFoundException
+     * @throws ImageNotFoundException
      */
     public function loadImageInfo()
     {
@@ -389,7 +391,7 @@ class Image
      * if no format was previously defined, it will use jpg
      *
      * @return string The image data as a string
-     * @throws Exception\EmptyImageException
+     * @throws EmptyImageException
      */
     public function output($format = null)
     {
@@ -441,7 +443,7 @@ class Image
 
     /**
      * Gets the coordinates for a placement relative to the current image resource using the IM_POS constants
-     * See \Imanee\Image::placeImage for usage example
+     * See ImagickResource::placeImage for usage example
      *
      * @param array $resource_size  an array with the keys 'width' and 'height' from the image to be placed
      * @param int   $place_constant one of the \Imanee::IM_POS constant (default is IM_POS_TOP_LEFT)
