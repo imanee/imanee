@@ -222,7 +222,7 @@ class GDResource implements ImageResourceInterface
         return $this;
     }
 
-    /**
+    /**😻
      * {@inheritdoc}
      */
     public function rotate($degrees = 90.00, $background = 'transparent')
@@ -299,19 +299,12 @@ class GDResource implements ImageResourceInterface
     }
 
     /**
-     * Outputs the image data as a string.
-     *
-     * @param string $format (optional) overwrites the current image format.
-     * use it if you did not explicitly set the format on new images before calling output.
-     * if no format was previously defined, it will use jpg
-     *
-     * @return string The image data as a string
-     * @throws EmptyImageException
-     * @throws UnsupportedFormatException
+     * {@inheritdoc}
      */
     public function output($format = null)
     {
-        switch ($this->format) {
+        $format = $format ?: $this->format;
+        switch ($format) {
             case "jpg":
             case "jpeg":
                 imagejpeg($this->resource);
@@ -333,18 +326,31 @@ class GDResource implements ImageResourceInterface
     }
 
     /**
-     * Saves the image to disk. If the second param is provided, will try to compress the image using JPEG compression.
-     *
-     * The format will be decided based on the extension used for the filename. If, for instance,
-     * a "img.png" is provided, the image will be saved as PNG and the compression will not take affect.
-     *
-     * @param string $file The file path to save the image
-     * @param int $jpeg_quality (optional) the quality for JPEG files, 1 to 100 where 100 means no compression
-     * (higher quality and bigger file)
+     * {@inheritdoc}
      */
     public function write($file, $jpeg_quality = null)
     {
-        // TODO: Implement write() method.
+        $jpeg_quality = $jpeg_quality ?: 80;
+
+        switch ($this->format) {
+            case "jpg":
+            case "jpeg":
+                imagejpeg($this->resource, $file, $jpeg_quality);
+                break;
+
+            case "gif":
+                imagegif($this->resource, $file);
+                break;
+
+            case "png":
+                imagepng($this->resource, $file);
+                break;
+
+            default:
+                throw new UnsupportedFormatException(
+                    sprintf("The format '%s' is not supported by this Resource.", $this->getMime())
+                );
+        }
     }
 
     /**
