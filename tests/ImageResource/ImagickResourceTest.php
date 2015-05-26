@@ -3,7 +3,7 @@
 namespace Imanee\Tests;
 
 use Imanee\Imanee;
-use Imanee\ResourceProvider\ImagickResource;
+use Imanee\ImageResource\ImagickResource;
 
 class ImagickResourceTest extends \PHPUnit_Framework_TestCase
 {

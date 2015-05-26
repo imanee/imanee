@@ -3,15 +3,17 @@
 namespace Imanee;
 
 use Imanee\Exception\FilterNotFoundException;
+use Imanee\Exception\ImageNotFoundException;
 use Imanee\Filter\BWFilter;
 use Imanee\Filter\ColorFilter;
 use Imanee\Filter\ModulateFilter;
 use Imanee\Filter\SepiaFilter;
-use Imanee\ResourceProvider\ImagickResource;
+use Imanee\ImageResource\ImagickResource;
+use Imanee\Model\ImageResourceInterface;
 
 class Imanee
 {
-    /** @var \Imanee\Model\ResourceProviderInterface Resource */
+    /** @var \Imanee\Model\ImageResourceInterface Resource */
     protected $resource;
 
     /** @var \Imanee\Drawer The drawer settings */
@@ -39,16 +41,29 @@ class Imanee
 
     /**
      * @param string $path a path to a image file - convenient way to open an image without using the load() method
+     * @param ImageResourceInterface $resource A valid object implementing the ImageResourceInterface; defaults to null,
+     * in which case a resource will be automatically created based on current extensions available
      */
-    public function __construct($path = null)
+    public function __construct($path = null, ImageResourceInterface $resource = null)
     {
         $this->drawer = new Drawer();
         $this->filterResolver = new FilterResolver($this->getFilters());
 
-        $this->load($path);
+        if (!$resource) {
+            $provider = new ResourceProvider();
+            $resource = $provider->createImageResource();
+        }
+
+        $this->resource = $resource;
+
+        if ($path) {
+            $this->load($path);
+        }
 
         return $this;
     }
+
+
 
     /**
      * {@inheritdoc}
@@ -60,13 +75,13 @@ class Imanee
 
     /**
      * Loads an image from a file
-     * @param string $image_path The path to the image
+     * @param string $imagePath The path to the image
      *
      * @return $this
      */
-    public function load($image_path)
+    public function load($imagePath)
     {
-        $this->resource = new ImagickResource($image_path);
+        $this->resource->load($imagePath);
 
         return $this;
     }
@@ -347,6 +362,15 @@ class Imanee
     }
 
     /**
+     * Convenient way to output the image
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->output();
+    }
+
+    /**
      * Saves the image to disk. If the second param is provided, will try to compress the image using JPEG compression.
      *
      * The format will be decided based on the extension used for the filename. If, for instance,
@@ -427,11 +451,37 @@ class Imanee
             throw new FilterNotFoundException();
         }
 
-        $filter->apply($this->getIMResource(), $options);
+        $this->resource->applyFilter($filter, $options);
 
         return $this;
     }
 
+    /**
+     * Convenient method for generating text-only images
+     *
+     * @param string $text
+     * @param Drawer $drawer
+     * @param string $format
+     * @param string $background
+     * @return Imanee
+     */
+    public static function textGen($text, Drawer $drawer = null, $format = 'png', $background = 'transparent')
+    {
+        $imanee = new Imanee();
+
+        if ($drawer !== null) {
+            $imanee->setDrawer($drawer);
+        }
+
+        $size = $imanee->resource->getTextGeometry($text, $imanee->getDrawer());
+        $imanee->newImage($size['width'], $size['height'], $background);
+        $imanee->setFormat($format);
+
+        $imanee->placeText($text, Imanee::IM_POS_TOP_LEFT);
+
+        return $imanee;
+    }
+    
     /**
      * Adds a frame for generating animated gifs with the animate() method
      * @param Imanee $imanee
@@ -459,32 +509,6 @@ class Imanee
         return (new Imanee())
             ->setIMResource($gif)
             ->setFormat('gif');
-    }
-
-    /**
-     * Convenient method for generating text-only images
-     *
-     * @param string $text
-     * @param Drawer $drawer
-     * @param string $format
-     * @param string $background
-     * @return Imanee
-     */
-    public static function textGen($text, Drawer $drawer = null, $format = 'png', $background = 'transparent')
-    {
-        $imanee = new Imanee();
-
-        if ($drawer !== null) {
-            $imanee->setDrawer($drawer);
-        }
-
-        $size = $imanee->resource->getTextGeometry($text, $imanee->getDrawer());
-        $imanee->newImage($size['width'], $size['height'], $background);
-        $imanee->setFormat($format);
-
-        $imanee->placeText($text, Imanee::IM_POS_TOP_LEFT);
-
-        return $imanee;
     }
 
     /**
@@ -534,11 +558,25 @@ class Imanee
     }
 
     /**
-     * Convenient way to output the image
-     * @return string
+     * Helper method to get info about an image saved in disk
+     * @param string $imagePath
+     * @return array Array containing the keys 'mime', 'width' and 'height'
+     * @throws ImageNotFoundException
      */
-    public function __toString()
+    public static function getImageInfo($imagePath)
     {
-        return $this->output();
+        if (!is_file($imagePath)) {
+            throw new ImageNotFoundException(
+                sprintf("File '%s' not found. Are you sure this is the right path?", $imagePath)
+            );
+        }
+
+        $info = getimagesize($imagePath);
+
+        return [
+            'mime' => $info['mime'],
+            'width' => $info[0],
+            'height' => $info[1],
+        ];
     }
 }

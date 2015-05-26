@@ -10,7 +10,7 @@ use Imanee\Drawer;
 use Imanee\Exception\ImageNotFoundException;
 use Imanee\Exception\EmptyImageException;
 
-interface ResourceProviderInterface
+interface ImageResourceInterface
 {
     /**
      * Loads an existent image into the current image resource
@@ -30,7 +30,7 @@ interface ResourceProviderInterface
     public function createNew($width, $height, $background = 'white');
 
     /**
-     * @return mixed The image resource
+     * @return mixed The image resource (Imagick object)
      */
     public function getResource();
 
@@ -73,63 +73,6 @@ interface ResourceProviderInterface
      * @throws EmptyImageException
      */
     public function resize($width, $height, $bestfit = true);
-
-    /**
-     * Places a text on top of the current image resource using relative positioning and the provided Drawer object.
-     * If fitWidth is provided, will calculate the correct font size to fit in the provided width.
-     *
-     * @param string $text           The text to be written.
-     * @param int    $place_constant Where to place the image - one of the \Imanee:IM_POS constants
-     * @param Drawer $drawer         The drawer object
-     * @param int    $fitWidth       If provided and different than zero, will calculate a new font size
-     * to fit text in the provided width
-     */
-    public function placeText($text, $place_constant, Drawer $drawer, $fitWidth = 0);
-
-    /**
-     * Writes text on the current image resource
-     *
-     * @param string $text
-     * @param int    $coordX
-     * @param int    $coordY
-     * @param int    $angle
-     * @param Drawer $drawer
-     */
-    public function annotate($text, $coordX, $coordY, $angle, Drawer $drawer);
-
-    /**
-     * Places an image on top of the current image resource.
-     *
-     * @param mixed $image        The path for an image on the filesystem or an Imanee object
-     * @param int   $coordX       X coord to place the image
-     * @param int   $coordY       Y coord to place the image
-     * @param int   $width        (optional) Width of the placed image, if resize is desirable
-     * @param int   $height       (optional) Height of the placed image, if resize is desirable
-     * @param int   $transparency (optional) Transparency in percentage - 0 for fully opaque (default),
-     * 100 for fully transparent.
-     *
-     * @throws \Exception
-     *
-     * Note about transparency: the change is made pixel per pixel, so using this will require more processing
-     * depending on the image size.
-     */
-    public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $transparency = 0);
-
-    /**
-     * Places an image on top of the current image resource using relative positioning.
-     *
-     * @param mixed  $image          The path for an image on the filesystem or an Imanee object
-     * @param int    $place_constant Where to place the image - one of the \Imanee:IM_POS constants
-     * @param int    $width          (optional) Width of the placed image, if resize is desirable
-     * @param int    $height         (optional) Height of the placed image, if resize is desirable
-     * @param int   $transparency    (optional) Transparency in percentage - 0 for fully opaque (default),
-     * 0 for fully transparent.
-     * @throws \Exception
-     *
-     * Note about transparency: change is made pixel per pixel, so using this will require more processing
-     * depending on the image size.
-     */
-    public function placeImage($image, $place_constant, $width = 0, $height = 0, $transparency = 100);
 
     /**
      * Rotates the image resource in the given degrees
@@ -183,4 +126,12 @@ interface ResourceProviderInterface
      * (higher quality and bigger file)
      */
     public function write($file, $jpeg_quality = null);
+
+    /**
+     * Applies a filter compatible with the current Resource Provider
+     * @param FilterInterface $filter
+     * @param array $options
+     * @return mixed
+     */
+    public function applyFilter(FilterInterface $filter, array $options = []);
 }

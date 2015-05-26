@@ -3,21 +3,29 @@
  * Default Imagick Provider for Imanee using the Imagick Extension
  */
 
-namespace Imanee\ResourceProvider;
+namespace Imanee\ImageResource;
 
 use Imanee\Exception\EmptyImageException;
 use Imanee\Exception\ImageNotFoundException;
-use Imanee\Model\ResourceProviderInterface;
+use Imanee\Model\FilterInterface;
+use Imanee\Model\ImageResourceInterface;
 use Imanee\Imanee;
 use Imanee\Drawer;
+use Imanee\Model\ImageAnimatableInterface;
+use Imanee\Model\ImageComposableInterface;
+use Imanee\Model\ImageWritableInterface;
 
-class ImagickResource implements ResourceProviderInterface
+class ImagickResource implements
+    ImageResourceInterface,
+    ImageWritableInterface,
+    ImageComposableInterface,
+    ImageAnimatableInterface
 {
     /** @var \Imagick the image resource */
     private $resource;
 
     /** @var string the path to the current image resource if loaded from file */
-    public $image_path;
+    public $imagePath;
 
     /** @var string the image mime type */
     public $mime;
@@ -31,17 +39,9 @@ class ImagickResource implements ResourceProviderInterface
     /** @var string the image background if defined */
     public $background;
 
-    /**
-     * Creates a new Image object
-     * @param string $image_path If the image path is provided, the load method will be called
-     */
-    public function __construct($image_path = null)
+    public function __construct()
     {
         $this->resource = new \Imagick();
-
-        if ($image_path !== null) {
-            $this->load($image_path);
-        }
     }
 
     /**
@@ -50,6 +50,28 @@ class ImagickResource implements ResourceProviderInterface
     public function __clone()
     {
         $this->resource = clone $this->resource;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function load($imagePath)
+    {
+        if (!is_file($imagePath)) {
+            throw new ImageNotFoundException(
+                sprintf("File '%s' not found. Are you sure this is the right path?", $imagePath)
+            );
+        }
+
+        $info = Imanee::getImageInfo($imagePath);
+        $this->mime = strtolower($info['mime']);
+        $this->width = $info['width'];
+        $this->height = $info['height'];
+        $this->imagePath = $imagePath;
+
+        $this->resource = new \Imagick($this->imagePath);
+
+        return $this;
     }
 
     /**
@@ -64,23 +86,6 @@ class ImagickResource implements ResourceProviderInterface
         $this->resource->newImage($width, $height, new \ImagickPixel($background));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load($image_path)
-    {
-        if (!is_file($image_path)) {
-            throw new ImageNotFoundException(
-                sprintf("File '%s' not found. Are you sure this is the right path?", $image_path)
-            );
-        }
-
-        $this->image_path = $image_path;
-        $this->loadImageInfo();
-        $this->resource = new \Imagick($this->image_path);
-
-        return $this;
-    }
 
     /**
      * @return \Imagick The imagick resource
@@ -149,26 +154,6 @@ class ImagickResource implements ResourceProviderInterface
     }
 
     /**
-     * Loads information about the current image resource
-     *
-     * @throws ImageNotFoundException
-     */
-    public function loadImageInfo()
-    {
-        if (!is_file($this->image_path)) {
-            throw new ImageNotFoundException(
-                sprintf("File '%s' not found. Are you sure this is the right path?", $this->image_path)
-            );
-        }
-
-        $info = getimagesize($this->image_path);
-
-        $this->mime   = $info['mime'];
-        $this->width  = $info[0];
-        $this->height = $info[1];
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function setFormat($format)
@@ -203,11 +188,7 @@ class ImagickResource implements ResourceProviderInterface
     }
 
     /**
-     * Gets the size of a text, given the text and the \Imanee\Drawer object
-     *
-     * @param string $text   The text
-     * @param Drawer $drawer The Drawer object
-     * @return array
+     * {@inheritdoc}
      */
     public function getTextGeometry($text, Drawer $drawer)
     {
@@ -473,5 +454,13 @@ class ImagickResource implements ResourceProviderInterface
         }
 
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function applyFilter(FilterInterface $filter, array $options = [])
+    {
+        $filter->apply($this->getResource(), $options);
     }
 }
