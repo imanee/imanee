@@ -12,10 +12,11 @@ use Imanee\Exception\ImageNotFoundException;
 use Imanee\Exception\UnsupportedFormatException;
 use Imanee\Imanee;
 use Imanee\Model\FilterInterface;
+use Imanee\Model\ImageComposableInterface;
 use Imanee\Model\ImageResourceInterface;
 use Imanee\PixelMath;
 
-class GDResource implements ImageResourceInterface
+class GDResource implements ImageResourceInterface, ImageComposableInterface
 {
     /** @var resource the image resource */
     public $resource;
@@ -81,8 +82,6 @@ class GDResource implements ImageResourceInterface
                 );
                 break;
         }
-
-        return $this;
     }
 
     public function loadColor($color)
@@ -179,8 +178,6 @@ class GDResource implements ImageResourceInterface
         $this->resource = $resized;
         $this->width = $finalWidth;
         $this->height = $finalHeight;
-
-        return $this;
     }
 
     /**😻
@@ -189,8 +186,6 @@ class GDResource implements ImageResourceInterface
     public function rotate($degrees = 90.00, $background = 'transparent')
     {
         $this->resource = imagerotate($this->resource, $degrees, $this->loadColor($background));
-
-        return $this;
     }
 
     /**
@@ -214,8 +209,6 @@ class GDResource implements ImageResourceInterface
         );
 
         $this->resource = $cropped;
-
-        return $this;
     }
 
     /**
@@ -255,8 +248,6 @@ class GDResource implements ImageResourceInterface
         );
 
         $this->resource = $thumb;
-
-        return $this;
     }
 
     /**
@@ -268,7 +259,7 @@ class GDResource implements ImageResourceInterface
         switch ($format) {
             case "jpg":
             case "jpeg":
-                imagejpeg($this->resource);
+                imagejpeg($this->resource, null, 90);
                 break;
 
             case "gif":
@@ -323,5 +314,45 @@ class GDResource implements ImageResourceInterface
     public function applyFilter(FilterInterface $filter, array $options = [])
     {
         // TODO: Implement applyFilter() method.
+    }
+
+    /** ImageComposableInterface */
+
+    /**
+     * {@inheritdoc}
+     */
+    public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $transparency = 0)
+    {
+        if (!is_object($image)) {
+            $image = new Imanee($image, new GDResource());
+        }
+
+        if (! ($image instanceof \Imanee\Imanee)) {
+            throw new \Exception('Object not supported. It must be an instance of Imanee');
+        }
+
+        if ($width and $height) {
+            $dimensions = PixelMath::getBestFit($width, $height, $image->getWidth(), $image->getHeight());
+            $width = $dimensions['width'];
+            $height = $dimensions['height'];
+        } else {
+            $width = $image->getWidth();
+            $height = $image->getHeight();
+        }
+
+        /* TODO: implement pixel per pixel transparency */
+
+        imagecopyresampled(
+            $this->resource,
+            $image->getIMResource(),
+            $coordX,
+            $coordY,
+            0,
+            0,
+            $width,
+            $height,
+            $image->getWidth(),
+            $image->getHeight()
+        );
     }
 }

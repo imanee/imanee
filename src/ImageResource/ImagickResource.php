@@ -71,8 +71,6 @@ class ImagickResource implements
         $this->imagePath = $imagePath;
 
         $this->resource = new \Imagick($this->imagePath);
-
-        return $this;
     }
 
     /**
@@ -266,34 +264,6 @@ class ImagickResource implements
         }
 
         $this->resource->compositeImage($img, \Imagick::COMPOSITE_OVER, $coordX, $coordY);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function placeImage($image, $place_constant, $width = 0, $height = 0, $transparency = 100)
-    {
-        if (!is_object($image)) {
-            $img = new \Imagick($image);
-        } else {
-            if (!($image instanceof \Imanee\Imanee)) {
-                throw new \Exception('Object not supported. It must be an instance of Imanee');
-            }
-
-            $img = $image->getIMResource();
-        }
-
-        if ($width and $height) {
-            $img->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
-        }
-
-        list ($coordX, $coordY) = PixelMath::getPlacementCoordinates(
-            $img->getImageGeometry(),
-            $this->resource->getImageGeometry(),
-            $place_constant
-        );
-
-        $this->compositeImage($image, $coordX, $coordY, 0, 0, $transparency);
     }
 
     /**

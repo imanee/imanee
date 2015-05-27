@@ -4,10 +4,12 @@ namespace Imanee;
 
 use Imanee\Exception\FilterNotFoundException;
 use Imanee\Exception\ImageNotFoundException;
+use Imanee\Exception\UnsupportedFormatException;
 use Imanee\Filter\BWFilter;
 use Imanee\Filter\ColorFilter;
 use Imanee\Filter\ModulateFilter;
 use Imanee\Filter\SepiaFilter;
+use Imanee\ImageResource\GDResource;
 use Imanee\ImageResource\ImagickResource;
 use Imanee\Model\ImageResourceInterface;
 
@@ -250,6 +252,8 @@ class Imanee
      * 0 for fully opaque (default), 100 for fully transparent
      *
      * @return $this
+     *
+     * @throws UnsupportedFormatException
      */
     public function placeImage(
         $image,
@@ -258,7 +262,27 @@ class Imanee
         $height = null,
         $transparency = 0
     ) {
-        $this->resource->placeImage($image, $place_constant, $width, $height, $transparency);
+        if (!is_object($image)) {
+            $img = clone $this;
+            $img->load($image);
+            $image = $img;
+        }
+
+        if (! ($image instanceof \Imanee\Imanee)) {
+            throw new UnsupportedFormatException('Object not supported. It must be an instance of Imanee');
+        }
+
+        if ($width and $height) {
+            $image->resize($width, $height);
+        }
+
+        list ($coordX, $coordY) = PixelMath::getPlacementCoordinates(
+            $image->getSize(),
+            ['width' => $this->getWidth(), 'height' => $this->getHeight()],
+            $place_constant
+        );
+
+        $this->resource->compositeImage($image, $coordX, $coordY, 0, 0, $transparency);
 
         return $this;
     }
@@ -274,7 +298,7 @@ class Imanee
      */
     public function watermark($image, $place_constant = Imanee::IM_POS_BOTTOM_RIGHT, $transparency = 0)
     {
-        $this->resource->placeImage($image, $place_constant, 0, 0, $transparency);
+        $this->placeImage($image, $place_constant, 0, 0, $transparency);
 
         return $this;
     }
@@ -350,6 +374,14 @@ class Imanee
     }
 
     /**
+     * Shortcut method to get width and height
+     */
+    public function getSize()
+    {
+        return ['width' => $this->getWidth(), 'height' => $this->getHeight()];
+    }
+
+    /**
      * Output the current image resource as a string
      *
      * @param string $format The image format (overwrites the currently defined format)
@@ -392,7 +424,8 @@ class Imanee
     /**
      * Gets the Imagick Resource from the Image Object
      *
-     * @return \Imagick
+     * @return mixed The return will depend on the ImageResource being used. It can be a simple "resource" type if GD
+     * is in use, or a \Imagick object if the ImagickResource is in use.
      */
     public function getIMResource()
     {
