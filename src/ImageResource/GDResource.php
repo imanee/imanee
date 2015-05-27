@@ -13,6 +13,7 @@ use Imanee\Exception\UnsupportedFormatException;
 use Imanee\Imanee;
 use Imanee\Model\FilterInterface;
 use Imanee\Model\ImageResourceInterface;
+use Imanee\PixelMath;
 
 class GDResource implements ImageResourceInterface
 {
@@ -147,46 +148,6 @@ class GDResource implements ImageResourceInterface
     }
 
     /**
-     * Gets the best fit for a given width / height where the provided values will be used as **maximum** values
-     * (the resulting image won't ever pass these dimensions)
-     * @param $width
-     * @param $height
-     * @return array
-     */
-    public function getBestFit($width, $height)
-    {
-        $finalWidth = $width;
-        $finalHeight = ($finalWidth * $this->height) / $this->width;
-
-        if ($finalHeight > $height) {
-            $finalHeight = $height;
-            $finalWidth = ($finalHeight * $this->width) / $this->height;
-        }
-
-        return ['width' => $finalWidth, 'height' =>$finalHeight];
-    }
-
-    /**
-     * Gets the best fit for a given width / height where the provided values will be used as **minimum** values
-     * (the resulting image can be bigger, there won't be any blank spaces)
-     * @param $width
-     * @param $height
-     * @return array
-     */
-    public function getMaxFit($width, $height)
-    {
-        $finalWidth = $width;
-        $finalHeight = ($finalWidth * $this->height) / $this->width;
-
-        if ($finalHeight < $height) {
-            $finalHeight = $height;
-            $finalWidth = ($finalHeight * $this->width) / $this->height;
-        }
-
-        return ['width' => $finalWidth, 'height' =>$finalHeight];
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function resize($width, $height, $bestfit = true)
@@ -195,7 +156,7 @@ class GDResource implements ImageResourceInterface
         $finalHeight = $height;
 
         if ($bestfit) {
-            $bestFitDimensions = $this->getBestFit($width, $height);
+            $bestFitDimensions = PixelMath::getBestFit($width, $height, $this->getWidth(), $this->getHeight());
             $finalWidth = $bestFitDimensions['width'];
             $finalHeight = $bestFitDimensions['height'];
         }
@@ -266,13 +227,13 @@ class GDResource implements ImageResourceInterface
         $sourceY = 0;
 
         if ($crop) {
-            $resizeDimensions = $this->getMaxFit($width, $height);
+            $resizeDimensions = PixelMath::getMaxFit($width, $height, $this->getWidth(), $this->getHeight());
             $finalWidth = $width;
             $finalHeight = $height;
             $sourceX = ($resizeDimensions['width'] / 2) - ($width / 2);
             $sourceY = ($resizeDimensions['height'] / 2) - ($height / 2);
         } else {
-            $resizeDimensions = $this->getBestFit($width, $height);
+            $resizeDimensions = PixelMath::getBestFit($width, $height, $this->getWidth(), $this->getHeight());
             $finalWidth = $resizeDimensions['width'];
             $finalHeight = $resizeDimensions['height'];
         }

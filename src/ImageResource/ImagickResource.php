@@ -14,6 +14,7 @@ use Imanee\Drawer;
 use Imanee\Model\ImageAnimatableInterface;
 use Imanee\Model\ImageComposableInterface;
 use Imanee\Model\ImageWritableInterface;
+use Imanee\PixelMath;
 
 class ImagickResource implements
     ImageResourceInterface,
@@ -231,7 +232,12 @@ class ImagickResource implements
         }
 
         $textsize = $this->getTextGeometry($text, $drawer);
-        list($coordX, $coordY) = $this->getPlacementCoordinates($textsize, $place_constant);
+
+        list($coordX, $coordY) = PixelMath::getPlacementCoordinates(
+            $textsize,
+            $this->resource->getImageGeometry(),
+            $place_constant
+        );
 
         $this->resource->annotateImage($drawer->getDrawer(), $coordX, $coordY + $drawer->getFontSize(), 0, $text);
     }
@@ -281,7 +287,12 @@ class ImagickResource implements
             $img->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
         }
 
-        list ($coordX, $coordY) = $this->getPlacementCoordinates($img->getImageGeometry(), $place_constant);
+        list ($coordX, $coordY) = PixelMath::getPlacementCoordinates(
+            $img->getImageGeometry(),
+            $this->resource->getImageGeometry(),
+            $place_constant
+        );
+
         $this->compositeImage($image, $coordX, $coordY, 0, 0, $transparency);
     }
 
@@ -362,64 +373,6 @@ class ImagickResource implements
     public function isBlank()
     {
         return !$this->width;
-    }
-
-    /**
-     * Gets the coordinates for a placement relative to the current image resource using the IM_POS constants
-     * See ImagickResource::placeImage for usage example
-     *
-     * @param array $resource_size  an array with the keys 'width' and 'height' from the image to be placed
-     * @param int   $place_constant one of the \Imanee::IM_POS constant (default is IM_POS_TOP_LEFT)
-     * @return array Returns an array with the first position representing the X coordinate and the second position
-     * representing the Y coordinate for placing the image
-     */
-    public function getPlacementCoordinates($resource_size = [], $place_constant = Imanee::IM_POS_TOP_LEFT)
-    {
-        $x = 0;
-        $y = 0;
-
-        $size = $this->resource->getImageGeometry();
-
-        switch ($place_constant) {
-
-            case Imanee::IM_POS_TOP_CENTER:
-                $x = ($size['width'] / 2) - ($resource_size['width'] / 2);
-                break;
-
-            case Imanee::IM_POS_TOP_RIGHT:
-                $x = ($size['width']) - ($resource_size['width']);
-                break;
-
-            case Imanee::IM_POS_MID_LEFT:
-                $y = ($size['height'] / 2) - ($resource_size['height'] / 2);
-                break;
-
-            case Imanee::IM_POS_MID_CENTER:
-                $x = ($size['width'] / 2) - ($resource_size['width'] / 2);
-                $y = ($size['height'] / 2) - ($resource_size['height'] / 2);
-                break;
-
-            case Imanee::IM_POS_MID_RIGHT:
-                $x = ($size['width']) - ($resource_size['width']);
-                $y = ($size['height'] / 2) - ($resource_size['height'] / 2);
-                break;
-
-            case Imanee::IM_POS_BOTTOM_LEFT:
-                $y = ($size['height']) - ($resource_size['height']);
-                break;
-
-            case Imanee::IM_POS_BOTTOM_CENTER:
-                $x = ($size['width'] / 2) - ($resource_size['width'] / 2);
-                $y = ($size['height']) - ($resource_size['height']);
-                break;
-
-            case Imanee::IM_POS_BOTTOM_RIGHT:
-                $x = ($size['width']) - ($resource_size['width']);
-                $y = ($size['height']) - ($resource_size['height']);
-                break;
-        }
-
-        return [$x, $y];
     }
 
     /**
