@@ -269,8 +269,8 @@ class GDResource implements ImageResourceInterface
             $resizeDimensions = $this->getMaxFit($width, $height);
             $finalWidth = $width;
             $finalHeight = $height;
-            $sourceX = ($this->getWidth() / 2) - ($width / 2);
-            $sourceY = ($this->getHeight() / 2) - ($height / 2);
+            $sourceX = ($resizeDimensions['width'] / 2) - ($width / 2);
+            $sourceY = ($resizeDimensions['height'] / 2) - ($height / 2);
         } else {
             $resizeDimensions = $this->getBestFit($width, $height);
             $finalWidth = $resizeDimensions['width'];
