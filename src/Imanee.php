@@ -13,16 +13,16 @@ use Imanee\Model\ImageResourceInterface;
 
 class Imanee
 {
-    /** @var \Imanee\Model\ImageResourceInterface Resource */
+    /** @var ImageResourceInterface Resource */
     protected $resource;
 
-    /** @var \Imanee\Drawer The drawer settings */
+    /** @var Drawer The drawer settings */
     protected $drawer;
 
     /** @var  Imanee[] Frames */
     protected $frames;
 
-    /** @var  \Imanee\FilterResolver The filter Resolver */
+    /** @var  FilterResolver The filter Resolver */
     protected $filterResolver;
 
     const IM_POS_CENTER = 1;
@@ -456,26 +456,21 @@ class Imanee
     }
 
     /**
-     * Gets the Imagick Resource from the Image Object
-     *
-     * @return mixed The return will depend on the ImageResource being used. It can be a simple "resource" type if GD
-     * is in use, or a \Imagick object if the ImagickResource is in use.
+     * Gets the current image resource
+     * @return ImageResourceInterface
      */
-    public function getIMResource()
+    public function getResource()
     {
-        return $this->resource->getResource();
+        return $this->resource;
     }
 
     /**
-     * Sets the Imagick resource in the Image Object
-     * @param \Imagick $imagick
-     * @return $this
+     * Sets the current Image Resource
+     * @param ImageResourceInterface $resource
      */
-    public function setIMResource(\Imagick $imagick)
+    public function setResource(ImageResourceInterface $resource)
     {
-        $this->resource->setResource($imagick);
-
-        return $this;
+        $this->resource = $resource;
     }
 
     /**
@@ -524,6 +519,49 @@ class Imanee
     }
 
     /**
+     * Shortcut for adding filters
+     * @param array $frames
+     * @return $this
+     */
+    public function addFrames(array $frames)
+    {
+        foreach ($frames as $frame) {
+            $this->addFrame($frame);
+        }
+
+        return $this;
+    }
+    
+    /**
+     * Adds a frame for generating animated gifs with the animate() method
+     * @param Imanee $imanee
+     * @return $this
+     */
+    public function addFrame(Imanee $imanee)
+    {
+        $this->frames[] = $imanee;
+
+        return $this;
+    }
+
+    /**
+     * @return Imanee[]
+     */
+    public function getFrames()
+    {
+        return $this->frames;
+    }
+
+    /**
+     * @param int $delay
+     * @return string
+     */
+    public function animate($delay = 20)
+    {
+        return $this->resource->animate($this->getFrames(), $delay);
+    }
+
+    /**
      * Convenient method for generating text-only images
      *
      * @param string $text
@@ -532,9 +570,14 @@ class Imanee
      * @param string $background
      * @return Imanee
      */
-    public static function textGen($text, Drawer $drawer = null, $format = 'png', $background = 'transparent')
-    {
-        $imanee = new Imanee();
+    public static function textGen(
+        $text,
+        Drawer $drawer = null,
+        $format = 'png',
+        $background = 'transparent',
+        ImageResourceInterface $resource = null
+    ) {
+        $imanee = new Imanee(null, $resource);
 
         if ($drawer !== null) {
             $imanee->setDrawer($drawer);
@@ -548,57 +591,19 @@ class Imanee
 
         return $imanee;
     }
-    
-    /**
-     * Adds a frame for generating animated gifs with the animate() method
-     * @param Imanee $imanee
-     */
-    public function addFrame(Imanee $imanee)
-    {
-        $this->frames[] = $imanee;
-    }
-
-    /**
-     * @param int $delay
-     * @return string
-     */
-    public function animate($delay = 20)
-    {
-        $gif = new \Imagick();
-        $gif->setFormat('gif');
-
-        foreach ($this->frames as $imanee) {
-            $frame = $imanee->getIMResource();
-            $frame->setImageDelay($delay);
-            $gif->addImage($frame);
-        }
-
-        return (new Imanee())
-            ->setIMResource($gif)
-            ->setFormat('gif');
-    }
 
     /**
      * Convenient method for generating an animated gif from an array of images.
      *
-     * @param array $images
+     * @param array $images Array containing paths to the images that should be used as frames
      * @param int $delay
      * @return string
      */
     public static function arrayAnimate(array $images, $delay = 20)
     {
-        $gif = new \Imagick();
-        $gif->setFormat('gif');
-
-        foreach ($images as $image) {
-            $frame = new \Imagick($image);
-            $frame->setImageDelay($delay);
-            $gif->addImage($frame);
-        }
-
         return (new Imanee())
-            ->setIMResource($gif)
-            ->setFormat('gif');
+           ->resource
+           ->animate($images, $delay);
     }
 
     /**
@@ -610,18 +615,15 @@ class Imanee
      */
     public static function globAnimate($pattern, $delay = 20)
     {
-        $gif = new \Imagick();
-        $gif->setFormat('gif');
+        $frames = [];
 
         foreach (glob($pattern) as $image) {
-            $frame = new \Imagick($image);
-            $frame->setImageDelay($delay);
-            $gif->addImage($frame);
+            $frames[] = $image;
         }
 
         return (new Imanee())
-            ->setIMResource($gif)
-            ->setFormat('gif');
+            ->resource
+            ->animate($frames, $delay);
     }
 
     /**

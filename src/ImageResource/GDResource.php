@@ -5,7 +5,6 @@
 
 namespace Imanee\ImageResource;
 
-
 use Imanee\Drawer;
 use Imanee\Exception\EmptyImageException;
 use Imanee\Exception\ImageNotFoundException;
@@ -96,7 +95,8 @@ class GDResource implements ImageResourceInterface, ImageComposableInterface, Im
     public function createNew($width, $height, $background = 'white')
     {
         $this->resource = imagecreatetruecolor($width, $height);
-        imagefill($this->resource, 0, 0, $this->loadColor($background));
+        imagefill($this->getResource(), 0, 0, $this->loadColor($background));
+        $this->updateResourceDimensions();
     }
 
     /**
@@ -105,6 +105,15 @@ class GDResource implements ImageResourceInterface, ImageComposableInterface, Im
     public function getResource()
     {
         return $this->resource;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setResource($resource)
+    {
+        $this->resource = $resource;
+        $this->updateResourceDimensions();
     }
 
     /**
@@ -165,7 +174,7 @@ class GDResource implements ImageResourceInterface, ImageComposableInterface, Im
 
         imagecopyresampled(
             $resized,
-            $this->resource,
+            $this->getResource(),
             0,
             0,
             0,
@@ -177,8 +186,7 @@ class GDResource implements ImageResourceInterface, ImageComposableInterface, Im
         );
 
         $this->resource = $resized;
-        $this->width = $finalWidth;
-        $this->height = $finalHeight;
+        $this->updateResourceDimensions();
     }
 
     /**😻
@@ -186,7 +194,8 @@ class GDResource implements ImageResourceInterface, ImageComposableInterface, Im
      */
     public function rotate($degrees = 90.00, $background = 'transparent')
     {
-        $this->resource = imagerotate($this->resource, $degrees, $this->loadColor($background));
+        $this->resource = imagerotate($this->getResource(), $degrees, $this->loadColor($background));
+        $this->updateResourceDimensions();
     }
 
     /**
@@ -198,7 +207,7 @@ class GDResource implements ImageResourceInterface, ImageComposableInterface, Im
 
         imagecopyresampled(
             $cropped,
-            $this->resource,
+            $this->getResource(),
             0,
             0,
             $coordX,
@@ -210,6 +219,7 @@ class GDResource implements ImageResourceInterface, ImageComposableInterface, Im
         );
 
         $this->resource = $cropped;
+        $this->updateResourceDimensions();
     }
 
     /**
@@ -237,7 +247,7 @@ class GDResource implements ImageResourceInterface, ImageComposableInterface, Im
 
         imagecopyresampled(
             $thumb,
-            $this->resource,
+            $this->getResource(),
             0,
             0,
             $sourceX,
@@ -249,6 +259,7 @@ class GDResource implements ImageResourceInterface, ImageComposableInterface, Im
         );
 
         $this->resource = $thumb;
+        $this->updateResourceDimensions();
     }
 
     /**
@@ -260,15 +271,16 @@ class GDResource implements ImageResourceInterface, ImageComposableInterface, Im
         switch ($format) {
             case "jpg":
             case "jpeg":
-                imagejpeg($this->resource, null, 90);
+                imagejpeg($this->getResource(), null, 90);
                 break;
 
             case "gif":
-                imagegif($this->resource);
+                imagegif($this->getResource());
                 break;
 
             case "png":
-                imagepng($this->resource);
+                imagesavealpha($this->getResource(), true);
+                imagepng($this->getResource());
                 break;
 
             default:
@@ -288,15 +300,16 @@ class GDResource implements ImageResourceInterface, ImageComposableInterface, Im
         switch ($this->format) {
             case "jpg":
             case "jpeg":
-                imagejpeg($this->resource, $file, $jpeg_quality);
+                imagejpeg($this->getResource(), $file, $jpeg_quality);
                 break;
 
             case "gif":
-                imagegif($this->resource, $file);
+                imagegif($this->getResource(), $file);
                 break;
 
             case "png":
-                imagepng($this->resource, $file);
+                imagesavealpha($this->getResource(), true);
+                imagepng($this->getResource(), $file);
                 break;
 
             default:
@@ -304,6 +317,15 @@ class GDResource implements ImageResourceInterface, ImageComposableInterface, Im
                     sprintf("The format '%s' is not supported by this Resource.", $this->getMime())
                 );
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function updateResourceDimensions()
+    {
+        $this->width = imagesx($this->getResource());
+        $this->height = imagesy($this->getResource());
     }
 
     /**
@@ -344,7 +366,7 @@ class GDResource implements ImageResourceInterface, ImageComposableInterface, Im
         /* TODO: implement pixel per pixel transparency */
 
         imagecopyresampled(
-            $this->resource,
+            $this->getResource(),
             $image->getIMResource(),
             $coordX,
             $coordY,
@@ -380,10 +402,10 @@ class GDResource implements ImageResourceInterface, ImageComposableInterface, Im
      */
     public function annotate($text, $coordX, $coordY, $angle, Drawer $drawer)
     {
-        $color = GDPixel::load($drawer->getFontColor(), $this->resource);
+        $color = GDPixel::load($drawer->getFontColor(), $this->getResource());
 
         imagettftext(
-            $this->resource,
+            $this->getResource(),
             $this->getFontSize($drawer),
             $angle,
             $coordX,

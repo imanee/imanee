@@ -35,6 +35,17 @@ interface ImageResourceInterface
     public function getResource();
 
     /**
+     * Sets image resource in the current object
+     * @return void
+     */
+    public function setResource($resource);
+
+    /**
+     * Updates the computed width and height for the current Image Resource object
+     */
+    public function updateResourceDimensions();
+
+    /**
      * @return string the Mime Type if available
      */
     public function getMime();

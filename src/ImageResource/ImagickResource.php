@@ -14,7 +14,6 @@ use Imanee\Drawer;
 use Imanee\Model\ImageAnimatableInterface;
 use Imanee\Model\ImageComposableInterface;
 use Imanee\Model\ImageWritableInterface;
-use Imanee\PixelMath;
 
 class ImagickResource implements
     ImageResourceInterface,
@@ -52,10 +51,6 @@ class ImagickResource implements
     {
         $this->resource = clone $this->resource;
     }
-
-    /******************************
-    /* ImageResourceInterface    */
-    /*****************************
 
     /**
      * {@inheritdoc}
@@ -102,7 +97,7 @@ class ImagickResource implements
      * Sets the current Imagick resource and updates the Image info
      * @param \Imagick $resource
      */
-    public function setResource(\Imagick $resource)
+    public function setResource($resource)
     {
         $this->resource = $resource;
         $this->updateResourceDimensions();
@@ -142,7 +137,6 @@ class ImagickResource implements
         }
 
         $this->resource->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1, $bestfit);
-
         $this->updateResourceDimensions();
     }
 
@@ -168,6 +162,7 @@ class ImagickResource implements
     public function rotate($degrees = 90.00, $background = 'transparent')
     {
         $this->resource->rotateimage(new \ImagickPixel($background), $degrees);
+        $this->updateResourceDimensions();
     }
 
     /**
@@ -177,8 +172,8 @@ class ImagickResource implements
     {
         $this->width = $width;
         $this->height = $height;
-
         $this->resource->cropImage($width, $height, $coordX, $coordY);
+        $this->updateResourceDimensions();
     }
 
     /**
@@ -192,9 +187,7 @@ class ImagickResource implements
             $this->resource->thumbnailImage($width, $height, true);
         }
 
-        $newsize = $this->resource->getImageGeometry();
-        $this->width  = $newsize['width'];
-        $this->height = $newsize['height'];
+        $this->updateResourceDimensions();
     }
 
     /**
@@ -232,9 +225,8 @@ class ImagickResource implements
         $this->resource->writeImages($file, true);
     }
 
-
     /**
-     * Updates the computed width and height for the current Imagick object
+     * Updates the computed width and height for the current Image Resource object
      */
     public function updateResourceDimensions()
     {
@@ -253,9 +245,7 @@ class ImagickResource implements
         return $this->background;
     }
 
-    /******************************
-    /* ImageComposableInterface */
-    /*****************************
+    // ImageComposableInterface
 
     /**
      * {@inheritdoc}
@@ -283,9 +273,7 @@ class ImagickResource implements
         $this->resource->compositeImage($img, \Imagick::COMPOSITE_OVER, $coordX, $coordY);
     }
 
-    /******************************
-    /* ImageWritableInterface   */
-    /*****************************
+    // ImageWritableInterface
 
     /**
      * {@inheritdoc}
@@ -293,32 +281,6 @@ class ImagickResource implements
     public function annotate($text, $coordX, $coordY, $angle, Drawer $drawer)
     {
         $this->resource->annotateImage($this->getImagickDraw($drawer), $coordX, $coordY, $angle, $text);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function placeText($text, $place_constant, Drawer $drawer, $fitWidth = 0)
-    {
-        if ($fitWidth > 0) {
-            $drawer = $this->adjustFontSize($text, $drawer, $fitWidth);
-        }
-
-        $textsize = $this->getTextGeometry($text, $drawer);
-
-        list($coordX, $coordY) = PixelMath::getPlacementCoordinates(
-            $textsize,
-            $this->resource->getImageGeometry(),
-            $place_constant
-        );
-
-        $this->resource->annotateImage(
-            $this->getImagickDraw($drawer),
-            $coordX,
-            $coordY + $drawer->getFontSize(),
-            0,
-            $text
-        );
     }
 
     /**
@@ -361,30 +323,41 @@ class ImagickResource implements
         return $imdraw;
     }
 
-    /**
-     * Adjusts the font size of the Drawer object to fit a text in the desired width
-     * @param $text
-     * @param Drawer $drawer
-     * @param $width
-     * @return int
-     */
-    public function adjustFontSize($text, Drawer $drawer, $width)
-    {
-        $fontSize = 0;
-        $metrics['width'] = 0;
+    // ImageAnimatableInterface
 
-        while ($metrics['width'] <= $width) {
-            $drawer->setFontSize($fontSize);
-            $metrics = $this->getTextGeometry($text, $drawer);
-            $fontSize++;
+    /**
+     * @param mixed $frames - Can be either a collection of Imanee objects, or a string array with paths to images,
+     * or both mixed
+     * @param int $delay
+     * @return $this
+     */
+    public function animate(array $frames, $delay = 20)
+    {
+        $gif = new \Imagick();
+        $gif->setFormat('gif');
+
+        foreach ($frames as $im) {
+            if ($im instanceof Imanee) {
+                $frame = $im->getResource()->getResource();
+            } else {
+                $frame = new \Imagick($im);
+            }
+
+            $frame->setImageDelay($delay);
+            $gif->addImage($frame);
         }
 
-        return $drawer;
+        $imagickResource = new ImagickResource();
+        $imagickResource->setResource($gif);
+
+        $imanee = new Imanee();
+        $imanee->setResource($imagickResource);
+        $imanee->setFormat('gif');
+
+        return $imanee;
     }
 
-    /******************************
-    /* Other Helpers             */
-    /*****************************
+    // Other Helpers
 
     /**
      * Checks if the current resource is empty
