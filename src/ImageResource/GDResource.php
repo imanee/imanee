@@ -14,9 +14,10 @@ use Imanee\Imanee;
 use Imanee\Model\FilterInterface;
 use Imanee\Model\ImageComposableInterface;
 use Imanee\Model\ImageResourceInterface;
+use Imanee\Model\ImageWritableInterface;
 use Imanee\PixelMath;
 
-class GDResource implements ImageResourceInterface, ImageComposableInterface
+class GDResource implements ImageResourceInterface, ImageComposableInterface, ImageWritableInterface
 {
     /** @var resource the image resource */
     public $resource;
@@ -354,5 +355,59 @@ class GDResource implements ImageResourceInterface, ImageComposableInterface
             $image->getWidth(),
             $image->getHeight()
         );
+    }
+
+    // ImageWritableInterface
+
+    /**
+     * Gets the adjusted font size to match the size on Imagick (smaller)
+     * @param Drawer $drawer
+     * @return float
+     */
+    public function getFontSize(Drawer $drawer)
+    {
+        return $drawer->getFontSize() * 0.75;
+    }
+
+    /**
+     * Writes text on the current image resource
+     *
+     * @param string $text
+     * @param int $coordX
+     * @param int $coordY
+     * @param int $angle
+     * @param Drawer $drawer
+     */
+    public function annotate($text, $coordX, $coordY, $angle, Drawer $drawer)
+    {
+        $color = GDPixel::load($drawer->getFontColor(), $this->resource);
+
+        imagettftext(
+            $this->resource,
+            $this->getFontSize($drawer),
+            $angle,
+            $coordX,
+            $coordY,
+            $color,
+            $drawer->getFont(),
+            $text
+        );
+    }
+
+    /**
+     * Gets the size of a text, given the text and the \Imanee\Drawer object
+     *
+     * @param string $text The text
+     * @param Drawer $drawer The Drawer object
+     * @return array
+     */
+    public function getTextGeometry($text, Drawer $drawer)
+    {
+        $coords = imagettfbbox($this->getFontSize($drawer), 0, $drawer->getFont(), $text);
+
+        $width = $coords[2] - $coords[0];
+        $height = $coords[1] - $coords[7];
+
+        return ['width' => $width, 'height' => $height];
     }
 }

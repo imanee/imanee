@@ -11,18 +11,6 @@ use Imanee\Drawer;
 interface ImageWritableInterface
 {
     /**
-     * Places a text on top of the current image resource using relative positioning and the provided Drawer object.
-     * If fitWidth is provided, will calculate the correct font size to fit in the provided width.
-     *
-     * @param string $text           The text to be written.
-     * @param int    $place_constant Where to place the image - one of the \Imanee:IM_POS constants
-     * @param Drawer $drawer         The drawer object
-     * @param int    $fitWidth       If provided and different than zero, will calculate a new font size
-     * to fit text in the provided width
-     */
-    public function placeText($text, $place_constant, Drawer $drawer, $fitWidth = 0);
-
-    /**
      * Writes text on the current image resource
      *
      * @param string $text
@@ -38,7 +26,17 @@ interface ImageWritableInterface
      *
      * @param string $text   The text
      * @param Drawer $drawer The Drawer object
-     * @return array
+     * @return array Array containing the indexes 'width' and 'height' representing the dimensions this text
+     * would have based on the provided Drawer object.
      */
     public function getTextGeometry($text, Drawer $drawer);
+
+
+    /**
+     * Returns the adjusted font size - this is important as Imagick and GD have different standards. To keep the
+     * size identical some adjustments are necessary.
+     * @param Drawer $drawer
+     * @return mixed
+     */
+    public function getFontSize(Drawer $drawer);
 }

@@ -53,6 +53,10 @@ class ImagickResource implements
         $this->resource = clone $this->resource;
     }
 
+    /******************************
+    /* ImageResourceInterface    */
+    /*****************************
+
     /**
      * {@inheritdoc}
      */
@@ -143,16 +147,6 @@ class ImagickResource implements
     }
 
     /**
-     * Updates the computed width and height for the current Imagick object
-     */
-    public function updateResourceDimensions()
-    {
-        $newsize = $this->resource->getImageGeometry();
-        $this->width  = $newsize['width'];
-        $this->height = $newsize['height'];
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function setFormat($format)
@@ -166,104 +160,6 @@ class ImagickResource implements
     public function getFormat()
     {
         return $this->resource->getImageFormat();
-    }
-
-    /**
-     * Returns a previously defined (e.g. when creating a new image) background color
-     *
-     * @return string The string previously used to define the background
-     */
-    public function getBackground()
-    {
-        return $this->background;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function annotate($text, $coordX, $coordY, $angle, Drawer $drawer)
-    {
-        $this->resource->annotateImage($drawer->getDrawer(), $coordX, $coordY, $angle, $text);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getTextGeometry($text, Drawer $drawer)
-    {
-        $metrics = $this->resource->queryFontMetrics($drawer->getDrawer(), $text);
-
-        return [
-            'width'  => $metrics['textWidth'],
-            'height' => $metrics['textHeight'],
-        ];
-    }
-
-    /**
-     * Adjusts the font size of the Drawer object to fit a text in the desired width
-     * @param $text
-     * @param Drawer $drawer
-     * @param $width
-     * @return int
-     */
-    public function adjustFontSize($text, Drawer $drawer, $width)
-    {
-        $fontSize = 0;
-        $metrics['width'] = 0;
-
-        while ($metrics['width'] <= $width) {
-            $drawer->setFontSize($fontSize);
-            $metrics = $this->getTextGeometry($text, $drawer);
-            $fontSize++;
-        }
-
-        return $drawer;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function placeText($text, $place_constant, Drawer $drawer, $fitWidth = 0)
-    {
-        if ($fitWidth > 0) {
-            $drawer = $this->adjustFontSize($text, $drawer, $fitWidth);
-        }
-
-        $textsize = $this->getTextGeometry($text, $drawer);
-
-        list($coordX, $coordY) = PixelMath::getPlacementCoordinates(
-            $textsize,
-            $this->resource->getImageGeometry(),
-            $place_constant
-        );
-
-        $this->resource->annotateImage($drawer->getDrawer(), $coordX, $coordY + $drawer->getFontSize(), 0, $text);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $transparency = 0)
-    {
-        if (!is_object($image)) {
-            $img = new \Imagick($image);
-        } else {
-            if (! ($image instanceof \Imanee\Imanee)) {
-                throw new \Exception('Object not supported. It must be an instance of Imanee');
-            }
-
-            $img = $image->getIMResource();
-        }
-
-        if ($width and $height) {
-            $img->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
-        }
-
-        if ($transparency > 0) {
-            $this->setOpacity($img, $transparency);
-        }
-
-        $this->resource->compositeImage($img, \Imagick::COMPOSITE_OVER, $coordX, $coordY);
     }
 
     /**
@@ -335,6 +231,160 @@ class ImagickResource implements
 
         $this->resource->writeImages($file, true);
     }
+
+
+    /**
+     * Updates the computed width and height for the current Imagick object
+     */
+    public function updateResourceDimensions()
+    {
+        $newsize = $this->resource->getImageGeometry();
+        $this->width  = $newsize['width'];
+        $this->height = $newsize['height'];
+    }
+
+    /**
+     * Returns a previously defined (e.g. when creating a new image) background color
+     *
+     * @return string The string previously used to define the background
+     */
+    public function getBackground()
+    {
+        return $this->background;
+    }
+
+    /******************************
+    /* ImageComposableInterface */
+    /*****************************
+
+    /**
+     * {@inheritdoc}
+     */
+    public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $transparency = 0)
+    {
+        if (!is_object($image)) {
+            $img = new \Imagick($image);
+        } else {
+            if (! ($image instanceof \Imanee\Imanee)) {
+                throw new \Exception('Object not supported. It must be an instance of Imanee');
+            }
+
+            $img = $image->getIMResource();
+        }
+
+        if ($width and $height) {
+            $img->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
+        }
+
+        if ($transparency > 0) {
+            $this->setOpacity($img, $transparency);
+        }
+
+        $this->resource->compositeImage($img, \Imagick::COMPOSITE_OVER, $coordX, $coordY);
+    }
+
+    /******************************
+    /* ImageWritableInterface   */
+    /*****************************
+
+    /**
+     * {@inheritdoc}
+     */
+    public function annotate($text, $coordX, $coordY, $angle, Drawer $drawer)
+    {
+        $this->resource->annotateImage($this->getImagickDraw($drawer), $coordX, $coordY, $angle, $text);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function placeText($text, $place_constant, Drawer $drawer, $fitWidth = 0)
+    {
+        if ($fitWidth > 0) {
+            $drawer = $this->adjustFontSize($text, $drawer, $fitWidth);
+        }
+
+        $textsize = $this->getTextGeometry($text, $drawer);
+
+        list($coordX, $coordY) = PixelMath::getPlacementCoordinates(
+            $textsize,
+            $this->resource->getImageGeometry(),
+            $place_constant
+        );
+
+        $this->resource->annotateImage(
+            $this->getImagickDraw($drawer),
+            $coordX,
+            $coordY + $drawer->getFontSize(),
+            0,
+            $text
+        );
+    }
+
+    /**
+     * The font size is based on ImagickDraw sizes, so we just return what is used in the Drawer here.
+     * @param Drawer $drawer
+     * @return int
+     */
+    public function getFontSize(Drawer $drawer)
+    {
+        return $drawer->getFontSize();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTextGeometry($text, Drawer $drawer)
+    {
+        $metrics = $this->resource->queryFontMetrics($this->getImagickDraw($drawer), $text);
+
+        return [
+            'width'  => $metrics['textWidth'],
+            'height' => $metrics['textHeight'],
+        ];
+    }
+
+    /**
+     * Translates the Drawer object to a ImagickDraw
+     * @param Drawer $drawer
+     * @return \ImagickDraw
+     */
+    public function getImagickDraw(Drawer $drawer)
+    {
+        $imdraw = new \ImagickDraw();
+
+        $imdraw->setFont($drawer->getFont());
+        $imdraw->setFillColor($drawer->getFontColor());
+        $imdraw->setFontSize($drawer->getFontSize());
+        $imdraw->setTextAlignment($drawer->getTextAlign());
+
+        return $imdraw;
+    }
+
+    /**
+     * Adjusts the font size of the Drawer object to fit a text in the desired width
+     * @param $text
+     * @param Drawer $drawer
+     * @param $width
+     * @return int
+     */
+    public function adjustFontSize($text, Drawer $drawer, $width)
+    {
+        $fontSize = 0;
+        $metrics['width'] = 0;
+
+        while ($metrics['width'] <= $width) {
+            $drawer->setFontSize($fontSize);
+            $metrics = $this->getTextGeometry($text, $drawer);
+            $fontSize++;
+        }
+
+        return $drawer;
+    }
+
+    /******************************
+    /* Other Helpers             */
+    /*****************************
 
     /**
      * Checks if the current resource is empty

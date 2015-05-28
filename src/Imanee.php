@@ -9,8 +9,6 @@ use Imanee\Filter\BWFilter;
 use Imanee\Filter\ColorFilter;
 use Imanee\Filter\ModulateFilter;
 use Imanee\Filter\SepiaFilter;
-use Imanee\ImageResource\GDResource;
-use Imanee\ImageResource\ImagickResource;
 use Imanee\Model\ImageResourceInterface;
 
 class Imanee
@@ -64,8 +62,6 @@ class Imanee
 
         return $this;
     }
-
-
 
     /**
      * {@inheritdoc}
@@ -157,6 +153,27 @@ class Imanee
     }
 
     /**
+     * Adjusts the font size of the Drawer object to fit a text in the desired width
+     * @param $text
+     * @param Drawer $drawer
+     * @param $width
+     * @return Drawer
+     */
+    public function adjustFontSize($text, Drawer $drawer, $width)
+    {
+        $fontSize = 0;
+        $metrics['width'] = 0;
+
+        while ($metrics['width'] <= $width) {
+            $drawer->setFontSize($fontSize);
+            $metrics = $this->resource->getTextGeometry($text, $drawer);
+            $fontSize++;
+        }
+
+        return $drawer;
+    }
+
+    /**
      * Places a text on top of the current image - convenient way to write text using relative positioning.
      * To overwrite the current Drawer settings, create a custom Drawer object and use the method ->setDrawer before
      *
@@ -171,9 +188,26 @@ class Imanee
     public function placeText($text, $place_constant = Imanee::IM_POS_TOP_LEFT, $fitWidth = 0, $fontSize = 0)
     {
         if ($fontSize) {
-            $this->drawer->setFontSize($fontSize);
+            $this->getDrawer()->setFontSize($fontSize);
         }
-        $this->resource->placeText($text, $place_constant, $this->drawer, $fitWidth);
+
+        if ($fitWidth > 0) {
+            $this->setDrawer($this->adjustFontSize($text, $this->getDrawer(), $fitWidth));
+        }
+
+        list ($coordX, $coordY) = PixelMath::getPlacementCoordinates(
+            $this->resource->getTextGeometry($text, $this->getDrawer()),
+            $this->getSize(),
+            $place_constant
+        );
+
+        $this->resource->annotate(
+            $text,
+            $coordX,
+            $coordY + $this->resource->getFontSize($this->getDrawer()),
+            0,
+            $this->getDrawer()
+        );
 
         return $this;
     }

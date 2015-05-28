@@ -13,22 +13,9 @@ use Imanee\ImageResource\ImagickResource;
 
 class ResourceProvider
 {
-
-    public function loadImageResource()
-    {
-        if (!extension_loaded('imagick')) {
-            if (!extension_loaded('gd')) {
-                throw new ExtensionNotFoundException(
-                    "We couldn't detect Imagick or GD extensions.
-                    You'll need to install one of these extensions in order to use Imanee."
-                );
-            }
-        }
-    }
-
     public function createImageResource()
     {
-        if ($this->imaneeIsSupported()) {
+        if ($this->imagickIsLoaded()) {
             return new ImagickResource();
         }
 
