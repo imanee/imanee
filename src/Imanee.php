@@ -5,11 +5,15 @@ namespace Imanee;
 use Imanee\Exception\FilterNotFoundException;
 use Imanee\Exception\ImageNotFoundException;
 use Imanee\Exception\UnsupportedFormatException;
+use Imanee\Exception\UnsupportedMethodException;
 use Imanee\Filter\BWFilter;
 use Imanee\Filter\ColorFilter;
 use Imanee\Filter\ModulateFilter;
 use Imanee\Filter\SepiaFilter;
+use Imanee\Model\ImageAnimatableInterface;
+use Imanee\Model\ImageComposableInterface;
 use Imanee\Model\ImageResourceInterface;
+use Imanee\Model\ImageWritableInterface;
 
 class Imanee
 {
@@ -19,7 +23,7 @@ class Imanee
     /** @var Drawer The drawer settings */
     protected $drawer;
 
-    /** @var  Imanee[] Frames */
+    /** @var  array Frames */
     protected $frames;
 
     /** @var  FilterResolver The filter Resolver */
@@ -158,9 +162,14 @@ class Imanee
      * @param Drawer $drawer
      * @param $width
      * @return Drawer
+     * @throws UnsupportedMethodException
      */
     public function adjustFontSize($text, Drawer $drawer, $width)
     {
+        if (! ($this->resource instanceof ImageWritableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
         $fontSize = 0;
         $metrics['width'] = 0;
 
@@ -184,9 +193,14 @@ class Imanee
      * @param int $fontSize The font size. Defaults to the current font size defined in the Drawer
      *
      * @return $this
+     * @throws UnsupportedMethodException
      */
     public function placeText($text, $place_constant = Imanee::IM_POS_TOP_LEFT, $fitWidth = 0, $fontSize = 0)
     {
+        if (! ($this->resource instanceof ImageWritableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
         if ($fontSize) {
             $this->getDrawer()->setFontSize($fontSize);
         }
@@ -222,9 +236,14 @@ class Imanee
      * @param int $angle The angle (defaults to 0, plain)
      *
      * @return $this
+     * @throws UnsupportedMethodException
      */
     public function annotate($text, $coordX, $coordY, $size = null, $angle = 0)
     {
+        if (! ($this->resource instanceof ImageWritableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
         $drawer = $this->getDrawer();
 
         if ($size) {
@@ -266,9 +285,14 @@ class Imanee
      * @param int $height (optional) specifies a height for the placement
      * @param int $transparency (optional) specifies the transparency of the placed image, in percentage
      * @return $this
+     * @throws UnsupportedMethodException
      */
     public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $transparency = 0)
     {
+        if (! ($this->resource instanceof ImageComposableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
         $this->resource->compositeImage($image, $coordX, $coordY, $width, $height, $transparency);
 
         return $this;
@@ -287,6 +311,7 @@ class Imanee
      *
      * @return $this
      *
+     * @throws UnsupportedMethodException
      * @throws UnsupportedFormatException
      */
     public function placeImage(
@@ -296,6 +321,10 @@ class Imanee
         $height = null,
         $transparency = 0
     ) {
+        if (! ($this->resource instanceof ImageComposableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
         if (!is_object($image)) {
             $img = clone $this;
             $img->load($image);
@@ -520,7 +549,7 @@ class Imanee
 
     /**
      * Shortcut for adding filters
-     * @param array $frames
+     * @param array $frames - Array of Imanee objects or image paths (string), or both
      * @return $this
      */
     public function addFrames(array $frames)
@@ -534,12 +563,12 @@ class Imanee
     
     /**
      * Adds a frame for generating animated gifs with the animate() method
-     * @param Imanee $imanee
+     * @param mixed $frame A string with a file path or an Imanee object
      * @return $this
      */
-    public function addFrame(Imanee $imanee)
+    public function addFrame($frame)
     {
-        $this->frames[] = $imanee;
+        $this->frames[] = $frame;
 
         return $this;
     }
@@ -555,9 +584,14 @@ class Imanee
     /**
      * @param int $delay
      * @return string
+     * @throws UnsupportedMethodException
      */
     public function animate($delay = 20)
     {
+        if (! ($this->resource instanceof ImageAnimatableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
         return $this->resource->animate($this->getFrames(), $delay);
     }
 
@@ -598,10 +632,17 @@ class Imanee
      * @param array $images Array containing paths to the images that should be used as frames
      * @param int $delay
      * @return string
+     * @throws UnsupportedMethodException
      */
     public static function arrayAnimate(array $images, $delay = 20)
     {
-        return (new Imanee())
+        $imanee = new Imanee();
+
+        if (! ($imanee->resource instanceof ImageAnimatableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
+        return $imanee
            ->resource
            ->animate($images, $delay);
     }
@@ -612,16 +653,23 @@ class Imanee
      * @param $pattern
      * @param int $delay
      * @return string
+     * @throws UnsupportedMethodException
      */
     public static function globAnimate($pattern, $delay = 20)
     {
+        $imanee = new Imanee();
+
+        if (! ($imanee->resource instanceof ImageAnimatableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
         $frames = [];
 
         foreach (glob($pattern) as $image) {
             $frames[] = $image;
         }
 
-        return (new Imanee())
+        return $imanee
             ->resource
             ->animate($frames, $delay);
     }
