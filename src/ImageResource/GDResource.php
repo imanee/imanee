@@ -10,6 +10,9 @@ use Imanee\Exception\EmptyImageException;
 use Imanee\Exception\ImageNotFoundException;
 use Imanee\Exception\UnsupportedFormatException;
 use Imanee\Filter\GD\BWFilter;
+use Imanee\Filter\GD\ColorFilter;
+use Imanee\Filter\GD\ModulateFilter;
+use Imanee\Filter\GD\SepiaFilter;
 use Imanee\Imanee;
 use Imanee\Model\FilterInterface;
 use Imanee\Model\ImageComposableInterface;
@@ -437,6 +440,9 @@ class GDResource implements
     {
         return [
             new BWFilter(),
+            new SepiaFilter(),
+            new ColorFilter(),
+            new ModulateFilter(),
         ];
     }
 }
