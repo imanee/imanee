@@ -13,6 +13,12 @@ use Imanee\ImageResource\ImagickResource;
 
 class ResourceProvider
 {
+    /**
+     * Checks for loaded extensions to create a suitable ImageResource, in case neither Imagick or GD are loaded
+     * throws an exception
+     * @return GDResource|ImagickResource
+     * @throws ExtensionNotFoundException
+     */
     public function createImageResource()
     {
         if ($this->imagickIsLoaded()) {
@@ -29,16 +35,25 @@ class ResourceProvider
         );
     }
 
+    /**
+     * @return bool
+     */
     public function imaneeIsSupported()
     {
         return ($this->imagickIsLoaded() or $this->gdIsLoaded());
     }
 
+    /**
+     * @return bool
+     */
     public function imagickIsLoaded()
     {
         return extension_loaded('imagick');
     }
 
+    /**
+     * @return bool
+     */
     public function gdIsLoaded()
     {
         return extension_loaded('gd');
