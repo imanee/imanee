@@ -1,7 +1,8 @@
 <?php
 
-namespace Imanee\Filter;
+namespace Imanee\Filter\Imagick;
 
+use Imanee\Imanee;
 use Imanee\Model\FilterInterface;
 
 class ColorFilter implements FilterInterface
@@ -9,8 +10,10 @@ class ColorFilter implements FilterInterface
     /**
      * {@inheritdoc}
      */
-    public function apply(\Imagick $resource, array $options = [])
+    public function apply(Imanee $imanee, array $options = [])
     {
+        /** @var \Imagick $resource */
+        $resource = $imanee->getResource()->getResource();
         $options = array_merge(['color' => 'blue'], $options);
 
         return $resource->colorizeimage($options['color'], 1);

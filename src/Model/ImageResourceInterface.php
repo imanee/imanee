@@ -137,12 +137,4 @@ interface ImageResourceInterface
      * (higher quality and bigger file)
      */
     public function write($file, $jpeg_quality = null);
-
-    /**
-     * Applies a filter compatible with the current Resource Provider
-     * @param FilterInterface $filter
-     * @param array $options
-     * @return mixed
-     */
-    public function applyFilter(FilterInterface $filter, array $options = []);
 }

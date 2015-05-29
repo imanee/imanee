@@ -1,7 +1,8 @@
 <?php
 
-namespace Imanee\Filter;
+namespace Imanee\Filter\Imagick;
 
+use Imanee\Imanee;
 use Imanee\Model\FilterInterface;
 
 /**
@@ -13,8 +14,11 @@ class BWFilter implements FilterInterface
     /**
      * {@inheritdoc}
      */
-    public function apply(\Imagick $resource, array $options = [])
+    public function apply(Imanee $imanee, array $options = [])
     {
+        /** @var \Imagick $resource */
+        $resource = $imanee->getResource()->getResource();
+
         return $resource->modulateimage(100, 0, 100);
     }
 

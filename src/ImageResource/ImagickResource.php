@@ -7,6 +7,10 @@ namespace Imanee\ImageResource;
 
 use Imanee\Exception\EmptyImageException;
 use Imanee\Exception\ImageNotFoundException;
+use Imanee\Filter\Imagick\BWFilter;
+use Imanee\Filter\Imagick\ColorFilter;
+use Imanee\Filter\Imagick\ModulateFilter;
+use Imanee\Filter\Imagick\SepiaFilter;
 use Imanee\Model\FilterInterface;
 use Imanee\Model\ImageResourceInterface;
 use Imanee\Imanee;
@@ -14,11 +18,13 @@ use Imanee\Drawer;
 use Imanee\Model\ImageAnimatableInterface;
 use Imanee\Model\ImageComposableInterface;
 use Imanee\Model\ImageWritableInterface;
+use Imanee\Model\ImageFilterableInterface;
 
 class ImagickResource implements
     ImageResourceInterface,
     ImageWritableInterface,
     ImageComposableInterface,
+    ImageFilterableInterface,
     ImageAnimatableInterface
 {
     /** @var \Imagick the image resource */
@@ -403,10 +409,16 @@ class ImagickResource implements
     }
 
     /**
-     * {@inheritdoc}
+     * Loads resource filters
+     * @return FilterInterface[] Returns an array with the available filters for this resource
      */
-    public function applyFilter(FilterInterface $filter, array $options = [])
+    public function loadFilters()
     {
-        $filter->apply($this->getResource(), $options);
+        return [
+            new BWFilter(),
+            new ColorFilter(),
+            new ModulateFilter(),
+            new SepiaFilter(),
+        ];
     }
 }

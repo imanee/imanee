@@ -12,6 +12,7 @@ use Imanee\Filter\ModulateFilter;
 use Imanee\Filter\SepiaFilter;
 use Imanee\Model\ImageAnimatableInterface;
 use Imanee\Model\ImageComposableInterface;
+use Imanee\Model\ImageFilterableInterface;
 use Imanee\Model\ImageResourceInterface;
 use Imanee\Model\ImageWritableInterface;
 
@@ -51,7 +52,6 @@ class Imanee
     public function __construct($path = null, ImageResourceInterface $resource = null)
     {
         $this->drawer = new Drawer();
-        $this->filterResolver = new FilterResolver($this->getFilters());
 
         if (!$resource) {
             $provider = new ResourceProvider();
@@ -59,6 +59,9 @@ class Imanee
         }
 
         $this->resource = $resource;
+        if ($this->resource instanceof ImageFilterableInterface) {
+            $this->filterResolver = new FilterResolver($this->resource->loadFilters());
+        }
 
         if ($path) {
             $this->load($path);
@@ -154,6 +157,142 @@ class Imanee
         $this->resource->resize($width, $height, $bestfit);
 
         return $this;
+    }
+
+    /**
+     * Rotates the image resource in the given degrees
+     *
+     * @param float $degrees Degrees to rotate the image. Negative values will rotate the image anti-clockwise
+     * @param string $background Background to fill the empty spaces, default is transparent -
+     * will render as black for jpg format (use png if you want it transparent)
+     *
+     * @return $this
+     */
+    public function rotate($degrees, $background = 'transparent')
+    {
+        $this->resource->rotate($degrees, $background);
+
+        return $this;
+    }
+
+    /**
+     * Crops a portion of the image
+     *
+     * @param int $width The width
+     * @param int $height The height
+     * @param int $coordX The X coordinate
+     * @param int $coordY The Y coordinate
+     *
+     * @return $this
+     */
+    public function crop($width, $height, $coordX, $coordY)
+    {
+        $this->resource->crop($width, $height, $coordX, $coordY);
+
+        return $this;
+    }
+
+    /**
+     * Creates a thumbnail of the current resource. If crop is true, the result will be a perfect fit thumbnail with the
+     * given dimensions, cropped by the center. If crop is false, the thumbnail will use the best fit for the dimensions
+     *
+     * @param int $width Width of the thumbnail
+     * @param int $height Height of the thumbnail
+     * @param bool $crop When set to true, the thumbnail will be cropped from the center to match the given size
+     *
+     * @return $this
+     */
+    public function thumbnail($width, $height, $crop = false)
+    {
+        $this->resource->thumbnail($width, $height, $crop);
+
+        return $this;
+    }
+
+    /**
+     * Gets the width of the current image resource
+     *
+     * @return int the width
+     */
+    public function getWidth()
+    {
+        return $this->resource->getWidth();
+    }
+
+    /**
+     * Gets the height of the current image resource
+     *
+     * @return int the height
+     */
+    public function getHeight()
+    {
+        return $this->resource->getHeight();
+    }
+
+    /**
+     * Shortcut method to get width and height
+     */
+    public function getSize()
+    {
+        return ['width' => $this->getWidth(), 'height' => $this->getHeight()];
+    }
+
+    /**
+     * Output the current image resource as a string
+     *
+     * @param string $format The image format (overwrites the currently defined format)
+     *
+     * @return string The image data as a string
+     */
+    public function output($format = null)
+    {
+        return $this->resource->output($format);
+    }
+
+    /**
+     * Convenient way to output the image
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->output();
+    }
+
+    /**
+     * Saves the image to disk. If the second param is provided, will try to compress the image using JPEG compression.
+     *
+     * The format will be decided based on the extension used for the filename. If, for instance,
+     * a "img.png" is provided, the image will be saved as PNG and the compression will not take affect.
+     *
+     * @param string $path The file path to save the image
+     * @param int $jpeg_quality (optional) the quality for JPEG files, 1 to 100 where 100 means no compression
+     * (higher quality and bigger file)
+     *
+     * @return Imanee $this
+     */
+    public function write($path, $jpeg_quality = null)
+    {
+        $this->resource->write($path, $jpeg_quality);
+
+        return $this;
+    }
+
+    /**
+     * Gets the current image resource
+     * @return ImageResourceInterface
+     */
+    public function getResource()
+    {
+        return $this->resource;
+    }
+
+    /**
+     * Sets the current Image Resource
+     * @param ImageResourceInterface $resource
+     */
+    public function setResource(ImageResourceInterface $resource)
+    {
+        $this->resource = $resource;
     }
 
     /**
@@ -367,163 +506,32 @@ class Imanee
     }
 
     /**
-     * Rotates the image resource in the given degrees
+     * Gets loaded filters
      *
-     * @param float $degrees Degrees to rotate the image. Negative values will rotate the image anti-clockwise
-     * @param string $background Background to fill the empty spaces, default is transparent -
-     * will render as black for jpg format (use png if you want it transparent)
-     *
-     * @return $this
-     */
-    public function rotate($degrees, $background = 'transparent')
-    {
-        $this->resource->rotate($degrees, $background);
-
-        return $this;
-    }
-
-    /**
-     * Crops a portion of the image
-     *
-     * @param int $width The width
-     * @param int $height The height
-     * @param int $coordX The X coordinate
-     * @param int $coordY The Y coordinate
-     *
-     * @return $this
-     */
-    public function crop($width, $height, $coordX, $coordY)
-    {
-        $this->resource->crop($width, $height, $coordX, $coordY);
-
-        return $this;
-    }
-
-    /**
-     * Creates a thumbnail of the current resource. If crop is true, the result will be a perfect fit thumbnail with the
-     * given dimensions, cropped by the center. If crop is false, the thumbnail will use the best fit for the dimensions
-     *
-     * @param int $width Width of the thumbnail
-     * @param int $height Height of the thumbnail
-     * @param bool $crop When set to true, the thumbnail will be cropped from the center to match the given size
-     *
-     * @return $this
-     */
-    public function thumbnail($width, $height, $crop = false)
-    {
-        $this->resource->thumbnail($width, $height, $crop);
-
-        return $this;
-    }
-
-    /**
-     * Gets the width of the current image resource
-     *
-     * @return int the width
-     */
-    public function getWidth()
-    {
-        return $this->resource->getWidth();
-    }
-
-    /**
-     * Gets the height of the current image resource
-     *
-     * @return int the height
-     */
-    public function getHeight()
-    {
-        return $this->resource->getHeight();
-    }
-
-    /**
-     * Shortcut method to get width and height
-     */
-    public function getSize()
-    {
-        return ['width' => $this->getWidth(), 'height' => $this->getHeight()];
-    }
-
-    /**
-     * Output the current image resource as a string
-     *
-     * @param string $format The image format (overwrites the currently defined format)
-     *
-     * @return string The image data as a string
-     */
-    public function output($format = null)
-    {
-        return $this->resource->output($format);
-    }
-
-    /**
-     * Convenient way to output the image
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->output();
-    }
-
-    /**
-     * Saves the image to disk. If the second param is provided, will try to compress the image using JPEG compression.
-     *
-     * The format will be decided based on the extension used for the filename. If, for instance,
-     * a "img.png" is provided, the image will be saved as PNG and the compression will not take affect.
-     *
-     * @param string $path The file path to save the image
-     * @param int $jpeg_quality (optional) the quality for JPEG files, 1 to 100 where 100 means no compression
-     * (higher quality and bigger file)
-     *
-     * @return Imanee $this
-     */
-    public function write($path, $jpeg_quality = null)
-    {
-        $this->resource->write($path, $jpeg_quality);
-
-        return $this;
-    }
-
-    /**
-     * Gets the current image resource
-     * @return ImageResourceInterface
-     */
-    public function getResource()
-    {
-        return $this->resource;
-    }
-
-    /**
-     * Sets the current Image Resource
-     * @param ImageResourceInterface $resource
-     */
-    public function setResource(ImageResourceInterface $resource)
-    {
-        $this->resource = $resource;
-    }
-
-    /**
-     * Gets the default filters
-     *
-     * @return array Return an array with the default filters
+     * @return array Return an array with the current loaded filters
+     * @throws UnsupportedMethodException
      */
     public function getFilters()
     {
-        return [
-            new ModulateFilter(),
-            new BWFilter(),
-            new SepiaFilter(),
-            new ColorFilter(),
-        ];
+        if (! ($this->resource instanceof ImageFilterableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
+        return $this->filterResolver->getFilters();
     }
 
     /**
      * Adds a custom filter to the FilterResolver
      *
      * @param FilterInterface $filter The Filter
+     * @throws UnsupportedMethodException
      */
-    public function addFilters(FilterInterface $filter)
+    public function addFilter(FilterInterface $filter)
     {
+        if (! ($this->resource instanceof ImageFilterableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
         $this->filterResolver->addFilter($filter);
     }
 
@@ -533,16 +541,21 @@ class Imanee
      * @param array $options
      * @throws FilterNotFoundException
      * @return $this
+     * @throws UnsupportedMethodException
      */
     public function applyFilter($filter, array $options = [])
     {
+        if (! ($this->resource instanceof ImageFilterableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
         $filter = $this->filterResolver->resolve($filter);
 
         if (!$filter) {
             throw new FilterNotFoundException();
         }
 
-        $this->resource->applyFilter($filter, $options);
+        $filter->apply($this, $options);
 
         return $this;
     }

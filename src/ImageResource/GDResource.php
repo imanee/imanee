@@ -9,14 +9,20 @@ use Imanee\Drawer;
 use Imanee\Exception\EmptyImageException;
 use Imanee\Exception\ImageNotFoundException;
 use Imanee\Exception\UnsupportedFormatException;
+use Imanee\Filter\GD\BWFilter;
 use Imanee\Imanee;
 use Imanee\Model\FilterInterface;
 use Imanee\Model\ImageComposableInterface;
 use Imanee\Model\ImageResourceInterface;
 use Imanee\Model\ImageWritableInterface;
 use Imanee\PixelMath;
+use Imanee\Model\ImageFilterableInterface;
 
-class GDResource implements ImageResourceInterface, ImageComposableInterface, ImageWritableInterface
+class GDResource implements
+    ImageResourceInterface,
+    ImageComposableInterface,
+    ImageWritableInterface,
+    ImageFilterableInterface
 {
     /** @var resource the image resource */
     public $resource;
@@ -328,17 +334,6 @@ class GDResource implements ImageResourceInterface, ImageComposableInterface, Im
         $this->height = imagesy($this->getResource());
     }
 
-    /**
-     * Applies a filter compatible with the current Resource Provider
-     * @param FilterInterface $filter
-     * @param array $options
-     * @return mixed
-     */
-    public function applyFilter(FilterInterface $filter, array $options = [])
-    {
-        // TODO: Implement applyFilter() method.
-    }
-
     /** ImageComposableInterface */
 
     /**
@@ -431,5 +426,17 @@ class GDResource implements ImageResourceInterface, ImageComposableInterface, Im
         $height = $coords[1] - $coords[7];
 
         return ['width' => $width, 'height' => $height];
+    }
+
+    // ImageFilterableInterface
+
+    /**
+     * {@inheritdoc}
+     */
+    public function loadFilters()
+    {
+        return [
+            new BWFilter(),
+        ];
     }
 }
