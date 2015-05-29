@@ -3,10 +3,10 @@
  * SepiaFilter Tests
  */
 
-namespace imanee\tests\Filter;
+namespace imanee\tests\Filter\Imagick;
 
 
-use Imanee\Filter\SepiaFilter;
+use Imanee\Filter\Imagick\SepiaFilter;
 
 class SepiaFilterTest extends \PHPUnit_Framework_TestCase
 {
@@ -37,6 +37,22 @@ class SepiaFilterTest extends \PHPUnit_Framework_TestCase
             ->method('sepiaToneImage')
             ->with(90);
 
-        $this->model->apply($imagick, [ 'threshold' => 90 ]);
+        $imanee = $this->getMockBuilder('Imanee\Imanee')
+            ->setMethods(['getResource'])
+            ->getMock();
+
+        $imresource = $this->getMockBuilder('Imanee\ImageResource\ImagickResource')
+            ->setMethods(['getResource'])
+            ->getMock();
+
+        $imanee->expects($this->once())
+            ->method('getResource')
+            ->will($this->returnValue($imresource));
+
+        $imresource->expects($this->once())
+            ->method('getResource')
+            ->will($this->returnValue($imagick));
+
+        $this->model->apply($imanee, [ 'threshold' => 90 ]);
     }
 }

@@ -24,7 +24,7 @@ class FilterResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldAddAndResolveFilter()
     {
-        $filter = $this->getMockBuilder('Imanee\Filter\BWFilter')
+        $filter = $this->getMockBuilder('Imanee\Filter\Imagick\BWFilter')
             ->setMethods(['getName'])
             ->getMock();
 
@@ -48,10 +48,10 @@ class FilterResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldGetFilters()
     {
-        $filter1 = $this->getMockBuilder('Imanee\Filter\BWFilter')
+        $filter1 = $this->getMockBuilder('Imanee\Filter\Imagick\BWFilter')
             ->getMock();
 
-        $filter2 = $this->getMockBuilder('Imanee\Filter\ColorFilter')
+        $filter2 = $this->getMockBuilder('Imanee\Filter\Imagick\ColorFilter')
             ->getMock();
 
         $this->model->addFilter($filter1);
