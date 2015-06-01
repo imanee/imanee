@@ -3,7 +3,7 @@
  * Extension Not Found Exception
  */
 
-namespace Exception;
+namespace Imanee\Exception;
 
 
 class ExtensionNotFoundException extends \Exception
