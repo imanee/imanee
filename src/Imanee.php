@@ -15,6 +15,7 @@ use Imanee\Model\ImageComposableInterface;
 use Imanee\Model\ImageFilterableInterface;
 use Imanee\Model\ImageResourceInterface;
 use Imanee\Model\ImageWritableInterface;
+use Imanee\Model\FilterInterface;
 
 class Imanee
 {
@@ -293,6 +294,18 @@ class Imanee
     public function setResource(ImageResourceInterface $resource)
     {
         $this->resource = $resource;
+
+        if ($this->resource instanceof ImageFilterableInterface) {
+            $this->filterResolver = new FilterResolver($this->resource->loadFilters());
+        }
+    }
+
+    /**
+     * @return FilterResolver
+     */
+    public function getFilterResolver()
+    {
+        return $this->filterResolver;
     }
 
     /**
@@ -517,13 +530,14 @@ class Imanee
             throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
         }
 
-        return $this->filterResolver->getFilters();
+        return $this->getFilterResolver()->getFilters();
     }
 
     /**
      * Adds a custom filter to the FilterResolver
      *
      * @param FilterInterface $filter The Filter
+     * @return $this
      * @throws UnsupportedMethodException
      */
     public function addFilter(FilterInterface $filter)
@@ -532,7 +546,9 @@ class Imanee
             throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
         }
 
-        $this->filterResolver->addFilter($filter);
+        $this->getFilterResolver()->addFilter($filter);
+
+        return $this;
     }
 
     /**
@@ -549,7 +565,7 @@ class Imanee
             throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
         }
 
-        $filter = $this->filterResolver->resolve($filter);
+        $filter = $this->getFilterResolver()->resolve($filter);
 
         if (!$filter) {
             throw new FilterNotFoundException();

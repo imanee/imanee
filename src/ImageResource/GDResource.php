@@ -365,7 +365,7 @@ class GDResource implements
 
         imagecopyresampled(
             $this->getResource(),
-            $image->getIMResource(),
+            $image->getResource()->getResource(),
             $coordX,
             $coordY,
             0,
