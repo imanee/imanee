@@ -2,6 +2,8 @@
 
 namespace Imanee;
 
+use Imanee\Model\FilterInterface;
+
 class FilterResolver
 {
     /**
@@ -9,6 +11,9 @@ class FilterResolver
      */
     protected $filters;
 
+    /**
+     * @param FilterInterface[] $filters
+     */
     public function __construct(array $filters = [])
     {
         $this->filters = [];
@@ -18,6 +23,10 @@ class FilterResolver
         }
     }
 
+    /**
+     * @param $filter_name
+     * @return bool|FilterInterface
+     */
     public function resolve($filter_name)
     {
         foreach ($this->filters as $filter) {
@@ -29,6 +38,9 @@ class FilterResolver
         return false;
     }
 
+    /**
+     * @param FilterInterface $filter
+     */
     public function addFilter(FilterInterface $filter)
     {
         $this->filters[] = $filter;

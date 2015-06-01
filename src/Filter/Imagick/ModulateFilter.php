@@ -1,8 +1,9 @@
 <?php
 
-namespace Imanee\Filter;
+namespace Imanee\Filter\Imagick;
 
-use Imanee\FilterInterface;
+use Imanee\Imanee;
+use Imanee\Model\FilterInterface;
 
 /**
  * Modulate Filter - changes image brightness, hue and saturation
@@ -13,8 +14,11 @@ class ModulateFilter implements FilterInterface
     /**
      * {@inheritdoc}
      */
-    public function apply(\Imagick $resource, array $options = [])
+    public function apply(Imanee $imanee, array $options = [])
     {
+        /** @var \Imagick $resource */
+        $resource = $imanee->getResource()->getResource();
+
         $options = array_merge([
             'brightness' => 100,
             'saturation' => 50,

@@ -7,8 +7,6 @@ namespace Imanee;
  */
 class Drawer extends ConfigContainer
 {
-    private $drawer;
-
     const TEXT_ALIGN_LEFT   = 1;
     const TEXT_ALIGN_CENTER = 2;
     const TEXT_ALIGN_RIGHT  = 3;
@@ -20,7 +18,6 @@ class Drawer extends ConfigContainer
      */
     public function __construct(array $values = [])
     {
-        $this->drawer = new \ImagickDraw();
         $defaultFont = __DIR__ . '/Resources/'. self::$DEFAULT_FONT;
 
         parent::__construct($values, [
@@ -29,28 +26,6 @@ class Drawer extends ConfigContainer
             'color' => '#000000',
             'align' => Drawer::TEXT_ALIGN_LEFT,
         ]);
-    }
-
-    /**
-     * Prepares the ImagickDraw object
-     */
-    private function prepare()
-    {
-        $this->drawer->setFont($this->font);
-        $this->drawer->setFillColor($this->color);
-        $this->drawer->setFontSize($this->size);
-        $this->drawer->setTextAlignment($this->align);
-    }
-
-    /**
-     * Prepares and returns the ImagickDraw Object
-     * @return \ImagickDraw
-     */
-    public function getDrawer()
-    {
-        $this->prepare();
-
-        return $this->drawer;
     }
 
     /**

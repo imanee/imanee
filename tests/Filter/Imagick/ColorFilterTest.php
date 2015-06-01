@@ -3,10 +3,10 @@
  * ColorFilterTest
  */
 
-namespace imanee\tests\Filter;
+namespace imanee\tests\Filter\Imagick;
 
 
-use Imanee\Filter\ColorFilter;
+use Imanee\Filter\Imagick\ColorFilter;
 
 class ColorFilterTest extends \PHPUnit_Framework_TestCase
 {
@@ -37,6 +37,22 @@ class ColorFilterTest extends \PHPUnit_Framework_TestCase
             ->method('colorizeImage')
             ->with('red', 1);
 
-        $this->model->apply($imagick, [ 'color' => 'red' ]);
+        $imanee = $this->getMockBuilder('Imanee\Imanee')
+            ->setMethods(['getResource'])
+            ->getMock();
+
+        $imresource = $this->getMockBuilder('Imanee\ImageResource\ImagickResource')
+            ->setMethods(['getResource'])
+            ->getMock();
+
+        $imanee->expects($this->once())
+            ->method('getResource')
+            ->will($this->returnValue($imresource));
+
+        $imresource->expects($this->once())
+            ->method('getResource')
+            ->will($this->returnValue($imagick));
+
+        $this->model->apply($imanee, [ 'color' => 'red' ]);
     }
 }

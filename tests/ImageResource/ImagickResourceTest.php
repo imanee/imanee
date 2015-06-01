@@ -2,10 +2,10 @@
 
 namespace Imanee\Tests;
 
-use Imanee\Image;
 use Imanee\Imanee;
+use Imanee\ImageResource\ImagickResource;
 
-class ImageTest extends \PHPUnit_Framework_TestCase
+class ImagickResourceTest extends \PHPUnit_Framework_TestCase
 {
     protected $test_jpg;
     protected $model;
@@ -13,7 +13,7 @@ class ImageTest extends \PHPUnit_Framework_TestCase
     public function setup()
     {
         $this->test_jpg = __DIR__ . '/resources/img01.jpg';
-        $this->model = new Image();
+        $this->model = new ImagickResource();
     }
 
     public function tearDown()
@@ -99,13 +99,5 @@ class ImageTest extends \PHPUnit_Framework_TestCase
         $this->model->createNew(100, 100);
 
         $this->assertFalse($this->model->isBlank());
-    }
-
-    /** this is not right :| */
-    public function testShouldLoadJpg()
-    {
-        $image = new \Imanee\Image($this->test_jpg);
-
-        $this->assertSame('image/jpeg', $image->mime);
     }
 }

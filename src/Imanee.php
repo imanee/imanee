@@ -3,23 +3,32 @@
 namespace Imanee;
 
 use Imanee\Exception\FilterNotFoundException;
+use Imanee\Exception\ImageNotFoundException;
+use Imanee\Exception\UnsupportedFormatException;
+use Imanee\Exception\UnsupportedMethodException;
 use Imanee\Filter\BWFilter;
 use Imanee\Filter\ColorFilter;
 use Imanee\Filter\ModulateFilter;
 use Imanee\Filter\SepiaFilter;
+use Imanee\Model\ImageAnimatableInterface;
+use Imanee\Model\ImageComposableInterface;
+use Imanee\Model\ImageFilterableInterface;
+use Imanee\Model\ImageResourceInterface;
+use Imanee\Model\ImageWritableInterface;
+use Imanee\Model\FilterInterface;
 
 class Imanee
 {
-    /** @var \Imanee\Image Resource */
+    /** @var ImageResourceInterface Resource */
     protected $resource;
 
-    /** @var \Imanee\Drawer The drawer settings */
+    /** @var Drawer The drawer settings */
     protected $drawer;
 
-    /** @var  Imanee[] Frames */
+    /** @var  array Frames */
     protected $frames;
 
-    /** @var  \Imanee\FilterResolver The filter Resolver */
+    /** @var  FilterResolver The filter Resolver */
     protected $filterResolver;
 
     const IM_POS_CENTER = 1;
@@ -38,13 +47,26 @@ class Imanee
 
     /**
      * @param string $path a path to a image file - convenient way to open an image without using the load() method
+     * @param ImageResourceInterface $resource A valid object implementing the ImageResourceInterface; defaults to null,
+     * in which case a resource will be automatically created based on current extensions available
      */
-    public function __construct($path = null)
+    public function __construct($path = null, ImageResourceInterface $resource = null)
     {
         $this->drawer = new Drawer();
-        $this->filterResolver = new FilterResolver($this->getFilters());
 
-        $this->load($path);
+        if (!$resource) {
+            $provider = new ResourceProvider();
+            $resource = $provider->createImageResource();
+        }
+
+        $this->resource = $resource;
+        if ($this->resource instanceof ImageFilterableInterface) {
+            $this->filterResolver = new FilterResolver($this->resource->loadFilters());
+        }
+
+        if ($path) {
+            $this->load($path);
+        }
 
         return $this;
     }
@@ -59,13 +81,13 @@ class Imanee
 
     /**
      * Loads an image from a file
-     * @param string $image_path The path to the image
+     * @param string $imagePath The path to the image
      *
      * @return $this
      */
-    public function load($image_path)
+    public function load($imagePath)
     {
-        $this->resource = new Image($image_path);
+        $this->resource->load($imagePath);
 
         return $this;
     }
@@ -87,13 +109,13 @@ class Imanee
     }
 
     /**
-     * Gets the mime type associated with the current loaded resource
+     * Gets the mime type associated with the current resource (if available)
      *
      * @return string the mime type
      */
     public function getMime()
     {
-        return $this->resource->mime;
+        return $this->resource->getMime();
     }
 
     /**
@@ -134,131 +156,6 @@ class Imanee
     public function resize($width, $height, $bestfit = true)
     {
         $this->resource->resize($width, $height, $bestfit);
-
-        return $this;
-    }
-
-    /**
-     * Places a text on top of the current image - convenient way to write text using relative positioning.
-     * To overwrite the current Drawer settings, create a custom Drawer object and use the method ->setDrawer before
-     *
-     * @param string $text Text to be written
-     * @param int $place_constant One of the Imanee:IM_POS constants - defaults to IM_POS_TOP_LEFT
-     * @param int $fitWidth If a positive value is provided, will change the font size to fit
-     * the text in this width
-     * @param int $fontSize The font size. Defaults to the current font size defined in the Drawer
-     *
-     * @return $this
-     */
-    public function placeText($text, $place_constant = Imanee::IM_POS_TOP_LEFT, $fitWidth = 0, $fontSize = 0)
-    {
-        if ($fontSize) {
-            $this->drawer->setFontSize($fontSize);
-        }
-        $this->resource->placeText($text, $place_constant, $this->drawer, $fitWidth);
-
-        return $this;
-    }
-
-    /**
-     * Writes text to an image
-     *
-     * @param string $text The text to be written
-     * @param int $coordX The X coordinate for text placement
-     * @param int $coordY The Y coordinate for text placement
-     * @param int $size The font size
-     * @param int $angle The angle (defaults to 0, plain)
-     *
-     * @return $this
-     */
-    public function annotate($text, $coordX, $coordY, $size = null, $angle = 0)
-    {
-        $drawer = $this->getDrawer();
-
-        if ($size) {
-            $drawer->setFontSize($size);
-        }
-        $this->resource->annotate($text, $coordX, $coordY, $angle, $drawer);
-
-        return $this;
-    }
-
-    /**
-     * Sets the drawer. Use this to change the default text settings
-     *
-     * @param Drawer $drawer
-     * @return $this
-     */
-    public function setDrawer(Drawer $drawer)
-    {
-        $this->drawer = $drawer;
-
-        return $this;
-    }
-
-    /**
-     * Gets the current drawer in use
-     *
-     * @return Drawer
-     */
-    public function getDrawer()
-    {
-        return $this->drawer;
-    }
-
-    /**
-     * @param mixed $image Path to an image on filesystem or an Imanee Object
-     * @param int $coordX Coord X for placement
-     * @param int $coordY Coord Y for placement
-     * @param int $width (optional) specifies a width for the placement
-     * @param int $height (optional) specifies a height for the placement
-     * @param int $transparency (optional) specifies the transparency of the placed image, in percentage
-     * @return $this
-     */
-    public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $transparency = 0)
-    {
-        $this->resource->compositeImage($image, $coordX, $coordY, $width, $height, $transparency);
-
-        return $this;
-    }
-
-    /**
-     * Places an image on top of the current resource. If the width and height are supplied,
-     * will perform a resize before placing the image.
-     *
-     * @param mixed $image Path to an image on filesystem or an Imanee Object
-     * @param int $place_constant One of the Imanee::IM_POS constants, defaults to IM_POS_TOP_LEFT (top left corner)
-     * @param int $width (optional) specifies a width for the placement
-     * @param int $height (optional) specifies a height for the placement
-     * @param int $transparency (optional) specifies the transparency of the placed image.
-     * 0 for fully opaque (default), 100 for fully transparent
-     *
-     * @return $this
-     */
-    public function placeImage(
-        $image,
-        $place_constant = Imanee::IM_POS_TOP_LEFT,
-        $width = null,
-        $height = null,
-        $transparency = 0
-    ) {
-        $this->resource->placeImage($image, $place_constant, $width, $height, $transparency);
-
-        return $this;
-    }
-
-    /**
-     * Convenient method to place a watermark image on top of the current resource
-     *
-     * @param mixed $image The path to the watermark image file or an Imanee object
-     * @param int $place_constant One of the Imanee::IM_POS constants, defaults to IM_POS_BOTTOM_RIGHT
-     * @param int $transparency Watermark transparency percentage. Defaults to 0 (fully opaque)
-     *
-     * @return $this
-     */
-    public function watermark($image, $place_constant = Imanee::IM_POS_BOTTOM_RIGHT, $transparency = 0)
-    {
-        $this->resource->placeImage($image, $place_constant, 0, 0, $transparency);
 
         return $this;
     }
@@ -320,7 +217,7 @@ class Imanee
      */
     public function getWidth()
     {
-        return $this->resource->width;
+        return $this->resource->getWidth();
     }
 
     /**
@@ -330,7 +227,15 @@ class Imanee
      */
     public function getHeight()
     {
-        return $this->resource->height;
+        return $this->resource->getHeight();
+    }
+
+    /**
+     * Shortcut method to get width and height
+     */
+    public function getSize()
+    {
+        return ['width' => $this->getWidth(), 'height' => $this->getHeight()];
     }
 
     /**
@@ -343,6 +248,15 @@ class Imanee
     public function output($format = null)
     {
         return $this->resource->output($format);
+    }
+
+    /**
+     * Convenient way to output the image
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->output();
     }
 
     /**
@@ -365,50 +279,276 @@ class Imanee
     }
 
     /**
-     * Gets the Imagick Resource from the Image Object
-     *
-     * @return \Imagick
+     * Gets the current image resource
+     * @return ImageResourceInterface
      */
-    public function getIMResource()
+    public function getResource()
     {
-        return $this->resource->getResource();
+        return $this->resource;
     }
 
     /**
-     * Sets the Imagick resource in the Image Object
-     * @param \Imagick $imagick
-     * @return $this
+     * Sets the current Image Resource
+     * @param ImageResourceInterface $resource
      */
-    public function setIMResource(\Imagick $imagick)
+    public function setResource(ImageResourceInterface $resource)
     {
-        $this->resource->setResource($imagick);
+        $this->resource = $resource;
+
+        if ($this->resource instanceof ImageFilterableInterface) {
+            $this->filterResolver = new FilterResolver($this->resource->loadFilters());
+        }
+    }
+
+    /**
+     * @return FilterResolver
+     */
+    public function getFilterResolver()
+    {
+        return $this->filterResolver;
+    }
+
+    /**
+     * Adjusts the font size of the Drawer object to fit a text in the desired width
+     * @param $text
+     * @param Drawer $drawer
+     * @param $width
+     * @return Drawer
+     * @throws UnsupportedMethodException
+     */
+    public function adjustFontSize($text, Drawer $drawer, $width)
+    {
+        if (! ($this->resource instanceof ImageWritableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
+        $fontSize = 0;
+        $metrics['width'] = 0;
+
+        while ($metrics['width'] <= $width) {
+            $drawer->setFontSize($fontSize);
+            $metrics = $this->resource->getTextGeometry($text, $drawer);
+            $fontSize++;
+        }
+
+        return $drawer;
+    }
+
+    /**
+     * Places a text on top of the current image - convenient way to write text using relative positioning.
+     * To overwrite the current Drawer settings, create a custom Drawer object and use the method ->setDrawer before
+     *
+     * @param string $text Text to be written
+     * @param int $place_constant One of the Imanee:IM_POS constants - defaults to IM_POS_TOP_LEFT
+     * @param int $fitWidth If a positive value is provided, will change the font size to fit
+     * the text in this width
+     * @param int $fontSize The font size. Defaults to the current font size defined in the Drawer
+     *
+     * @return $this
+     * @throws UnsupportedMethodException
+     */
+    public function placeText($text, $place_constant = Imanee::IM_POS_TOP_LEFT, $fitWidth = 0, $fontSize = 0)
+    {
+        if (! ($this->resource instanceof ImageWritableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
+        if ($fontSize) {
+            $this->getDrawer()->setFontSize($fontSize);
+        }
+
+        if ($fitWidth > 0) {
+            $this->setDrawer($this->adjustFontSize($text, $this->getDrawer(), $fitWidth));
+        }
+
+        list ($coordX, $coordY) = PixelMath::getPlacementCoordinates(
+            $this->resource->getTextGeometry($text, $this->getDrawer()),
+            $this->getSize(),
+            $place_constant
+        );
+
+        $this->resource->annotate(
+            $text,
+            $coordX,
+            $coordY + $this->resource->getFontSize($this->getDrawer()),
+            0,
+            $this->getDrawer()
+        );
 
         return $this;
     }
 
     /**
-     * Gets the default filters
+     * Writes text to an image
      *
-     * @return array Return an array with the default filters
+     * @param string $text The text to be written
+     * @param int $coordX The X coordinate for text placement
+     * @param int $coordY The Y coordinate for text placement
+     * @param int $size The font size
+     * @param int $angle The angle (defaults to 0, plain)
+     *
+     * @return $this
+     * @throws UnsupportedMethodException
+     */
+    public function annotate($text, $coordX, $coordY, $size = null, $angle = 0)
+    {
+        if (! ($this->resource instanceof ImageWritableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
+        $drawer = $this->getDrawer();
+
+        if ($size) {
+            $drawer->setFontSize($size);
+        }
+        $this->resource->annotate($text, $coordX, $coordY, $angle, $drawer);
+
+        return $this;
+    }
+
+    /**
+     * Sets the drawer. Use this to change the default text settings
+     *
+     * @param Drawer $drawer
+     * @return $this
+     */
+    public function setDrawer(Drawer $drawer)
+    {
+        $this->drawer = $drawer;
+
+        return $this;
+    }
+
+    /**
+     * Gets the current drawer in use
+     *
+     * @return Drawer
+     */
+    public function getDrawer()
+    {
+        return $this->drawer;
+    }
+
+    /**
+     * @param mixed $image Path to an image on filesystem or an Imanee Object
+     * @param int $coordX Coord X for placement
+     * @param int $coordY Coord Y for placement
+     * @param int $width (optional) specifies a width for the placement
+     * @param int $height (optional) specifies a height for the placement
+     * @param int $transparency (optional) specifies the transparency of the placed image, in percentage
+     * @return $this
+     * @throws UnsupportedMethodException
+     */
+    public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $transparency = 0)
+    {
+        if (! ($this->resource instanceof ImageComposableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
+        $this->resource->compositeImage($image, $coordX, $coordY, $width, $height, $transparency);
+
+        return $this;
+    }
+
+    /**
+     * Places an image on top of the current resource. If the width and height are supplied,
+     * will perform a resize before placing the image.
+     *
+     * @param mixed $image Path to an image on filesystem or an Imanee Object
+     * @param int $place_constant One of the Imanee::IM_POS constants, defaults to IM_POS_TOP_LEFT (top left corner)
+     * @param int $width (optional) specifies a width for the placement
+     * @param int $height (optional) specifies a height for the placement
+     * @param int $transparency (optional) specifies the transparency of the placed image.
+     * 0 for fully opaque (default), 100 for fully transparent
+     *
+     * @return $this
+     *
+     * @throws UnsupportedMethodException
+     * @throws UnsupportedFormatException
+     */
+    public function placeImage(
+        $image,
+        $place_constant = Imanee::IM_POS_TOP_LEFT,
+        $width = null,
+        $height = null,
+        $transparency = 0
+    ) {
+        if (! ($this->resource instanceof ImageComposableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
+        if (!is_object($image)) {
+            $img = clone $this;
+            $img->load($image);
+            $image = $img;
+        }
+
+        if (! ($image instanceof \Imanee\Imanee)) {
+            throw new UnsupportedFormatException('Object not supported. It must be an instance of Imanee');
+        }
+
+        if ($width and $height) {
+            $image->resize($width, $height);
+        }
+
+        list ($coordX, $coordY) = PixelMath::getPlacementCoordinates(
+            $image->getSize(),
+            ['width' => $this->getWidth(), 'height' => $this->getHeight()],
+            $place_constant
+        );
+
+        $this->resource->compositeImage($image, $coordX, $coordY, 0, 0, $transparency);
+
+        return $this;
+    }
+
+    /**
+     * Convenient method to place a watermark image on top of the current resource
+     *
+     * @param mixed $image The path to the watermark image file or an Imanee object
+     * @param int $place_constant One of the Imanee::IM_POS constants, defaults to IM_POS_BOTTOM_RIGHT
+     * @param int $transparency Watermark transparency percentage. Defaults to 0 (fully opaque)
+     *
+     * @return $this
+     */
+    public function watermark($image, $place_constant = Imanee::IM_POS_BOTTOM_RIGHT, $transparency = 0)
+    {
+        $this->placeImage($image, $place_constant, 0, 0, $transparency);
+
+        return $this;
+    }
+
+    /**
+     * Gets loaded filters
+     *
+     * @return array Return an array with the current loaded filters
+     * @throws UnsupportedMethodException
      */
     public function getFilters()
     {
-        return [
-            new ModulateFilter(),
-            new BWFilter(),
-            new SepiaFilter(),
-            new ColorFilter(),
-        ];
+        if (! ($this->resource instanceof ImageFilterableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
+        return $this->getFilterResolver()->getFilters();
     }
 
     /**
      * Adds a custom filter to the FilterResolver
      *
      * @param FilterInterface $filter The Filter
+     * @return $this
+     * @throws UnsupportedMethodException
      */
-    public function addFilters(FilterInterface $filter)
+    public function addFilter(FilterInterface $filter)
     {
-        $this->filterResolver->addFilter($filter);
+        if (! ($this->resource instanceof ImageFilterableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
+        $this->getFilterResolver()->addFilter($filter);
+
+        return $this;
     }
 
     /**
@@ -417,47 +557,71 @@ class Imanee
      * @param array $options
      * @throws FilterNotFoundException
      * @return $this
+     * @throws UnsupportedMethodException
      */
     public function applyFilter($filter, array $options = [])
     {
-        $filter = $this->filterResolver->resolve($filter);
+        if (! ($this->resource instanceof ImageFilterableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
+        $filter = $this->getFilterResolver()->resolve($filter);
 
         if (!$filter) {
             throw new FilterNotFoundException();
         }
 
-        $filter->apply($this->getIMResource(), $options);
+        $filter->apply($this, $options);
 
         return $this;
     }
 
     /**
-     * Adds a frame for generating animated gifs with the animate() method
-     * @param Imanee $imanee
+     * Shortcut for adding filters
+     * @param array $frames - Array of Imanee objects or image paths (string), or both
+     * @return $this
      */
-    public function addFrame(Imanee $imanee)
+    public function addFrames(array $frames)
     {
-        $this->frames[] = $imanee;
+        foreach ($frames as $frame) {
+            $this->addFrame($frame);
+        }
+
+        return $this;
+    }
+    
+    /**
+     * Adds a frame for generating animated gifs with the animate() method
+     * @param mixed $frame A string with a file path or an Imanee object
+     * @return $this
+     */
+    public function addFrame($frame)
+    {
+        $this->frames[] = $frame;
+
+        return $this;
+    }
+
+    /**
+     * @return Imanee[]
+     */
+    public function getFrames()
+    {
+        return $this->frames;
     }
 
     /**
      * @param int $delay
      * @return string
+     * @throws UnsupportedMethodException
      */
     public function animate($delay = 20)
     {
-        $gif = new \Imagick();
-        $gif->setFormat('gif');
-
-        foreach ($this->frames as $imanee) {
-            $frame = $imanee->getIMResource();
-            $frame->setImageDelay($delay);
-            $gif->addImage($frame);
+        if (! ($this->resource instanceof ImageAnimatableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
         }
 
-        return (new Imanee())
-            ->setIMResource($gif)
-            ->setFormat('gif');
+        return $this->resource->animate($this->getFrames(), $delay);
     }
 
     /**
@@ -469,9 +633,14 @@ class Imanee
      * @param string $background
      * @return Imanee
      */
-    public static function textGen($text, Drawer $drawer = null, $format = 'png', $background = 'transparent')
-    {
-        $imanee = new Imanee();
+    public static function textGen(
+        $text,
+        Drawer $drawer = null,
+        $format = 'png',
+        $background = 'transparent',
+        ImageResourceInterface $resource = null
+    ) {
+        $imanee = new Imanee(null, $resource);
 
         if ($drawer !== null) {
             $imanee->setDrawer($drawer);
@@ -489,24 +658,22 @@ class Imanee
     /**
      * Convenient method for generating an animated gif from an array of images.
      *
-     * @param array $images
+     * @param array $images Array containing paths to the images that should be used as frames
      * @param int $delay
      * @return string
+     * @throws UnsupportedMethodException
      */
     public static function arrayAnimate(array $images, $delay = 20)
     {
-        $gif = new \Imagick();
-        $gif->setFormat('gif');
+        $imanee = new Imanee();
 
-        foreach ($images as $image) {
-            $frame = new \Imagick($image);
-            $frame->setImageDelay($delay);
-            $gif->addImage($frame);
+        if (! ($imanee->resource instanceof ImageAnimatableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
         }
 
-        return (new Imanee())
-            ->setIMResource($gif)
-            ->setFormat('gif');
+        return $imanee
+           ->resource
+           ->animate($images, $delay);
     }
 
     /**
@@ -515,29 +682,47 @@ class Imanee
      * @param $pattern
      * @param int $delay
      * @return string
+     * @throws UnsupportedMethodException
      */
     public static function globAnimate($pattern, $delay = 20)
     {
-        $gif = new \Imagick();
-        $gif->setFormat('gif');
+        $imanee = new Imanee();
 
-        foreach (glob($pattern) as $image) {
-            $frame = new \Imagick($image);
-            $frame->setImageDelay($delay);
-            $gif->addImage($frame);
+        if (! ($imanee->resource instanceof ImageAnimatableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
         }
 
-        return (new Imanee())
-            ->setIMResource($gif)
-            ->setFormat('gif');
+        $frames = [];
+
+        foreach (glob($pattern) as $image) {
+            $frames[] = $image;
+        }
+
+        return $imanee
+            ->resource
+            ->animate($frames, $delay);
     }
 
     /**
-     * Convenient way to output the image
-     * @return string
+     * Helper method to get info about an image saved in disk
+     * @param string $imagePath
+     * @return array Array containing the keys 'mime', 'width' and 'height'
+     * @throws ImageNotFoundException
      */
-    public function __toString()
+    public static function getImageInfo($imagePath)
     {
-        return $this->output();
+        if (!is_file($imagePath)) {
+            throw new ImageNotFoundException(
+                sprintf("File '%s' not found. Are you sure this is the right path?", $imagePath)
+            );
+        }
+
+        $info = getimagesize($imagePath);
+
+        return [
+            'mime' => $info['mime'],
+            'width' => $info[0],
+            'height' => $info[1],
+        ];
     }
 }

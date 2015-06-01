@@ -28,13 +28,6 @@ class DrawerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('#000000', $this->model->getFontColor());
     }
 
-    public function testShouldReturnDrawerObject()
-    {
-        $drawer = $this->model->getDrawer();
-
-        $this->assertInstanceOf('ImagickDraw', $drawer);
-    }
-
     public function testShouldSetAndGetFontSize()
     {
         $this->model->setFontSize(20);
