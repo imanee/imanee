@@ -6,8 +6,7 @@
 
 namespace Imanee;
 
-
-use Exception\ExtensionNotFoundException;
+use Imanee\Exception\ExtensionNotFoundException;
 use Imanee\ImageResource\GDResource;
 use Imanee\ImageResource\ImagickResource;
 
@@ -30,8 +29,9 @@ class ResourceProvider
         }
 
         throw new ExtensionNotFoundException(
-            "We couldn't detect Imagick or GD extensions.
-                    You'll need to install one of these extensions in order to use Imanee."
+            "We couldn't detect neither Imagick or GD extensions.
+            You'll need to install one of these extensions in order to use Imanee.
+            Check this link for more info: http://imanee.io/#requirements"
         );
     }
 
