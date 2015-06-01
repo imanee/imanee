@@ -265,7 +265,7 @@ class ImagickResource implements
                 throw new \Exception('Object not supported. It must be an instance of Imanee');
             }
 
-            $img = $image->getIMResource();
+            $img = $image->getResource()->getResource();
         }
 
         if ($width and $height) {
