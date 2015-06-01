@@ -1,12 +1,14 @@
 Getting Started
 ===============
 
-Imanee is a simple wrapper to facilitate the use of ImageMagick (Imagick extension) in PHP. Imanee provides several convenient methods for dealing with images, generating
+Imanee is a simple wrapper to facilitate the use of ImageMagick and GD in PHP. Imanee provides several convenient methods for dealing with images, generating
 text and animated gifs, applying filters and funny effects to images, amongst other things.
 
 Requirements
 ------------
-Imanee requires the *imagick* PHP extension, and PHP >= 5.4 .
+Imanee requires PHP >= 5.4 and a supported image extension to be installed and loaded in the PHP server. We currently support **Imagick** and **GD**. Imanee
+will always try to use Imagick by default, but if it cannot find the *Imagick* extension loaded, it will try to use GD instead. You can also override this behavior
+by providing a *ImageResource* object when instantiating Imanee.
 
 Installation
 ------------
@@ -61,3 +63,11 @@ A few simple examples to get you started
     $imanee = new Imanee('path/to/my/image.jpg');
     echo $imanee->watermark('path/to/my/image.png', Imanee::IM_POS_BOTTOM_RIGHT, 50)->output();
 
+5. Forcing use of GD:
+
+.. code-block:: php
+
+    header("Content-type: image/jpg");
+
+    $imanee = new Imanee('path/to/my/image.jpg', new GDResource());
+    echo $imanee->thumbnail(200, 200)->output();

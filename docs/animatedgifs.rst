@@ -1,7 +1,7 @@
 Creating Animated Gifs
 ======================
 
-Imanee has various convenient methods to generate animated gifs.
+Imanee has various convenient methods to generate animated gifs. Notice that the animated gif features are currently only supported when you are using the **ImagickResource** - you need the Imagick extension for that.
 
 Creating an animated gif from images in a directory
 ---------------------------------------------------

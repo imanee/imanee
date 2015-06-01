@@ -5,7 +5,7 @@
 
 Imanee documentation
 ====================
-Imanee is a simple wrapper library for Imagemagick (on top of Imagick PHP extension). It provides an easy flow for editing images and performing common tasks such as thumbnails, watermarks and text writing.
+Imanee is a simple image manipulation library for PHP. It provides an easy flow for editing images and performing tasks such as creating thumbnails, watermarks, text writing and animated gifs.
 
 For live demos, please visit our main website: `imanee.io <http://imanee.io>`_.
 
