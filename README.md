@@ -1,16 +1,19 @@
 [![Build Status](https://travis-ci.org/imanee/imanee.svg?branch=master)](https://travis-ci.org/imanee/imanee)
 [![Documentation Status](https://readthedocs.org/projects/imanee/badge/?version=latest)](https://readthedocs.org/projects/imanee/?badge=latest)
 
-Imanee is a simple wrapper library for Imagemagick on PHP (using the Imagick PHP extension). 
+Imanee is a simple Image Manipulation library for PHP. 
 It provides an easy flow and convenient methods for creating thumbnails, watermarks, text writing, animated gifs and more.
 
-Check [our documentation](http://imanee.readthedocs.org) for detailed instructions and usage examples.
+Check [our live demos](http://imanee.io/#demos) for usage examples.
+Check [our documentation](http://imanee.readthedocs.org) for detailed instructions.
 
 ## Requirements
-Imanee requires the *imagick* PHP extension, and PHP >= 5.4 .
+Imanee requires PHP >= 5.4 , and one of the following image extensions for PHP: **Imagick** or **GD**. It's recommended to use Imagick as it has more features, including animated gifs support (not available with GD).
 
 ## Installation
-Installation can easily be made through composer.
+First make sure you have either Imagick or GD installed and enabled on your PHP server. Imanee will try to use GD if Imagick is not found in the system.
+
+You can add Imanee to your project easily through composer:
 
     $ composer require imanee/imanee
 
@@ -73,6 +76,15 @@ echo Imanee::arrayAnimate($frames, 30);
 header("Content-type: image/gif");
 
 echo Imanee::globAnimate('resources/*.jpg');
+```
+
+###Forcing GD usage
+
+```php
+header("Content-type: image/jpg");
+
+$imanee = new Imanee('path/to/my/image.jpg', new GDResource());
+echo $imanee->thumbnail(200, 200)->output();
 ```
 
 For more (and complete) examples please have a look at the demos repository: <a href="https://github.com/imanee/demos">https://github.com/imanee/demos</a>
