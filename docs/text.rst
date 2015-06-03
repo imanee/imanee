@@ -21,11 +21,34 @@ Basic usage example:
     header("Content-type: image/jpg");
 
     $imanee = new Imanee($res_jpg);
-    echo $imanee->placeText('imanee test', 40, \Imanee\Imanee::IM_POS_MID_CENTER)->output();
+    echo $imanee
+        ->placeText('imanee test', Imanee::IM_POS_MID_CENTER)
+        ->output();
 
-This will write 'imanee test' using size 40 and the default Drawer settings, on top of the current image resource, centralized.
+This will write 'imanee test' using the default Drawer settings, on top of the current image resource, centralized. Result:
+
+.. image:: img/text01.jpg
 
 For a reference on all available placement constants, have a look at the :ref:`Positioning Constants<constants-positioning>` manual page.
+
+Now imagine you want your text to have a specific width, and you are not sure which font size would give you that.
+No worries! You can use the argument ``fitWidth = x`` to define the width you want the text to fill:
+
+.. code-block:: php
+
+    $res_jpg = __DIR__ . '/../resources/img01.jpg';
+
+    header("Content-type: image/jpg");
+
+    $imanee = new Imanee($res_jpg);
+    echo $imanee
+        ->placeText('imanee test', Imanee::IM_POS_MID_CENTER, $imanee->getWidth()*0.9) // this will use 90% of the image width for the text, leaving some margins
+        ->output();
+
+And this is the result:
+
+.. image:: img/text02.jpg
+
 
 Using Coordinates
 -----------------
@@ -46,9 +69,11 @@ Basic usage example:
     header("Content-type: image/jpg");
 
     $imanee = new Imanee($res_jpg);
-    echo $imanee->annotate('imanee test', 10, 60, 20)->output();
+    echo $imanee
+        ->annotate('imanee test', 10, 60, 20)
+        ->output();
 
-
+.. image:: img/text03.jpg
 
 Setting the font and text color
 -------------------------------
@@ -65,12 +90,16 @@ Imanee uses a default *Drawer* object, but you can customize all options by crea
     $imanee = new Imanee($res_jpg);
     $drawer = new Drawer();
     $drawer
-        ->setFont('path/to/my/font.ttf')
-        ->setFontColor('red')
-        ->setFontSize(50);
+        ->setFont(__DIR__ . '/resources/almonte_wood.ttf')
+        ->setFontColor('blue')
+        ->setFontSize(100);
 
     $imanee->setDrawer($drawer);
-    echo $imanee->annotate('imanee test', 10, 60, 20)->output();
+    echo $imanee
+        ->placeText('Imanee Rocks!', Imanee::IM_POS_MID_CENTER)
+        ->output();
+
+.. image:: img/text04.jpg
 
 Generating text-only images
 ---------------------------
@@ -86,14 +115,15 @@ Example:
     header("Content-type: image/png");
 
     $drawer = new Drawer();
+    $drawer
+        ->setFont(__DIR__ . '/resources/almonte_wood.ttf')
+        ->setFontColor('blue')
+        ->setFontSize(100);
 
-    $drawer->setFont(__DIR__ . '/../resources/fonts/moderna.ttf')
-        ->setFontColor('red')
-        ->setFontSize(50);
-
-    $text = Imanee::textGen('Imanee!', $drawer, 'png');
-
+    $text = Imanee::textGen('Imanee Rocks!', $drawer);
     echo $text->output();
 
 Only the text is mandatory, but you normally will be creating a custom Drawer object to change things like font, color and size. By default it generates a PNG with
 transparent background.
+
+.. image:: img/text.png

@@ -64,6 +64,8 @@ A few simple examples to get you started
     echo $imanee->watermark('path/to/my/image.png', Imanee::IM_POS_BOTTOM_RIGHT, 50)->output();
 
 5. Forcing use of GD:
+Sometimes it might be useful to force usage of a specific Image Resource type.
+You can just pass an object implementing the ImageResource interface as a second argument to the Imanee constructor.
 
 .. code-block:: php
 

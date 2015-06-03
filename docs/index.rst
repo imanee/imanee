@@ -15,12 +15,12 @@ Contents:
    :maxdepth: 2
 
    gettingstarted.rst
-   resizes.rst
-   thumbnails.rst
-   saving.rst
+   basic.rst
+   filters.rst
+   customFilter.rst
    text.rst
-   watermarks.rst
    collages.rst
+   watermarks.rst
    animatedgifs.rst
    constants.rst
 
