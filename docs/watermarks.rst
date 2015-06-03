@@ -15,8 +15,9 @@ Use the method ``watermark`` to add watermarks on top of images:
     $imanee = new Imanee($res_jpg);
     echo $imanee->watermark($res_png, Imanee::IM_POS_BOTTOM_RIGHT, 30)->output();
 
-It's important to remember that only images with alpha channel can have transparency, so if you want to have a translucid watermark you need to use a PNG.
+It's important to remember that only images with alpha channel can have transparency, so if you want to have a translucid watermark you need to use a PNG. Also, the transparency feature is not currently supported by the GD wrapper - it only works well when using the Imagick extension.
+
+.. image:: img/watermark.jpg
 
 .. note::
-   The opacity change must be done pixel per pixel, so it will have a poor performance on huge images. Chances are you won't notice any problem since
-   watermark pngs usually are not so big. You can always save the PNG with transparency already applied, and don't make use of the opacity argument here (should work faster).
+   The opacity change must be done pixel per pixel, so it will have a poor performance on huge images. You can always save the PNG with transparency already applied, and don't make use of the opacity argument here (should work faster).

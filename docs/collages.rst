@@ -29,6 +29,7 @@ Using relative positioning
 
     echo $imanee->output();
 
+.. image:: img/collage01.jpg
 
 Using absolute positioning
 --------------------------
@@ -50,3 +51,5 @@ Using absolute positioning
         ->compositeImage($res_png2, 300, 150, 100, 100);
 
     echo $imanee->output();
+
+.. image:: img/collage02.jpg
