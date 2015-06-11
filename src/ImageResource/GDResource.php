@@ -305,6 +305,7 @@ class GDResource implements
     public function write($file, $jpeg_quality = null)
     {
         $jpeg_quality = $jpeg_quality ?: 80;
+        $this->setFormat($this->getExtensionByFileName($file));
 
         switch ($this->format) {
             case "jpg":
@@ -326,6 +327,18 @@ class GDResource implements
                     sprintf("The format '%s' is not supported by this Resource.", $this->getMime())
                 );
         }
+    }
+
+    /**
+     * A workaround to keep compatibility with Imagick when writing images to disk
+     * @param string $filepath
+     * @return string
+     */
+    public function getExtensionByFileName($filepath)
+    {
+        $path = pathinfo($filepath);
+
+        return $path['extension'];
     }
 
     /**
