@@ -14,7 +14,9 @@
         "php": ">=5.4.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "3.7.*"
+        "phpunit/phpunit": "3.7.*",
+        "ext-imagick": "*",
+        "ext-gd": "*"
     },
     "autoload": {
         "psr-4": { "Imanee\\": "src/" }

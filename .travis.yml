@@ -6,6 +6,13 @@ php:
     - 5.6
     - hhvm
 
+before_install:
+    - pear config-set preferred_state beta
+    - printf "\n" | pecl install imagick
+    - echo "extension = imagick.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    - sudo apt-get update -qq
+    - sudo apt-get install -qq php5-gd
+
 install:
     - composer install --no-interaction
 
