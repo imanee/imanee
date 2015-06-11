@@ -1,7 +1,7 @@
 {
     "name": "imanee/imanee",
-    "description": "A PHP Image Manipulation Library based on Imagemagick",
-    "keywords": ["image", "php", "processing", "imagick", "imagemagick"],
+    "description": "PHP Image Manipulation Library",
+    "keywords": ["image", "php", "imagick", "gd", "imagemagick"],
     "homepage": "http://imanee.io",
     "license": "MIT",
     "authors": [
