@@ -76,6 +76,8 @@ class ImagickResource implements
         $this->imagePath = $imagePath;
 
         $this->resource = new \Imagick($this->imagePath);
+
+        return $this;
     }
 
     /**
@@ -87,7 +89,7 @@ class ImagickResource implements
         $this->height     = $height;
         $this->background = $background;
 
-        $this->resource->newImage($width, $height, new \ImagickPixel($background));
+        return $this->resource->newImage($width, $height, new \ImagickPixel($background));
     }
 
 
@@ -142,8 +144,13 @@ class ImagickResource implements
             throw new EmptyImageException("You are trying to resize an empty image.");
         }
 
-        $this->resource->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1, $bestfit);
-        $this->updateResourceDimensions();
+        if ($this->resource->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1, $bestfit)) {
+            $this->updateResourceDimensions();
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -167,8 +174,13 @@ class ImagickResource implements
      */
     public function rotate($degrees = 90.00, $background = 'transparent')
     {
-        $this->resource->rotateimage(new \ImagickPixel($background), $degrees);
-        $this->updateResourceDimensions();
+        if ($this->resource->rotateimage(new \ImagickPixel($background), $degrees)) {
+            $this->updateResourceDimensions();
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -178,8 +190,14 @@ class ImagickResource implements
     {
         $this->width = $width;
         $this->height = $height;
-        $this->resource->cropImage($width, $height, $coordX, $coordY);
-        $this->updateResourceDimensions();
+
+        if ($this->resource->cropImage($width, $height, $coordX, $coordY)) {
+            $this->updateResourceDimensions();
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -188,12 +206,18 @@ class ImagickResource implements
     public function thumbnail($width, $height, $crop = false)
     {
         if ($crop) {
-            $this->resource->cropThumbnailImage($width, $height);
+            $return = $this->resource->cropThumbnailImage($width, $height);
         } else {
-            $this->resource->thumbnailImage($width, $height, true);
+            $return = $this->resource->thumbnailImage($width, $height, true);
         }
 
-        $this->updateResourceDimensions();
+        if ($return) {
+            $this->updateResourceDimensions();
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -228,7 +252,7 @@ class ImagickResource implements
             $this->resource->setImageCompressionQuality($jpeg_quality);
         }
 
-        $this->resource->writeImages($file, true);
+        return $this->resource->writeImages($file, true);
     }
 
     /**
@@ -276,7 +300,7 @@ class ImagickResource implements
             $this->setOpacity($img, $transparency);
         }
 
-        $this->resource->compositeImage($img, \Imagick::COMPOSITE_OVER, $coordX, $coordY);
+        return $this->resource->compositeImage($img, \Imagick::COMPOSITE_OVER, $coordX, $coordY);
     }
 
     // ImageWritableInterface
@@ -286,13 +310,11 @@ class ImagickResource implements
      */
     public function annotate($text, $coordX, $coordY, $angle, Drawer $drawer)
     {
-        $this->resource->annotateImage($this->getImagickDraw($drawer), $coordX, $coordY, $angle, $text);
+        return $this->resource->annotateImage($this->getImagickDraw($drawer), $coordX, $coordY, $angle, $text);
     }
 
     /**
-     * The font size is based on ImagickDraw sizes, so we just return what is used in the Drawer here.
-     * @param Drawer $drawer
-     * @return int
+     * {@inheritdoc}
      */
     public function getFontSize(Drawer $drawer)
     {
@@ -332,10 +354,7 @@ class ImagickResource implements
     // ImageAnimatableInterface
 
     /**
-     * @param mixed $frames - Can be either a collection of Imanee objects, or a string array with paths to images,
-     * or both mixed
-     * @param int $delay
-     * @return $this
+     * {@inheritdoc}
      */
     public function animate(array $frames, $delay = 20)
     {
@@ -382,7 +401,7 @@ class ImagickResource implements
      *
      * @param \Imagick  $resource      The imagick resource to set opacity
      * @param int       $transparency  The transparency percentage, 0 to 100 - where 100 is fully transparent
-     * @return \Imagick Returns        the Imagick object with changed opacity
+     * @return bool     Returns true if successful
      */
     public function setOpacity(\Imagick $resource, $transparency)
     {
@@ -409,8 +428,7 @@ class ImagickResource implements
     }
 
     /**
-     * Loads resource filters
-     * @return FilterInterface[] Returns an array with the available filters for this resource
+     * {@inheritdoc}
      */
     public function loadFilters()
     {

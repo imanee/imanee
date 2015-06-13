@@ -26,11 +26,13 @@ interface ImageResourceInterface
      * @param int $width  The width for the image
      * @param int $height The height for the image
      * @param string $background The background color
+     *
+     * @return bool True if successful
      */
     public function createNew($width, $height, $background = 'white');
 
     /**
-     * @return mixed The image resource (Imagick object)
+     * @return mixed The image resource (Imagick object or GD resource)
      */
     public function getResource();
 
@@ -81,6 +83,9 @@ interface ImageResourceInterface
      * @param int  $height  The new height
      * @param bool $bestfit When set to false, will force resize to specified dimensions. Default is true, which means
      * the resize will be proportional to fit in the provided dimensions, keeping the image always proportional.
+     *
+     * @return bool True if successful
+     *
      * @throws EmptyImageException
      */
     public function resize($width, $height, $bestfit = true);
@@ -91,6 +96,9 @@ interface ImageResourceInterface
      * @param float     $degrees Degrees to rotate the image. Negative values will rotate the image anti-clockwise
      * @param string $background Background to fill the empty spaces, default is transparent.
      * will render as black for jpg format (use png if you want it transparent)
+     *
+     * @return bool True if successful
+     *
      */
     public function rotate($degrees = 90.00, $background = 'transparent');
 
@@ -101,6 +109,9 @@ interface ImageResourceInterface
      * @param int $height The height
      * @param int $coordX The X coordinate
      * @param int $coordY The Y coordinate
+     *
+     * @return bool True if successful
+     *
      */
     public function crop($width, $height, $coordX, $coordY);
 
@@ -111,6 +122,8 @@ interface ImageResourceInterface
      * @param int  $width  Width of the thumbnail
      * @param int  $height Height of the thumbnail
      * @param bool $crop   When set to true, the thumbnail will be cropped from the center to match the given size
+     *
+     * @return bool True if successful
      */
     public function thumbnail($width, $height, $crop = false);
 
@@ -135,6 +148,8 @@ interface ImageResourceInterface
      * @param string $file         The file path to save the image
      * @param int    $jpeg_quality (optional) the quality for JPEG files, 1 to 100 where 100 means no compression
      * (higher quality and bigger file)
+     *
+     * @return bool True if successful
      */
     public function write($file, $jpeg_quality = null);
 }

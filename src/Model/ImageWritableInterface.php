@@ -18,6 +18,8 @@ interface ImageWritableInterface
      * @param int    $coordY
      * @param int    $angle
      * @param Drawer $drawer
+     *
+     * @return bool True if successful
      */
     public function annotate($text, $coordX, $coordY, $angle, Drawer $drawer);
 
@@ -36,7 +38,7 @@ interface ImageWritableInterface
      * Returns the adjusted font size - this is important as Imagick and GD have different standards. To keep the
      * size identical some adjustments are necessary.
      * @param Drawer $drawer
-     * @return mixed
+     * @return float
      */
     public function getFontSize(Drawer $drawer);
 }

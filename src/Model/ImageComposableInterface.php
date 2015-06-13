@@ -20,6 +20,8 @@ interface ImageComposableInterface
      * @param int   $transparency (optional) Transparency in percentage - 0 for fully opaque (default),
      * 100 for fully transparent.
      *
+     * @return bool True if successful
+     *
      * @throws \Exception
      *
      * Note about transparency: the change is made pixel per pixel, so using this will require more processing
