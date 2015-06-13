@@ -91,8 +91,14 @@ class GDResource implements
                 );
                 break;
         }
+
+        return $this;
     }
 
+    /**
+     * @param string $color
+     * @return int
+     */
     public function loadColor($color)
     {
         return GDPixel::load($color, $this->getResource());
@@ -103,9 +109,14 @@ class GDResource implements
      */
     public function createNew($width, $height, $background = 'white')
     {
-        $this->resource = imagecreatetruecolor($width, $height);
-        imagefill($this->getResource(), 0, 0, $this->loadColor($background));
-        $this->updateResourceDimensions();
+        if ($this->resource = imagecreatetruecolor($width, $height)) {
+            imagefill($this->getResource(), 0, 0, $this->loadColor($background));
+            $this->updateResourceDimensions();
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -181,7 +192,7 @@ class GDResource implements
 
         $resized = imagecreatetruecolor($finalWidth, $finalHeight);
 
-        imagecopyresampled(
+        if (imagecopyresampled(
             $resized,
             $this->getResource(),
             0,
@@ -192,10 +203,14 @@ class GDResource implements
             $finalHeight,
             $this->getWidth(),
             $this->getHeight()
-        );
+        )) {
+            $this->resource = $resized;
+            $this->updateResourceDimensions();
 
-        $this->resource = $resized;
-        $this->updateResourceDimensions();
+            return true;
+        }
+
+        return false;
     }
 
     /**😻
@@ -203,8 +218,13 @@ class GDResource implements
      */
     public function rotate($degrees = 90.00, $background = 'transparent')
     {
-        $this->resource = imagerotate($this->getResource(), $degrees, $this->loadColor($background));
-        $this->updateResourceDimensions();
+        if ($this->resource = imagerotate($this->getResource(), $degrees, $this->loadColor($background))) {
+            $this->updateResourceDimensions();
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -214,7 +234,7 @@ class GDResource implements
     {
         $cropped = imagecreatetruecolor($width, $height);
 
-        imagecopyresampled(
+        if (imagecopyresampled(
             $cropped,
             $this->getResource(),
             0,
@@ -225,10 +245,14 @@ class GDResource implements
             $height,
             $width,
             $height
-        );
+        )) {
+            $this->resource = $cropped;
+            $this->updateResourceDimensions();
 
-        $this->resource = $cropped;
-        $this->updateResourceDimensions();
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -254,7 +278,7 @@ class GDResource implements
         $this->resize($resizeDimensions['width'], $resizeDimensions['height'], false);
         $thumb = imagecreatetruecolor($finalWidth, $finalHeight);
 
-        imagecopyresampled(
+        if (imagecopyresampled(
             $thumb,
             $this->getResource(),
             0,
@@ -265,10 +289,14 @@ class GDResource implements
             $finalHeight,
             $finalWidth,
             $finalHeight
-        );
+        )) {
+            $this->resource = $thumb;
+            $this->updateResourceDimensions();
 
-        $this->resource = $thumb;
-        $this->updateResourceDimensions();
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -309,16 +337,16 @@ class GDResource implements
         switch ($this->format) {
             case "jpg":
             case "jpeg":
-                imagejpeg($this->getResource(), $file, $jpeg_quality);
+                return imagejpeg($this->getResource(), $file, $jpeg_quality);
                 break;
 
             case "gif":
-                imagegif($this->getResource(), $file);
+                return imagegif($this->getResource(), $file);
                 break;
 
             case "png":
                 imagesavealpha($this->getResource(), true);
-                imagepng($this->getResource(), $file);
+                return imagepng($this->getResource(), $file);
                 break;
 
             default:
@@ -363,7 +391,7 @@ class GDResource implements
 
         /* TODO: implement pixel per pixel transparency */
 
-        imagecopyresampled(
+        return imagecopyresampled(
             $this->getResource(),
             $image->getResource()->getResource(),
             $coordX,
@@ -380,9 +408,7 @@ class GDResource implements
     // ImageWritableInterface
 
     /**
-     * Gets the adjusted font size to match the size on Imagick (smaller)
-     * @param Drawer $drawer
-     * @return float
+     * {@inheritdoc}
      */
     public function getFontSize(Drawer $drawer)
     {
@@ -390,19 +416,13 @@ class GDResource implements
     }
 
     /**
-     * Writes text on the current image resource
-     *
-     * @param string $text
-     * @param int $coordX
-     * @param int $coordY
-     * @param int $angle
-     * @param Drawer $drawer
+     * {@inheritdoc}
      */
     public function annotate($text, $coordX, $coordY, $angle, Drawer $drawer)
     {
         $color = GDPixel::load($drawer->getFontColor(), $this->getResource());
 
-        imagettftext(
+        return imagettftext(
             $this->getResource(),
             $this->getFontSize($drawer),
             $angle,
@@ -415,11 +435,7 @@ class GDResource implements
     }
 
     /**
-     * Gets the size of a text, given the text and the \Imanee\Drawer object
-     *
-     * @param string $text The text
-     * @param Drawer $drawer The Drawer object
-     * @return array
+     * {@inheritdoc}
      */
     public function getTextGeometry($text, Drawer $drawer)
     {
