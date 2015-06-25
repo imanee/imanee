@@ -33,7 +33,7 @@ class PixelMathTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testShouldReturnBestForPortraitDimensions()
+    public function testShouldReturnBestFitForPortraitDimensions()
     {
         $this->assertEquals(
             [
