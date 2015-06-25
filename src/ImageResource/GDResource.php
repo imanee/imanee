@@ -13,6 +13,7 @@ use Imanee\Filter\GD\BWFilter;
 use Imanee\Filter\GD\ColorFilter;
 use Imanee\Filter\GD\ModulateFilter;
 use Imanee\Filter\GD\SepiaFilter;
+use Imanee\Filter\GD\GaussianFilter;
 use Imanee\Imanee;
 use Imanee\Model\FilterInterface;
 use Imanee\Model\ImageComposableInterface;
@@ -472,6 +473,7 @@ class GDResource implements
             new SepiaFilter(),
             new ColorFilter(),
             new ModulateFilter(),
+            new GaussianFilter()
         ];
     }
 }
