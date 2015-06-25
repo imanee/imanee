@@ -40,7 +40,7 @@ class GDResourceTest extends \PHPUnit_Framework_TestCase
         $imageResource->load($file);
     }
     /**
-     * @covers \Imanee\ImageResource\GDResource::load
+     * @covers \Imanee\ImageResource\GDResource::loadColor
      * @group imanee-33
      * @dataProvider imageTypeProvider
      * @todo \Imanee\ImageResource\GDResource::load uses static method Imanee::getImageInfo
