@@ -40,7 +40,7 @@ class GDResourceTest extends \PHPUnit_Framework_TestCase
         $imageResource->load($file);
     }
     /**
-     * @covers \Imanee\ImageResource\GDResource::load
+     * @covers \Imanee\ImageResource\GDResource::loadColor
      * @group imanee-33
      * @dataProvider imageTypeProvider
      * @todo \Imanee\ImageResource\GDResource::load uses static method Imanee::getImageInfo
@@ -56,5 +56,27 @@ class GDResourceTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('\\Imanee\ImageResource\\GDResource', $result);
         $this->assertSame($imageResource, $result);
+    }
+
+    public function badColorProvider()
+    {
+        return [
+            ['AABBCCDD'],
+            ['foobar'],
+            ['#1234567'],
+        ];
+    }
+
+    /**
+     * @covers \Imanee\ImageResource\GDResource::load
+     * @group imanee-33
+     * @dataProvider badColorProvider
+     */
+    public function testLoadColourFailsWithBadInput($color)
+    {
+        $file = __DIR__ . '/_files/imanee.png';
+        $gdResource = new GDResource();
+        $gdResource->load($file);
+        $this->assertFalse($gdResource->loadColor($color));
     }
 }
