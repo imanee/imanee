@@ -71,6 +71,7 @@ class GDResourceTest extends \PHPUnit_Framework_TestCase
      * @covers \Imanee\ImageResource\GDResource::load
      * @group imanee-33
      * @dataProvider badColorProvider
+     * @expectedException \Imanee\Exception\InvalidColorException
      */
     public function testLoadColourFailsWithBadInput($color)
     {
