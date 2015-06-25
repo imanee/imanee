@@ -122,19 +122,19 @@ class PixelMathTest extends PHPUnit_Framework_TestCase
                 'resourceSize' => ['width' => 10, 'height' => 5],
                 'size' => ['width' => 100, 'height' => 100],
                 'pos' => Imanee::IM_POS_MID_LEFT,
-                'expectedCoordinates' => [0, 47.5]
+                'expectedCoordinates' => [0, 47]
             ],
             [
                 'resourceSize' => ['width' => 10, 'height' => 5],
                 'size' => ['width' => 100, 'height' => 100],
                 'pos' => Imanee::IM_POS_MID_CENTER,
-                'expectedCoordinates' => [45, 47.5]
+                'expectedCoordinates' => [45, 47]
             ],
             [
                 'resourceSize' => ['width' => 10, 'height' => 5],
                 'size' => ['width' => 100, 'height' => 100],
                 'pos' => Imanee::IM_POS_MID_RIGHT,
-                'expectedCoordinates' => [90, 47.5]
+                'expectedCoordinates' => [90, 47]
             ],
             [
                 'resourceSize' => ['width' => 10, 'height' => 5],
