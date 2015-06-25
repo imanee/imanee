@@ -49,22 +49,6 @@ class PixelMathTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testShouldReturnBestFitForPortraitDimensions()
-    {
-        $this->assertEquals(
-            [
-                'width' => 80,
-                'height' => 100
-            ],
-            $this->pixelMath->getBestFit(
-                80,
-                100,
-                800,
-                1000
-            )
-        );
-    }
-
     public function testShouldReturnMaxFitForLandscapeDimensions()
     {
         $this->assertEquals(
