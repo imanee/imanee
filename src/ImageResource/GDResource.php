@@ -1,12 +1,8 @@
 <?php
-/**
- * GDResource for simple image operations using GD - fallback for when Imagick extension is not available
- */
 
 namespace Imanee\ImageResource;
 
 use Imanee\Drawer;
-use Imanee\Exception\EmptyImageException;
 use Imanee\Exception\ImageNotFoundException;
 use Imanee\Exception\UnsupportedFormatException;
 use Imanee\Filter\GD\BWFilter;
@@ -15,19 +11,70 @@ use Imanee\Filter\GD\ModulateFilter;
 use Imanee\Filter\GD\SepiaFilter;
 use Imanee\Filter\GD\GaussianFilter;
 use Imanee\Imanee;
-use Imanee\Model\FilterInterface;
 use Imanee\Model\ImageComposableInterface;
 use Imanee\Model\ImageResourceInterface;
 use Imanee\Model\ImageWritableInterface;
 use Imanee\PixelMath;
 use Imanee\Model\ImageFilterableInterface;
 
+/**
+ * GD-based image manipulator.
+ */
 class GDResource extends Resource implements
     ImageResourceInterface,
     ImageComposableInterface,
     ImageWritableInterface,
     ImageFilterableInterface
 {
+    /**
+     * Underlying image resource handle.
+     *
+     * @var resource
+     */
+    public $resource;
+
+    /**
+     * Path to the current image resource.
+     *
+     * @var string
+     */
+    public $imagePath;
+
+    /**
+     * Image mime type.
+     *
+     * @var string
+     */
+    public $mime;
+
+    /**
+     * Format (based on mime type).
+     *
+     * @var string
+     */
+    public $format;
+
+    /**
+     * Image width.
+     *
+     * @var int
+     */
+    public $width;
+
+    /**
+     * Image height.
+     *
+     * @var int
+     */
+    public $height;
+
+    /**
+     * Image background.
+     *
+     * @var string
+     */
+    public $background;
+
     /**
      * {@inheritdoc}
      */
@@ -77,6 +124,7 @@ class GDResource extends Resource implements
 
     /**
      * @param string $color
+     *
      * @return int
      */
     public function loadColor($color)
@@ -136,7 +184,7 @@ class GDResource extends Resource implements
         return false;
     }
 
-    /**😻
+    /**
      * {@inheritdoc}
      */
     public function rotate($degrees = 90.00, $background = 'transparent')
@@ -281,8 +329,10 @@ class GDResource extends Resource implements
     }
 
     /**
-     * A workaround to keep compatibility with Imagick when writing images to disk
+     * A workaround to keep compatibility with Imagick when writing images to disk.
+     *
      * @param string $filepath
+     *
      * @return string
      */
     public function getExtensionByFileName($filepath)
@@ -300,8 +350,6 @@ class GDResource extends Resource implements
         $this->width = imagesx($this->getResource());
         $this->height = imagesy($this->getResource());
     }
-
-    /** ImageComposableInterface */
 
     /**
      * {@inheritdoc}
@@ -340,8 +388,6 @@ class GDResource extends Resource implements
             $image->getHeight()
         );
     }
-
-    // ImageWritableInterface
 
     /**
      * {@inheritdoc}
@@ -382,8 +428,6 @@ class GDResource extends Resource implements
 
         return ['width' => $width, 'height' => $height];
     }
-
-    // ImageFilterableInterface
 
     /**
      * {@inheritdoc}

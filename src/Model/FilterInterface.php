@@ -2,21 +2,28 @@
 
 namespace Imanee\Model;
 
+use Imagick;
 use Imanee\Imanee;
 
+/**
+ * Effect which can be applied to an image.
+ */
 interface FilterInterface
 {
     /**
-     * Apply the filter to the Imagick resource
-     * @param Imanee $imanee Imanee object
-     * @param array $options
-     * @return \Imagick The modified resource
+     * Apply the filter to the Imagick resource.
+     *
+     * @param Imanee $imanee
+     * @param array  $options
+     *
+     * @return Imagick
      */
     public function apply(Imanee $imanee, array $options = []);
 
     /**
-     * Gets the filter name. It must be a unique identifier
-     * @return string The identifier of the filter
+     * Gets the filter name. It must be a unique identifier.
+     *
+     * @return string
      */
     public function getName();
 }

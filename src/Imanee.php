@@ -20,16 +20,28 @@ use Imanee\Model\FilterInterface;
 
 class Imanee
 {
-    /** @var ImageResourceInterface Resource */
+    /**
+     * @var ImageResourceInterface
+     */
     protected $resource;
 
-    /** @var Drawer The drawer settings */
+    /**
+     * The drawer settings
+     *
+     * @var Drawer
+     */
     protected $drawer;
 
-    /** @var  array Frames */
+    /**
+     * @var array
+     */
     protected $frames;
 
-    /** @var  FilterResolver The filter Resolver */
+    /**
+     * The filter Resolver.
+     *
+     * @var FilterResolver
+     */
     protected $filterResolver;
 
     const IM_POS_CENTER = 1;
@@ -47,9 +59,12 @@ class Imanee
     const IM_POS_BOTTOM_CENTER = 18;
 
     /**
-     * @param string $path a path to a image file - convenient way to open an image without using the load() method
-     * @param ImageResourceInterface $resource A valid object implementing the ImageResourceInterface; defaults to null,
-     * in which case a resource will be automatically created based on current extensions available
+     * @param null|string                 $path     Path to a image file, for opening an image
+     *                                              without using the load() method.
+     * @param null|ImageResourceInterface $resource A valid object implementing the
+     *                                              ImageResourceInterface; defaults to null, in
+     *                                              which case a resource will be automatically
+     *                                              created based on current extensions available.
      */
     public function __construct($path = null, ImageResourceInterface $resource = null)
     {
@@ -81,8 +96,9 @@ class Imanee
     }
 
     /**
-     * Loads an image from a file
-     * @param string $imagePath The path to the image
+     * Loads an image from a file.
+     *
+     * @param string $imagePath The path to the image.
      *
      * @return $this
      */
@@ -94,11 +110,11 @@ class Imanee
     }
 
     /**
-     * Creates a new "blank" image
+     * Creates a new "blank" image.
      *
-     * @param int $width The width of the image
-     * @param int $height The height of the image
-     * @param string $background The image background, Defaults to white
+     * @param int    $width The width of the image.
+     * @param int    $height The height of the image.
+     * @param string $background The image background.
      *
      * @return $this
      */
@@ -110,9 +126,9 @@ class Imanee
     }
 
     /**
-     * Gets the mime type associated with the current resource (if available)
+     * Gets the mime type associated with the current resource (if available).
      *
-     * @return string the mime type
+     * @return string The mime type.
      */
     public function getMime()
     {
@@ -122,7 +138,7 @@ class Imanee
     /**
      * Sets the format to the current loaded resource.
      *
-     * @param string $format The image format, e.g: "jpeg"
+     * @param string $format The image format, e.g: "jpeg".
      *
      * @return $this
      */
@@ -134,7 +150,7 @@ class Imanee
     }
 
     /**
-     * Gets the current format
+     * Gets the current format.
      *
      * @return string
      */
@@ -144,13 +160,13 @@ class Imanee
     }
 
     /**
-     * Resizes the current image resource
+     * Resizes the current image resource.
      *
-     * @param int $width The new width
-     * @param int $height The new height
-     * @param bool $bestfit When set to true (default), will fit the image inside the provided box dimensions.
-     * When set to false, will force resize to the specified dimensions, which may cause the resulting image to be
-     * out of proportion.
+     * @param int  $width   The new width.
+     * @param int  $height  The new height.
+     * @param bool $bestfit When set to true, will fit the image inside the provided box dimensions.
+     *                      When set to false, will force resize to the specified dimensions, which
+     *                      may cause the resulting image to be out of proportion.
      *
      * @return $this
      */
@@ -162,11 +178,12 @@ class Imanee
     }
 
     /**
-     * Rotates the image resource in the given degrees
+     * Rotates the image resource in the given degrees.
      *
-     * @param float $degrees Degrees to rotate the image. Negative values will rotate the image anti-clockwise
-     * @param string $background Background to fill the empty spaces, default is transparent -
-     * will render as black for jpg format (use png if you want it transparent)
+     * @param float  $degrees    Degrees to rotate the image. Negative values will rotate the image
+     *                           anti-clockwise.
+     * @param string $background Background to fill the empty spaces. Will render as black for jpg
+     *                           format (use png for transparency).
      *
      * @return $this
      */
@@ -178,12 +195,12 @@ class Imanee
     }
 
     /**
-     * Crops a portion of the image
+     * Crops a portion of the image.
      *
-     * @param int $width The width
-     * @param int $height The height
-     * @param int $coordX The X coordinate
-     * @param int $coordY The Y coordinate
+     * @param int $width  The width.
+     * @param int $height The height.
+     * @param int $coordX The X coordinate.
+     * @param int $coordY The Y coordinate.
      *
      * @return $this
      */
@@ -195,12 +212,14 @@ class Imanee
     }
 
     /**
-     * Creates a thumbnail of the current resource. If crop is true, the result will be a perfect fit thumbnail with the
-     * given dimensions, cropped by the center. If crop is false, the thumbnail will use the best fit for the dimensions
+     * Creates a thumbnail of the current resource. If crop is true, the result will be a perfect
+     * fit thumbnail with the given dimensions, cropped by the center. If crop is false, the
+     * thumbnail will use the best fit for the dimensions.
      *
-     * @param int $width Width of the thumbnail
-     * @param int $height Height of the thumbnail
-     * @param bool $crop When set to true, the thumbnail will be cropped from the center to match the given size
+     * @param int  $width  Width of the thumbnail.
+     * @param int  $height Height of the thumbnail.
+     * @param bool $crop   When set to true, the thumbnail will be cropped from the center to match
+     *                     the given size.
      *
      * @return $this
      */
@@ -212,9 +231,9 @@ class Imanee
     }
 
     /**
-     * Gets the width of the current image resource
+     * Gets the width of the current image resource.
      *
-     * @return int the width
+     * @return int The width.
      */
     public function getWidth()
     {
@@ -222,9 +241,9 @@ class Imanee
     }
 
     /**
-     * Gets the height of the current image resource
+     * Gets the height of the current image resource.
      *
-     * @return int the height
+     * @return int The height.
      */
     public function getHeight()
     {
@@ -232,7 +251,7 @@ class Imanee
     }
 
     /**
-     * Shortcut method to get width and height
+     * Shortcut method to get width and height.
      */
     public function getSize()
     {
@@ -240,11 +259,11 @@ class Imanee
     }
 
     /**
-     * Output the current image resource as a string
+     * Output the current image resource as a string.
      *
-     * @param string $format The image format (overwrites the currently defined format)
+     * @param string $format The image format (overwrites the currently defined format).
      *
-     * @return string The image data as a string
+     * @return string The image data as a string.
      */
     public function output($format = null)
     {
@@ -252,7 +271,8 @@ class Imanee
     }
 
     /**
-     * Convenient way to output the image
+     * Convenient way to output the image.
+     *
      * @return string
      */
     public function __toString()
@@ -261,16 +281,18 @@ class Imanee
     }
 
     /**
-     * Saves the image to disk. If the second param is provided, will try to compress the image using JPEG compression.
+     * Saves the image to disk. If the second param is provided, will try to compress the image
+     * using JPEG compression.
      *
      * The format will be decided based on the extension used for the filename. If, for instance,
-     * a "img.png" is provided, the image will be saved as PNG and the compression will not take affect.
+     * a "img.png" is provided, the image will be saved as PNG and the compression will not take
+     * affect.
      *
-     * @param string $path The file path to save the image
-     * @param int $jpeg_quality (optional) the quality for JPEG files, 1 to 100 where 100 means no compression
-     * (higher quality and bigger file)
+     * @param string $path         The file path to save the image.
+     * @param int    $jpeg_quality The quality for JPEG files, 1 to 100 where 100 means no
+     *                             compression (higher quality and bigger file).
      *
-     * @return Imanee $this
+     * @return $this
      */
     public function write($path, $jpeg_quality = null)
     {
@@ -280,7 +302,8 @@ class Imanee
     }
 
     /**
-     * Gets the current image resource
+     * Gets the current image resource.
+     *
      * @return ImageResourceInterface
      */
     public function getResource()
@@ -289,7 +312,8 @@ class Imanee
     }
 
     /**
-     * Sets the current Image Resource
+     * Sets the current Image Resource.
+     *
      * @param ImageResourceInterface $resource
      */
     public function setResource(ImageResourceInterface $resource)
@@ -310,11 +334,14 @@ class Imanee
     }
 
     /**
-     * Adjusts the font size of the Drawer object to fit a text in the desired width
-     * @param $text
+     * Adjusts the font size of the Drawer object to fit a text in the desired width.
+     *
+     * @param string $text
      * @param Drawer $drawer
-     * @param $width
+     * @param int    $width
+     *
      * @return Drawer
+     *
      * @throws UnsupportedMethodException
      */
     public function adjustFontSize($text, Drawer $drawer, $width)
@@ -336,16 +363,19 @@ class Imanee
     }
 
     /**
-     * Places a text on top of the current image - convenient way to write text using relative positioning.
-     * To overwrite the current Drawer settings, create a custom Drawer object and use the method ->setDrawer before
+     * Places a text on top of the current image, for writing text using relative positioning. To
+     * overwrite the current Drawer settings, create a custom Drawer object and use the setDrawer()
+     * method before.
      *
-     * @param string $text Text to be written
-     * @param int $place_constant One of the Imanee:IM_POS constants - defaults to IM_POS_TOP_LEFT
-     * @param int $fitWidth If a positive value is provided, will change the font size to fit
-     * the text in this width
-     * @param int $fontSize The font size. Defaults to the current font size defined in the Drawer
+     * @param string $text           Text to be written.
+     * @param int    $place_constant One of the Imanee:IM_POS constants.
+     * @param int    $fitWidth       If a positive value is provided, will change the font size to
+     *                               fit the text in this width.
+     * @param int $fontSize          The font size. Defaults to the current font size defined in the
+     *                               Drawer.
      *
      * @return $this
+     *
      * @throws UnsupportedMethodException
      */
     public function placeText($text, $place_constant = Imanee::IM_POS_TOP_LEFT, $fitWidth = 0, $fontSize = 0)
@@ -380,13 +410,13 @@ class Imanee
     }
 
     /**
-     * Writes text to an image
+     * Writes text to an image.
      *
-     * @param string $text The text to be written
-     * @param int $coordX The X coordinate for text placement
-     * @param int $coordY The Y coordinate for text placement
-     * @param int $size The font size
-     * @param int $angle The angle (defaults to 0, plain)
+     * @param string $text   The text to be written.
+     * @param int    $coordX The X coordinate for text placement.
+     * @param int    $coordY The Y coordinate for text placement.
+     * @param int    $size   The font size.
+     * @param int    $angle  The angle.
      *
      * @return $this
      * @throws UnsupportedMethodException
@@ -408,9 +438,10 @@ class Imanee
     }
 
     /**
-     * Sets the drawer. Use this to change the default text settings
+     * Sets the drawer. Use this to change the default text settings.
      *
      * @param Drawer $drawer
+     *
      * @return $this
      */
     public function setDrawer(Drawer $drawer)
@@ -421,7 +452,7 @@ class Imanee
     }
 
     /**
-     * Gets the current drawer in use
+     * Gets the current drawer in use.
      *
      * @return Drawer
      */
@@ -431,13 +462,15 @@ class Imanee
     }
 
     /**
-     * @param mixed $image Path to an image on filesystem or an Imanee Object
-     * @param int $coordX Coord X for placement
-     * @param int $coordY Coord Y for placement
-     * @param int $width (optional) specifies a width for the placement
-     * @param int $height (optional) specifies a height for the placement
-     * @param int $transparency (optional) specifies the transparency of the placed image, in percentage
+     * @param mixed $image        Path to an image on filesystem or an Imanee Object.
+     * @param int   $coordX       X coordinate for placement.
+     * @param int   $coordY       Y coordinate for placement.
+     * @param int   $width        Width for the placement.
+     * @param int   $height       Height for the placement.
+     * @param int   $transparency Transparency of the placed image, in percentage.
+     *
      * @return $this
+     *
      * @throws UnsupportedMethodException
      */
     public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $transparency = 0)
@@ -452,15 +485,16 @@ class Imanee
     }
 
     /**
-     * Places an image on top of the current resource. If the width and height are supplied,
-     * will perform a resize before placing the image.
+     * Places an image on top of the current resource. If the width and height are supplied, will
+     * perform a resize before placing the image.
      *
-     * @param mixed $image Path to an image on filesystem or an Imanee Object
-     * @param int $place_constant One of the Imanee::IM_POS constants, defaults to IM_POS_TOP_LEFT (top left corner)
-     * @param int $width (optional) specifies a width for the placement
-     * @param int $height (optional) specifies a height for the placement
-     * @param int $transparency (optional) specifies the transparency of the placed image.
-     * 0 for fully opaque (default), 100 for fully transparent
+     * @param mixed $image          Path to an image on filesystem or an Imanee Object.
+     * @param int   $place_constant One of the Imanee::IM_POS constants, defaults to
+     *                              IM_POS_TOP_LEFT (top left corner).
+     * @param int   $width          Width for the placement.
+     * @param int   $height         Height for the placement.
+     * @param int $transparency     Transparency of the placed image - 0 (default) to 100
+     *                              (transparent).
      *
      * @return $this
      *
@@ -504,11 +538,11 @@ class Imanee
     }
 
     /**
-     * Convenient method to place a watermark image on top of the current resource
+     * Convenient method to place a watermark image on top of the current resource.
      *
-     * @param mixed $image The path to the watermark image file or an Imanee object
-     * @param int $place_constant One of the Imanee::IM_POS constants, defaults to IM_POS_BOTTOM_RIGHT
-     * @param int $transparency Watermark transparency percentage. Defaults to 0 (fully opaque)
+     * @param mixed $image          The path to the watermark image file or an Imanee object.
+     * @param int   $place_constant One of the Imanee::IM_POS constants
+     * @param int   $transparency   Watermark transparency percentage.
      *
      * @return $this
      */
@@ -520,9 +554,10 @@ class Imanee
     }
 
     /**
-     * Gets loaded filters
+     * Gets loaded filters.
      *
-     * @return array Return an array with the current loaded filters
+     * @return array Returns an array with the current loaded filters.
+     *
      * @throws UnsupportedMethodException
      */
     public function getFilters()
@@ -535,10 +570,12 @@ class Imanee
     }
 
     /**
-     * Adds a custom filter to the FilterResolver
+     * Adds a custom filter to the FilterResolver.
      *
      * @param FilterInterface $filter The Filter
+     *
      * @return $this
+     *
      * @throws UnsupportedMethodException
      */
     public function addFilter(FilterInterface $filter)
@@ -553,11 +590,14 @@ class Imanee
     }
 
     /**
-     * Tries to apply the specified filter to the current resource
-     * @param string $filter The filter identifier, e.g. "filter_bw"
-     * @param array $options
-     * @throws FilterNotFoundException
+     * Tries to apply the specified filter to the current resource.
+     *
+     * @param string $filter  The filter identifier, e.g. "filter_bw".
+     * @param array  $options
+     *
      * @return $this
+     *
+     * @throws FilterNotFoundException
      * @throws UnsupportedMethodException
      */
     public function applyFilter($filter, array $options = [])
@@ -578,8 +618,10 @@ class Imanee
     }
 
     /**
-     * Shortcut for adding filters
-     * @param array $frames - Array of Imanee objects or image paths (string), or both
+     * Shortcut for adding filters.
+     *
+     * @param array $frames Array of Imanee objects or image paths (string), or both.
+     *
      * @return $this
      */
     public function addFrames(array $frames)
@@ -592,8 +634,10 @@ class Imanee
     }
 
     /**
-     * Adds a frame for generating animated gifs with the animate() method
-     * @param mixed $frame A string with a file path or an Imanee object
+     * Adds a frame for generating animated GIFs with the animate() method.
+     *
+     * @param mixed $frame A string with a file path or an Imanee object.
+     *
      * @return $this
      */
     public function addFrame($frame)
@@ -613,7 +657,9 @@ class Imanee
 
     /**
      * @param int $delay
+     *
      * @return string
+     *
      * @throws UnsupportedMethodException
      */
     public function animate($delay = 20)
@@ -626,12 +672,13 @@ class Imanee
     }
 
     /**
-     * Convenient method for generating text-only images
+     * Generates text-only images.
      *
      * @param string $text
      * @param Drawer $drawer
      * @param string $format
      * @param string $background
+     *
      * @return Imanee
      */
     public static function textGen(
@@ -657,11 +704,13 @@ class Imanee
     }
 
     /**
-     * Convenient method for generating an animated gif from an array of images.
+     * Generates an animated gif from an array of images.
      *
-     * @param array $images Array containing paths to the images that should be used as frames
-     * @param int $delay
+     * @param array $images Array containing paths to the images that should be used as frames.
+     * @param int   $delay
+     *
      * @return string
+     *
      * @throws UnsupportedMethodException
      */
     public static function arrayAnimate(array $images, $delay = 20)
@@ -678,11 +727,13 @@ class Imanee
     }
 
     /**
-     * Convenient method for generating an animated gif from image files in a directory.
+     * Generates an animated gif from image files in a directory.
      *
-     * @param $pattern
-     * @param int $delay
+     * @param string $pattern
+     * @param int    $delay
+     *
      * @return string
+     *
      * @throws UnsupportedMethodException
      */
     public static function globAnimate($pattern, $delay = 20)
@@ -705,9 +756,12 @@ class Imanee
     }
 
     /**
-     * Helper method to get info about an image saved in disk
+     * Get info about an image saved in disk.
+     *
      * @param string $imagePath
-     * @return array Array containing the keys 'mime', 'width' and 'height'
+     *
+     * @return array Array containing the keys 'mime', 'width' and 'height'.
+     *
      * @throws ImageNotFoundException
      */
     public static function getImageInfo($imagePath)

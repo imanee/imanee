@@ -5,15 +5,20 @@
 
 namespace Imanee;
 
+/**
+ * Performs pixel/coordinate calculations.
+ */
 class PixelMath
 {
     /**
-     * Gets the best fit for a given width / height where the provided values will be used as **maximum** values
-     * (the resulting image won't ever pass these dimensions)
+     * Gets the best fit for a given width / height where the provided values will be used as
+     * maximum values (the resulting image won't ever pass these dimensions).
+     *
      * @param int $width
      * @param int $height
      * @param int $originalWidth
      * @param int $originalHeight
+     *
      * @return array
      */
     public static function getBestFit($width, $height, $originalWidth, $originalHeight)
@@ -30,12 +35,14 @@ class PixelMath
     }
 
     /**
-     * Gets the best fit for a given width / height where the provided values will be used as **minimum** values
-     * (the resulting image can be bigger, there won't be any blank spaces)
+     * Gets the best fit for a given width / height where the provided values will be used as
+     * minimum values (the resulting image can be bigger, there won't be any blank spaces).
+     *
      * @param int $width
      * @param int $height
      * @param int $originalWidth
      * @param int $originalHeight
+     *
      * @return array
      */
     public static function getMaxFit($width, $height, $originalWidth, $originalHeight)
@@ -52,13 +59,16 @@ class PixelMath
     }
 
     /**
-     * Gets the coordinates for a relative placement using the IM_POS constants
+     * Gets the coordinates for a relative placement using the IM_POS constants.
      *
-     * @param array $resourceSize  an array with the keys 'width' and 'height' from the image to be placed
-     * @param array $size an array with they keys 'width' and 'height' from the original, base image
-     * @param int   $place_constant one of the \Imanee::IM_POS constant (default is IM_POS_TOP_LEFT)
-     * @return int[] Returns an array with the first position representing the X coordinate and the second position
-     * representing the Y coordinate for placing the image
+     * @param array $resourceSize   An array with the keys 'width' and 'height' from the image to be
+     *                              placed.
+     * @param array $size           An array with they keys 'width' and 'height' from the original,
+     *                              base image.
+     * @param int   $place_constant An Imanee::IM_POS_* constant.
+     *
+     * @return int[] Returns an array with the first position representing the X coordinate and the
+     *               second position representing the Y coordinate for placing the image.
      */
     public static function getPlacementCoordinates(
         $resourceSize = [],

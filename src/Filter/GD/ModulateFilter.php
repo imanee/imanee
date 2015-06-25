@@ -6,7 +6,9 @@ use Imanee\Imanee;
 use Imanee\Model\FilterInterface;
 
 /**
- * Modulate Filter - changes image brightness and contrast
+ * Adjusts the brightness, hue and saturation of an image.
+ *
+ * Without options this will adjust the saturation to 50%.
  */
 class ModulateFilter implements FilterInterface
 {

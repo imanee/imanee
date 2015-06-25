@@ -3,7 +3,7 @@
 namespace Imanee;
 
 /**
- * Saves Drawing settings
+ * Saves Drawing settings.
  */
 class Drawer extends ConfigContainer
 {
@@ -11,6 +11,9 @@ class Drawer extends ConfigContainer
     const TEXT_ALIGN_CENTER = 2;
     const TEXT_ALIGN_RIGHT  = 3;
 
+    /**
+     * @var string
+     */
     public static $DEFAULT_FONT = 'OpenSans-Regular.ttf';
 
     /**
@@ -29,8 +32,10 @@ class Drawer extends ConfigContainer
     }
 
     /**
-     * Sets the font size
+     * Sets the font size.
+     *
      * @param int $size
+     *
      * @return $this
      */
     public function setFontSize($size)
@@ -41,8 +46,9 @@ class Drawer extends ConfigContainer
     }
 
     /**
-     * Gets the font size
-     * @return int The font size
+     * Gets the font size.
+     *
+     * @return int The font size.
      */
     public function getFontSize()
     {
@@ -50,8 +56,10 @@ class Drawer extends ConfigContainer
     }
 
     /**
-     * Sets the font
-     * @param string $font The name/path to the font
+     * Sets the font.
+     *
+     * @param string $font The name/path to the font.
+     *
      * @return $this
      */
     public function setFont($font)
@@ -62,8 +70,9 @@ class Drawer extends ConfigContainer
     }
 
     /**
-     * Gets the current font
-     * @return string The font name / path
+     * Gets the current font.
+     *
+     * @return string The font name/path.
      */
     public function getFont()
     {
@@ -71,8 +80,11 @@ class Drawer extends ConfigContainer
     }
 
     /**
-     * Sets the font color
-     * @param mixed $color Any color format accepted by Imagick, e.g.: 'black', '#000000' or an ImagickPixel object
+     * Sets the font color.
+     *
+     * @param mixed $color Any color format accepted by Imagick, e.g.: 'black', '#000000' or an
+     *                     ImagickPixel object.
+     *
      * @return $this
      */
     public function setFontColor($color)
@@ -83,7 +95,8 @@ class Drawer extends ConfigContainer
     }
 
     /**
-     * Gets the current font color
+     * Gets the current font color.
+     *
      * @return mixed
      */
     public function getFontColor()
@@ -92,9 +105,11 @@ class Drawer extends ConfigContainer
     }
 
     /**
-     * Sets the text align
-     * @param int $align One of: Drawer:TEXT_ALIGN_LEFT, Drawer:TEXT_ALIGN_CENTER, Drawer:TEXT_ALIGN_RIGHT
-     * Default is TEXT_ALIGN_LEFT
+     * Sets the text align.
+     *
+     * @param int $align Drawer:TEXT_ALIGN_LEFT, Drawer:TEXT_ALIGN_CENTER or
+     *                   Drawer:TEXT_ALIGN_RIGHT.
+     *
      * @return $this
      */
     public function setTextAlign($align)
@@ -106,6 +121,7 @@ class Drawer extends ConfigContainer
 
     /**
      * Gets the current text align.
+     *
      * @return int Number representing the current Text Align constant applied.
      */
     public function getTextAlign()

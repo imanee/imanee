@@ -5,6 +5,9 @@ namespace Imanee\Filter\GD;
 use Imanee\Imanee;
 use Imanee\Model\FilterInterface;
 
+/**
+ * Makes an image brownish.
+ */
 class SepiaFilter implements FilterInterface
 {
     /**

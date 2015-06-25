@@ -6,8 +6,7 @@ use Imanee\Imanee;
 use Imanee\Model\FilterInterface;
 
 /**
- * Black and White Filter
- * Convenient way to modulate the image for removing saturation
+ * Removes color from images.
  */
 class BWFilter implements FilterInterface
 {

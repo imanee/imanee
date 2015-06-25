@@ -1,8 +1,4 @@
 <?php
-/**
- * Resource Provider
- * Acts as a factory for resources based on which extensions are loaded
- */
 
 namespace Imanee;
 
@@ -10,6 +6,9 @@ use Imanee\Exception\ExtensionNotFoundException;
 use Imanee\ImageResource\GDResource;
 use Imanee\ImageResource\ImagickResource;
 
+/**
+ * Factory for resources based on which extensions are loaded.
+ */
 class ResourceProvider
 {
     /**
@@ -26,9 +25,11 @@ class ResourceProvider
     }
 
     /**
-     * Checks for loaded extensions to create a suitable ImageResource, in case neither Imagick or GD are loaded
-     * throws an exception
+     * Checks for loaded extensions to create a suitable ImageResource, in case neither Imagick or
+     * GD are loaded throws an exception.
+     *
      * @return GDResource|ImagickResource
+     * 
      * @throws ExtensionNotFoundException
      */
     public function createImageResource()

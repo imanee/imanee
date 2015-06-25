@@ -1,10 +1,12 @@
 <?php
-/**
- * Default Imagick Provider for Imanee using the Imagick Extension
- */
 
 namespace Imanee\ImageResource;
 
+use Exception;
+use Imagick;
+use ImagickDraw;
+use ImagickException;
+use ImagickPixel;
 use Imanee\Exception\EmptyImageException;
 use Imanee\Exception\ImageNotFoundException;
 use Imanee\Filter\Imagick\BWFilter;
@@ -21,6 +23,9 @@ use Imanee\Model\ImageComposableInterface;
 use Imanee\Model\ImageWritableInterface;
 use Imanee\Model\ImageFilterableInterface;
 
+/**
+ * Imagick-based image manipulator.
+ */
 class ImagickResource extends Resource implements
     ImageResourceInterface,
     ImageWritableInterface,
@@ -28,13 +33,62 @@ class ImagickResource extends Resource implements
     ImageFilterableInterface,
     ImageAnimatableInterface
 {
+    /**
+     * Underlying image resource handle.
+     *
+     * @var resource
+     */
+    public $resource;
+
+    /**
+     * Path to the current image resource.
+     *
+     * @var string
+     */
+    public $imagePath;
+
+    /**
+     * Image mime type.
+     *
+     * @var string
+     */
+    public $mime;
+
+    /**
+     * Format (based on mime type).
+     *
+     * @var string
+     */
+    public $format;
+
+    /**
+     * Image width.
+     *
+     * @var int
+     */
+    public $width;
+
+    /**
+     * Image height.
+     *
+     * @var int
+     */
+    public $height;
+
+    /**
+     * Image background.
+     *
+     * @var string
+     */
+    public $background;
+
     public function __construct()
     {
-        $this->resource = new \Imagick();
+        $this->resource = new Imagick();
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function __clone()
     {
@@ -58,7 +112,7 @@ class ImagickResource extends Resource implements
         $this->height = $info['height'];
         $this->imagePath = $imagePath;
 
-        $this->resource = new \Imagick($this->imagePath);
+        $this->resource = new Imagick($this->imagePath);
 
         return $this;
     }
@@ -72,7 +126,7 @@ class ImagickResource extends Resource implements
         $this->height     = $height;
         $this->background = $background;
 
-        return $this->resource->newImage($width, $height, new \ImagickPixel($background));
+        return $this->resource->newImage($width, $height, new ImagickPixel($background));
     }
 
     /**
@@ -84,7 +138,7 @@ class ImagickResource extends Resource implements
             throw new EmptyImageException("You are trying to resize an empty image.");
         }
 
-        if ($this->resource->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1, $bestfit)) {
+        if ($this->resource->resizeImage($width, $height, Imagick::FILTER_LANCZOS, 1, $bestfit)) {
             $this->updateResourceDimensions();
 
             return true;
@@ -114,7 +168,7 @@ class ImagickResource extends Resource implements
      */
     public function rotate($degrees = 90.00, $background = 'transparent')
     {
-        if ($this->resource->rotateimage(new \ImagickPixel($background), $degrees)) {
+        if ($this->resource->rotateimage(new ImagickPixel($background), $degrees)) {
             $this->updateResourceDimensions();
 
             return true;
@@ -171,7 +225,7 @@ class ImagickResource extends Resource implements
 
         try {
             $format = $this->getFormat();
-        } catch (\ImagickException $e) {
+        } catch (ImagickException $e) {
             $this->setFormat('jpg');
         }
 
@@ -188,7 +242,7 @@ class ImagickResource extends Resource implements
     public function write($file, $jpeg_quality = null)
     {
         if ($jpeg_quality) {
-            $this->resource->setImageCompression(\Imagick::COMPRESSION_JPEG);
+            $this->resource->setImageCompression(Imagick::COMPRESSION_JPEG);
             $this->resource->setImageCompressionQuality($jpeg_quality);
         }
 
@@ -196,7 +250,7 @@ class ImagickResource extends Resource implements
     }
 
     /**
-     * Updates the computed width and height for the current Image Resource object
+     * {@inheritdoc}
      */
     public function updateResourceDimensions()
     {
@@ -206,16 +260,12 @@ class ImagickResource extends Resource implements
     }
 
     /**
-     * Returns a previously defined (e.g. when creating a new image) background color
-     *
-     * @return string The string previously used to define the background
+     * {@inheritdoc}
      */
     public function getBackground()
     {
         return $this->background;
     }
-
-    // ImageComposableInterface
 
     /**
      * {@inheritdoc}
@@ -223,27 +273,25 @@ class ImagickResource extends Resource implements
     public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $transparency = 0)
     {
         if (!is_object($image)) {
-            $img = new \Imagick($image);
+            $img = new Imagick($image);
         } else {
-            if (! ($image instanceof \Imanee\Imanee)) {
-                throw new \Exception('Object not supported. It must be an instance of Imanee');
+            if (! ($image instanceof Imanee)) {
+                throw new Exception('Object not supported. It must be an instance of Imanee');
             }
 
             $img = $image->getResource()->getResource();
         }
 
         if ($width and $height) {
-            $img->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1);
+            $img->resizeImage($width, $height, Imagick::FILTER_LANCZOS, 1);
         }
 
         if ($transparency > 0) {
             $this->setOpacity($img, $transparency);
         }
 
-        return $this->resource->compositeImage($img, \Imagick::COMPOSITE_OVER, $coordX, $coordY);
+        return $this->resource->compositeImage($img, Imagick::COMPOSITE_OVER, $coordX, $coordY);
     }
-
-    // ImageWritableInterface
 
     /**
      * {@inheritdoc}
@@ -275,13 +323,15 @@ class ImagickResource extends Resource implements
     }
 
     /**
-     * Translates the Drawer object to a ImagickDraw
+     * Translates the Drawer object to a ImagickDraw.
+     *
      * @param Drawer $drawer
-     * @return \ImagickDraw
+     *
+     * @return ImagickDraw
      */
     public function getImagickDraw(Drawer $drawer)
     {
-        $imdraw = new \ImagickDraw();
+        $imdraw = new ImagickDraw();
 
         $imdraw->setFont($drawer->getFont());
         $imdraw->setFillColor($drawer->getFontColor());
@@ -291,21 +341,19 @@ class ImagickResource extends Resource implements
         return $imdraw;
     }
 
-    // ImageAnimatableInterface
-
     /**
      * {@inheritdoc}
      */
     public function animate(array $frames, $delay = 20)
     {
-        $gif = new \Imagick();
+        $gif = new Imagick();
         $gif->setFormat('gif');
 
         foreach ($frames as $im) {
             if ($im instanceof Imanee) {
                 $frame = $im->getResource()->getResource();
             } else {
-                $frame = new \Imagick($im);
+                $frame = new Imagick($im);
             }
 
             $frame->setImageDelay($delay);
@@ -322,11 +370,10 @@ class ImagickResource extends Resource implements
         return $imanee;
     }
 
-    // Other Helpers
-
     /**
-     * Checks if the current resource is empty
-     * @return bool Returns true if the resource is empty (no file was loaded or no new image created)
+     * Returns true if the resource is empty (no file was loaded or no new image created).
+     *
+     * @return bool
      */
     public function isBlank()
     {
@@ -336,14 +383,16 @@ class ImagickResource extends Resource implements
     /**
      * Manually sets the transparency pixel per pixel.
      *
-     * This method properly sets the opacity on a png with transparency, by iterating pixel per pixel. It's a substitute
-     * for the Imagick::setImageOpacity, since it doesn't handle well transparent backgrounds.
+     * This method properly sets the opacity on a png with transparency, by iterating pixel per
+     * pixel. It's a substitute for the Imagick::setImageOpacity, since it doesn't handle well
+     * transparent backgrounds.
      *
-     * @param \Imagick  $resource      The imagick resource to set opacity
-     * @param int       $transparency  The transparency percentage, 0 to 100 - where 100 is fully transparent
-     * @return bool     Returns true if successful
+     * @param Imagick  $resource     The imagick resource to set opacity
+     * @param int      $transparency The transparency percentage, 0 (opaque) to 100 (transparent).
+     *
+     * @return bool Returns true if successful.
      */
-    public function setOpacity(\Imagick $resource, $transparency)
+    public function setOpacity(Imagick $resource, $transparency)
     {
         $alpha = $transparency / 100;
 
@@ -356,9 +405,10 @@ class ImagickResource extends Resource implements
         foreach ($rows as $cols) {
             foreach ($cols as $pixel) {
 
-                $current = $pixel->getColorValue(\Imagick::COLOR_ALPHA);
+                /** @var ImagickPixel $pixel */
+                $current = $pixel->getColorValue(Imagick::COLOR_ALPHA);
 
-                $pixel->setColorValue(\Imagick::COLOR_ALPHA, (($current - $alpha > 0) ? ($current - $alpha) : (0)));
+                $pixel->setColorValue(Imagick::COLOR_ALPHA, (($current - $alpha > 0) ? ($current - $alpha) : (0)));
 
                 $rows->syncIterator();
             }

@@ -2,12 +2,14 @@
 
 namespace Imanee\Filter\Imagick;
 
+use Imagick;
 use Imanee\Imanee;
 use Imanee\Model\FilterInterface;
 
 /**
- * Modulate Filter - changes image brightness, hue and saturation
- * If parameters are not specified, changes the saturation for 50%
+ * Adjusts the brightness, hue and saturation of an image.
+ *
+ * Without options this will adjust the saturation to 50%.
  */
 class ModulateFilter implements FilterInterface
 {
@@ -16,7 +18,7 @@ class ModulateFilter implements FilterInterface
      */
     public function apply(Imanee $imanee, array $options = [])
     {
-        /** @var \Imagick $resource */
+        /** @var Imagick $resource */
         $resource = $imanee->getResource()->getResource();
 
         $options = array_merge([
