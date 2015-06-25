@@ -17,7 +17,11 @@ class PixelMathTest extends PHPUnit_Framework_TestCase
         $this->pixelMath = new PixelMath();
     }
 
-    public function testReturnTargetDimensionsWhenProportionsMatch()
+    /**
+     * This test test both best fit and max fit since the are expected to
+     * behave the same when dimensions match
+     */
+    public function testShouldReturnDimensionsThatExactlyFitInTargetImage()
     {
         $this->assertEquals(
             [
@@ -31,9 +35,22 @@ class PixelMathTest extends PHPUnit_Framework_TestCase
                 800
             )
         );
+
+        $this->assertEquals(
+            [
+                'width' => 100,
+                'height' => 80
+            ],
+            $this->pixelMath->getMaxFit(
+                100,
+                80,
+                1000,
+                800
+            )
+        );
     }
 
-    public function testShouldReturnBestFittingPartOfDimensionWhenProportionsDoNotMatch()
+    public function testShouldReturnDimensionsUsingTargetDimensionsAsAMaximumWhenProportionsDoNotMatch()
     {
         $this->assertEquals(
             [
@@ -49,34 +66,18 @@ class PixelMathTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testShouldReturnMaxFitForLandscapeDimensions()
-    {
-        $this->assertEquals(
-            [
-                'width' => 1000,
-                'height' => 800
-            ],
-            $this->pixelMath->getMaxFit(
-                1000,
-                800,
-                100,
-                80
-            )
-        );
-    }
-
-    public function testShouldReturnMaxFitForPortraitDimensions()
+    public function testShouldReturnDimensionsUsingTargetDimensionsAsAMinimumWhenProportionsDoNotMatch()
     {
         $this->assertEquals(
             [
                 'width' => 800,
-                'height' => 1000
+                'height' => 100
             ],
             $this->pixelMath->getMaxFit(
-                800,
-                1000,
                 80,
-                100
+                100,
+                1600,
+                200
             )
         );
     }
