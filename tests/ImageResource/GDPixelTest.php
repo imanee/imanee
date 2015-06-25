@@ -11,7 +11,8 @@ namespace Imanee\Tests;
 
 use Imanee\ImageResource\GDPixel;
 
-class GDPixelTest extends \PHPUnit_Framework_TestCase {
+class GDPixelTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * Check that colours can be created from appropriate color strings
@@ -25,7 +26,8 @@ class GDPixelTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($b, $gdPixel->channelB, 'blue value incorrect for ' . $hexColor);
     }
 
-    public function colorTestValues() {
+    public function colorTestValues()
+    {
         return array(
             array('#000000', 0, 0, 0),
             array('000000', 0, 0, 0),
@@ -56,12 +58,12 @@ class GDPixelTest extends \PHPUnit_Framework_TestCase {
     /**
      * Check that colours can be created from appropriate color strings
      * @dataProvider badColorTestValues
-     * @expectedException \Imanee\Exception\UnsupportedFormatException
+     * @expectedException \Imanee\Exception\InvalidColorException
      */
     public function testBadCreateGDPixelByColorString($hexColor)
     {
         new GDPixel($hexColor);
-        $this->fail('UnsupportedFormatException expected');
+        $this->fail('InvalidColorException expected');
     }
 
     public function badColorTestValues()
@@ -78,11 +80,11 @@ class GDPixelTest extends \PHPUnit_Framework_TestCase {
     /**
      * Check that the transparent color can be created with static load command
      */
-    public function testCreateGDPixelByLoadTransparentColor() {
-        $resource = imagecreate(1,1);
+    public function testCreateGDPixelByLoadTransparentColor()
+    {
+        $resource = imagecreate(1, 1);
         $GDPixel = GDPixel::load('transparent', $resource);
         $this->assertsame(0, $GDPixel);
-
     }
 
     /**
@@ -91,23 +93,18 @@ class GDPixelTest extends \PHPUnit_Framework_TestCase {
      */
     public function testCreateGDPixelByStaticLoadColorString($hexColor, $r, $g, $b)
     {
-        $gdPixel = GDPixel::load($hexColor, imagecreate(1,1));
+        $gdPixel = GDPixel::load($hexColor, imagecreate(1, 1));
         $this->assertNotSame(false, $gdPixel);
     }
 
     /**
      * Check that colours can be created from appropriate color strings
      * @dataProvider badColorTestValues
-     * @expectedException \Imanee\Exception\UnsupportedFormatException
+     * @expectedException \Imanee\Exception\InvalidColorException
      */
     public function testBadCreateGDPixelByStaticLoadColorString($hexColor)
     {
         new GDPixel($hexColor);
-        $this->fail('UnsupportedFormatException expected');
+        $this->fail('InvalidColorException expected');
     }
-
-
-
-
 }
- 
