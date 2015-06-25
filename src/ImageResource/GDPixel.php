@@ -6,6 +6,7 @@
 
 namespace Imanee\ImageResource;
 
+use Imanee\Exception\InvalidColorException;
 
 class GDPixel
 {
@@ -33,6 +34,7 @@ class GDPixel
     public static function load($color, $resource)
     {
         if ($color === 'transparent') {
+
             return imagecolorallocatealpha($resource, 0, 0, 0, 127);
         }
 
@@ -43,6 +45,7 @@ class GDPixel
 
     /**
      * @param string $color
+     * @throws InvalidColorException
      */
     public function __construct($color)
     {
@@ -55,7 +58,13 @@ class GDPixel
 
         //is it html hexa?
         if ((strpos($color, '#')) !== false) {
-            str_replace('#', '', $color);
+            $color = str_replace('#', '', $color);
+        }
+
+        if (!preg_match('/^[a-f0-9]{6}$/i', $color)) {
+            throw new InvalidColorException(
+                sprintf('Color \'%s\' is not supported use a HEX color or the name of a common color', $color)
+            );
         }
 
         //now we should have something like 000000
