@@ -2,6 +2,7 @@
 
 namespace Imanee\Tests;
 
+use Imanee\Imanee;
 use Imanee\PixelMath;
 use PHPUnit_Framework_TestCase;
 
@@ -80,5 +81,79 @@ class PixelMathTest extends PHPUnit_Framework_TestCase
                 200
             )
         );
+    }
+
+    /**
+     * @dataProvider coordinatesProvider
+     */
+    public function testShouldReturnCorrectCoordinatesForEachPosition(array $resourceSize, array $size, $position, $expectedCoordinates)
+    {
+        $this->assertEquals(
+            $expectedCoordinates,
+            $this->pixelMath->getPlacementCoordinates($resourceSize, $size, $position)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function coordinatesProvider()
+    {
+        return [
+            [
+                'resourceSize' => ['width' => 10, 'height' => 5],
+                'size' => ['width' => 100, 'height' => 100],
+                'pos' => Imanee::IM_POS_TOP_LEFT,
+                'expectedCoordinates' => [0, 0]
+            ],
+            [
+                'resourceSize' => ['width' => 10, 'height' => 5],
+                'size' => ['width' => 100, 'height' => 100],
+                'pos' => Imanee::IM_POS_TOP_CENTER,
+                'expectedCoordinates' => [45, 0]
+            ],
+            [
+                'resourceSize' => ['width' => 10, 'height' => 5],
+                'size' => ['width' => 100, 'height' => 100],
+                'pos' => Imanee::IM_POS_TOP_RIGHT,
+                'expectedCoordinates' => [90, 0]
+            ],
+            [
+                'resourceSize' => ['width' => 10, 'height' => 5],
+                'size' => ['width' => 100, 'height' => 100],
+                'pos' => Imanee::IM_POS_MID_LEFT,
+                'expectedCoordinates' => [0, 47.5]
+            ],
+            [
+                'resourceSize' => ['width' => 10, 'height' => 5],
+                'size' => ['width' => 100, 'height' => 100],
+                'pos' => Imanee::IM_POS_MID_CENTER,
+                'expectedCoordinates' => [45, 47.5]
+            ],
+            [
+                'resourceSize' => ['width' => 10, 'height' => 5],
+                'size' => ['width' => 100, 'height' => 100],
+                'pos' => Imanee::IM_POS_MID_RIGHT,
+                'expectedCoordinates' => [90, 47.5]
+            ],
+            [
+                'resourceSize' => ['width' => 10, 'height' => 5],
+                'size' => ['width' => 100, 'height' => 100],
+                'pos' => Imanee::IM_POS_BOTTOM_LEFT,
+                'expectedCoordinates' => [0, 95]
+            ],
+            [
+                'resourceSize' => ['width' => 10, 'height' => 5],
+                'size' => ['width' => 100, 'height' => 100],
+                'pos' => Imanee::IM_POS_BOTTOM_CENTER,
+                'expectedCoordinates' => [45, 95]
+            ],
+            [
+                'resourceSize' => ['width' => 10, 'height' => 5],
+                'size' => ['width' => 100, 'height' => 100],
+                'pos' => Imanee::IM_POS_BOTTOM_RIGHT,
+                'expectedCoordinates' => [90, 95]
+            ],
+        ];
     }
 }
