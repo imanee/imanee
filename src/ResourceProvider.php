@@ -38,10 +38,7 @@ class ResourceProvider
     /**
      * @return bool
      */
-    /**
-     * @return bool
-     */
-    public function imagickIsLoaded()
+    private function imagickIsLoaded()
     {
         return extension_loaded('imagick');
     }
@@ -49,7 +46,7 @@ class ResourceProvider
     /**
      * @return bool
      */
-    public function gdIsLoaded()
+    private function gdIsLoaded()
     {
         return extension_loaded('gd');
     }
