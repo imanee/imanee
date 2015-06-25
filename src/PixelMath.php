@@ -57,7 +57,7 @@ class PixelMath
      * @param array $resourceSize  an array with the keys 'width' and 'height' from the image to be placed
      * @param array $size an array with they keys 'width' and 'height' from the original, base image
      * @param int   $place_constant one of the \Imanee::IM_POS constant (default is IM_POS_TOP_LEFT)
-     * @return array Returns an array with the first position representing the X coordinate and the second position
+     * @return int[] Returns an array with the first position representing the X coordinate and the second position
      * representing the Y coordinate for placing the image
      */
     public static function getPlacementCoordinates(
@@ -107,6 +107,9 @@ class PixelMath
                 break;
         }
 
-        return [$x, $y];
+        return [
+            (int) floor($x),
+            (int) floor($y)
+        ];
     }
 }
