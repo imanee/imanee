@@ -20,31 +20,13 @@ use Imanee\Model\ImageComposableInterface;
 use Imanee\Model\ImageWritableInterface;
 use Imanee\Model\ImageFilterableInterface;
 
-class ImagickResource implements
+class ImagickResource extends Resource implements
     ImageResourceInterface,
     ImageWritableInterface,
     ImageComposableInterface,
     ImageFilterableInterface,
     ImageAnimatableInterface
 {
-    /** @var \Imagick the image resource */
-    private $resource;
-
-    /** @var string the path to the current image resource if loaded from file */
-    public $imagePath;
-
-    /** @var string the image mime type */
-    public $mime;
-
-    /** @var  int the image width */
-    public $width;
-
-    /** @var int the image height */
-    public $height;
-
-    /** @var string the image background if defined */
-    public $background;
-
     public function __construct()
     {
         $this->resource = new \Imagick();
@@ -90,49 +72,6 @@ class ImagickResource implements
         $this->background = $background;
 
         return $this->resource->newImage($width, $height, new \ImagickPixel($background));
-    }
-
-
-    /**
-     * @return \Imagick The imagick resource
-     */
-    public function getResource()
-    {
-        return $this->resource;
-    }
-
-    /**
-     * Sets the current Imagick resource and updates the Image info
-     * @param \Imagick $resource
-     */
-    public function setResource($resource)
-    {
-        $this->resource = $resource;
-        $this->updateResourceDimensions();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMime()
-    {
-        return $this->mime;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeight()
-    {
-        return $this->height;
     }
 
     /**
