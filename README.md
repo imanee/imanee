@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/imanee/imanee.svg?branch=master)](https://travis-ci.org/imanee/imanee)
 [![Documentation Status](https://readthedocs.org/projects/imanee/badge/?version=latest)](https://readthedocs.org/projects/imanee/?badge=latest)
+[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/imanee/imanee/blob/master/LICENSE.md)
 
 Imanee is a simple Image Manipulation library for PHP. 
 It provides an easy flow and convenient methods for creating thumbnails, watermarks, text writing, animated gifs and more.
