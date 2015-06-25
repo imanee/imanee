@@ -38,11 +38,6 @@ class ResourceProvider
     /**
      * @return bool
      */
-    public function imaneeIsSupported()
-    {
-        return ($this->imagickIsLoaded() or $this->gdIsLoaded());
-    }
-
     /**
      * @return bool
      */
