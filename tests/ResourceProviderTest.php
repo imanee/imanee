@@ -27,7 +27,7 @@ class ResourceProviderTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException Imanee\Exception\ExtensionNotFoundException
      */
-    public function testFailIfNoUsableExtensionIsAvailable()
+    public function testshouldFailIfNoUsableExtensionIsAvailable()
     {
         $this->PhpExtensionAvailabilityChecker
             ->shouldReceive('isLoaded')
