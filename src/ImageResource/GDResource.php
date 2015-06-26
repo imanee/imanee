@@ -21,33 +21,12 @@ use Imanee\Model\ImageWritableInterface;
 use Imanee\PixelMath;
 use Imanee\Model\ImageFilterableInterface;
 
-class GDResource implements
+class GDResource extends Resource implements
     ImageResourceInterface,
     ImageComposableInterface,
     ImageWritableInterface,
     ImageFilterableInterface
 {
-    /** @var resource the image resource */
-    public $resource;
-
-    /** @var string the path to the current image resource if loaded from file */
-    public $imagePath;
-
-    /** @var string the image mime type */
-    public $mime;
-
-    /** @var string helper variable with image format from mimetype */
-    public $format;
-
-    /** @var  int the image width */
-    public $width;
-
-    /** @var int the image height */
-    public $height;
-
-    /** @var string the image background if defined */
-    public $background;
-
     /**
      * {@inheritdoc}
      */
@@ -117,63 +96,6 @@ class GDResource implements
         }
 
         return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getResource()
-    {
-        return $this->resource;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setResource($resource)
-    {
-        $this->resource = $resource;
-        $this->updateResourceDimensions();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMime()
-    {
-        return $this->mime;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormat()
-    {
-        return $this->format;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setFormat($format)
-    {
-        $this->format = $format;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeight()
-    {
-        return $this->height;
     }
 
     /**
