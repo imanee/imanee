@@ -12,6 +12,9 @@ class SepiaFilter implements FilterInterface
      */
     public function apply(Imanee $imanee, array $options = [])
     {
+        $bw = new BWFilter;
+        $bw->apply($imanee);
+
         /** @var \Imagick $resource */
         $resource = $imanee->getResource()->getResource();
 

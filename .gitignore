@@ -3,3 +3,4 @@ build
 vendor
 examples
 composer.lock
+.DS_Store
