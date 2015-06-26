@@ -16,7 +16,8 @@
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
         "ext-imagick": "*",
-        "ext-gd": "*"
+        "ext-gd": "*",
+        "mockery/mockery": "^0.9.4"
     },
     "autoload": {
         "psr-4": { "Imanee\\": "src/" }

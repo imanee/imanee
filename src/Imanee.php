@@ -55,7 +55,7 @@ class Imanee
         $this->drawer = new Drawer();
 
         if (!$resource) {
-            $provider = new ResourceProvider();
+            $provider = new ResourceProvider(new PhpExtensionAvailabilityChecker());
             $resource = $provider->createImageResource();
         }
 
@@ -589,7 +589,7 @@ class Imanee
 
         return $this;
     }
-    
+
     /**
      * Adds a frame for generating animated gifs with the animate() method
      * @param mixed $frame A string with a file path or an Imanee object

@@ -13,6 +13,19 @@ use Imanee\ImageResource\ImagickResource;
 class ResourceProvider
 {
     /**
+     * @var PhpExtensionAvailabilityChecker;
+     */
+    private $PhpExtensionAvailabilityChecker;
+
+    /**
+     * @param PhpExtensionAvailabilityChecker $PhpExtensionAvailabilityChecker
+     */
+    public function __construct(PhpExtensionAvailabilityChecker $PhpExtensionAvailabilityChecker)
+    {
+        $this->PhpExtensionAvailabilityChecker = $PhpExtensionAvailabilityChecker;
+    }
+
+    /**
      * Checks for loaded extensions to create a suitable ImageResource, in case neither Imagick or GD are loaded
      * throws an exception
      * @return GDResource|ImagickResource
@@ -38,24 +51,16 @@ class ResourceProvider
     /**
      * @return bool
      */
-    public function imaneeIsSupported()
+    private function imagickIsLoaded()
     {
-        return ($this->imagickIsLoaded() or $this->gdIsLoaded());
+        return $this->PhpExtensionAvailabilityChecker->isLoaded('imagick');
     }
 
     /**
      * @return bool
      */
-    public function imagickIsLoaded()
+    private function gdIsLoaded()
     {
-        return extension_loaded('imagick');
-    }
-
-    /**
-     * @return bool
-     */
-    public function gdIsLoaded()
-    {
-        return extension_loaded('gd');
+        return $this->PhpExtensionAvailabilityChecker->isLoaded('gd');
     }
 }
