@@ -5,7 +5,7 @@ namespace Imanee\Filter\Imagick;
 use Imanee\Imanee;
 use Imanee\Model\FilterInterface;
 
-class SepiaFilter implements FilterInterface
+class GaussianFilter implements FilterInterface
 {
     /**
      * {@inheritdoc}
@@ -15,9 +15,9 @@ class SepiaFilter implements FilterInterface
         /** @var \Imagick $resource */
         $resource = $imanee->getResource()->getResource();
 
-        $options = array_merge(['threshold' => 80], $options);
+        $options = array_merge(['radius' => 2, 'sigma' => 2], $options);
 
-        return $resource->sepiaToneImage($options['threshold']);
+        return $resource->gaussianBlurImage($options['radius'], $options['sigma']);
     }
 
     /**
@@ -25,6 +25,6 @@ class SepiaFilter implements FilterInterface
      */
     public function getName()
     {
-        return 'filter_sepia';
+        return 'filter_gaussian';
     }
 }

@@ -10,6 +10,7 @@ use Imanee\Filter\BWFilter;
 use Imanee\Filter\ColorFilter;
 use Imanee\Filter\ModulateFilter;
 use Imanee\Filter\SepiaFilter;
+use Imanee\Filter\GaussianFilter;
 use Imanee\Model\ImageAnimatableInterface;
 use Imanee\Model\ImageComposableInterface;
 use Imanee\Model\ImageFilterableInterface;

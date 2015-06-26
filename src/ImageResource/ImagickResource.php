@@ -11,6 +11,7 @@ use Imanee\Filter\Imagick\BWFilter;
 use Imanee\Filter\Imagick\ColorFilter;
 use Imanee\Filter\Imagick\ModulateFilter;
 use Imanee\Filter\Imagick\SepiaFilter;
+use Imanee\Filter\Imagick\GaussianFilter;
 use Imanee\Model\FilterInterface;
 use Imanee\Model\ImageResourceInterface;
 use Imanee\Imanee;
@@ -376,6 +377,7 @@ class ImagickResource extends Resource implements
             new ColorFilter(),
             new ModulateFilter(),
             new SepiaFilter(),
+            new GaussianFilter()
         ];
     }
 }

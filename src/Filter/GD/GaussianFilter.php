@@ -1,23 +1,21 @@
 <?php
 
-namespace Imanee\Filter\Imagick;
+namespace Imanee\Filter\GD;
 
 use Imanee\Imanee;
 use Imanee\Model\FilterInterface;
 
-class SepiaFilter implements FilterInterface
+class GaussianFilter implements FilterInterface
 {
     /**
      * {@inheritdoc}
      */
     public function apply(Imanee $imanee, array $options = [])
     {
-        /** @var \Imagick $resource */
+        /** @var resource $resource */
         $resource = $imanee->getResource()->getResource();
 
-        $options = array_merge(['threshold' => 80], $options);
-
-        return $resource->sepiaToneImage($options['threshold']);
+        imagefilter($resource, IMG_FILTER_GAUSSIAN_BLUR);
     }
 
     /**
@@ -25,6 +23,6 @@ class SepiaFilter implements FilterInterface
      */
     public function getName()
     {
-        return 'filter_sepia';
+        return 'filter_gaussian';
     }
 }
