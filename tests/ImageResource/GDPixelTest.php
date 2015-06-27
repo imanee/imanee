@@ -1,13 +1,9 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Rob
- * Date: 25-6-2015
- * Time: 19:52
+ * GDPixel Tests
  */
 
 namespace Imanee\Tests;
-
 
 use Imanee\ImageResource\GDPixel;
 
@@ -28,31 +24,31 @@ class GDPixelTest extends \PHPUnit_Framework_TestCase
 
     public function colorTestValues()
     {
-        return array(
-            array('#000000', 0, 0, 0),
-            array('000000', 0, 0, 0),
-            array('#FFFFFF', 255, 255, 255),
-            array('FFFFFF', 255, 255, 255),
-            array('#FF0000', 255, 0, 0),
-            array('#008000', 0, 128, 0),
-            array('#00000F', 0, 0, 15),
+        return [
+            ['#000000', 0, 0, 0],
+            ['000000', 0, 0, 0],
+            ['#FFFFFF', 255, 255, 255],
+            ['FFFFFF', 255, 255, 255],
+            ['#FF0000', 255, 0, 0],
+            ['#008000', 0, 128, 0],
+            ['#00000F', 0, 0, 15],
 
-            array('black', 0, 0, 0), //000000
-            array('white', 255, 255, 255), //FFFFFF
-            array('grey', 190, 190, 190), //BEBEBE
-            array('red', 254, 0, 0), //FE0000
-            array('green', 0, 128, 1), //008001
-            array('blue' , 0, 0 , 254), //0000FE
-            array('purple', 129, 0, 127), //81007F
-            array('pink', 255, 192, 203), //FFC0CB
-            array('yellow', 255, 255, 0), //FFFF00
-            array('orange', 254, 165, 0), //FEA500
-            array('silver', 192, 192, 192), //C0C0C0
-            array('lavender', 229, 230, 250), //E5E6FA
-            array('salmon', 250, 128, 113), //FA8071
-            array('magenta', 255, 0, 254), //FF00FE
-            array('plum', 221, 160, 220), //DDA0DC
-        );
+            ['black', 0, 0, 0], //000000
+            ['white', 255, 255, 255], //FFFFFF
+            ['grey', 190, 190, 190], //BEBEBE
+            ['red', 254, 0, 0], //FE0000
+            ['green', 0, 128, 1], //008001
+            ['blue' , 0, 0 , 254], //0000FE
+            ['purple', 129, 0, 127], //81007F
+            ['pink', 255, 192, 203], //FFC0CB
+            ['yellow', 255, 255, 0], //FFFF00
+            ['orange', 254, 165, 0], //FEA500
+            ['silver', 192, 192, 192], //C0C0C0
+            ['lavender', 229, 230, 250], //E5E6FA
+            ['salmon', 250, 128, 113], //FA8071
+            ['magenta', 255, 0, 254], //FF00FE
+            ['plum', 221, 160, 220], //DDA0DC
+        ];
     }
 
     /**
@@ -68,13 +64,13 @@ class GDPixelTest extends \PHPUnit_Framework_TestCase
 
     public function badColorTestValues()
     {
-        return array(
-            array('lightGrey'),
-            array('notsupported'),
-            array('baddata'),
-            array('abc'),
-            array('12345'),
-        );
+        return [
+            ['lightGrey'],
+            ['notsupported'],
+            ['baddata'],
+            ['abc'],
+            ['12345'],
+        ];
     }
 
     /**
