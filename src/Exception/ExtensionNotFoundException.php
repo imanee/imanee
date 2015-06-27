@@ -1,12 +1,10 @@
 <?php
-/**
- * Extension Not Found Exception
- */
 
 namespace Imanee\Exception;
 
+use Exception;
 
-class ExtensionNotFoundException extends \Exception
+class ExtensionNotFoundException extends Exception
 {
 
 }

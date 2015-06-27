@@ -2,9 +2,13 @@
 
 namespace Imanee\Filter\Imagick;
 
+use Imagick;
 use Imanee\Imanee;
 use Imanee\Model\FilterInterface;
 
+/**
+ * Makes an image brownish.
+ */
 class SepiaFilter implements FilterInterface
 {
     /**
@@ -12,7 +16,7 @@ class SepiaFilter implements FilterInterface
      */
     public function apply(Imanee $imanee, array $options = [])
     {
-        /** @var \Imagick $resource */
+        /** @var Imagick $resource */
         $resource = $imanee->getResource()->getResource();
 
         $options = array_merge(['threshold' => 80], $options);

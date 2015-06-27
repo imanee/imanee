@@ -2,10 +2,6 @@
 
 namespace Imanee;
 
-/**
- * Class ConfigContainer
- * @package Imanee
- */
 abstract class ConfigContainer
 {
     protected $config;
@@ -21,6 +17,7 @@ abstract class ConfigContainer
 
     /**
      * @param $param
+     *
      * @return string|null
      */
     public function __get($param)
@@ -38,8 +35,9 @@ abstract class ConfigContainer
     }
 
     /**
-     * @param string $param
+     * @param string      $param
      * @param string|null $default
+     *
      * @return string|null
      */
     public function get($param, $default = null)
@@ -50,6 +48,7 @@ abstract class ConfigContainer
     /**
      * @param string $name
      * @param string $value
+     *
      * @return ConfigContainer $this
      */
     public function set($name, $value)

@@ -1,35 +1,55 @@
 <?php
-/**
- * GDPixel Helper to translate colors like ImagickPixel
- * Colors are treated as html string by default as they have to be separated into R G B
- */
 
 namespace Imanee\ImageResource;
 
 use Imanee\Exception\InvalidColorException;
 
+/**
+ * Translate colors like ImagickPixel.
+ *
+ * Colors are treated similarly to CSS color values, and are split into red, green, and blue values.
+ */
 class GDPixel
 {
+    /**
+     * @var string
+     */
     public $color;
+
+    /**
+     * @var int
+     */
     public $channelR;
+
+    /**
+     * @var int
+     */
     public $channelG;
+
+    /**
+     * @var int
+     */
     public $channelB;
 
+    /**
+     * @var array
+     */
     protected $colors;
 
     /**
-     * Returns a color representation for GD based on a color string
+     * Returns a color representation for GD based on a color string.
+     *
      * Examples of valid color strings:
      *    - black
      *    - white
      *    - purple
      *    - #00FFCC
      *    - 00FFCC
-     * @param string $color
-     * @param resource $resource
-     * @return int
      *
-     * Current color aliases: check loadColorAliases()
+     * @param string   $color
+     * @param resource $resource
+     *
+     * @return int
      */
     public static function load($color, $resource)
     {
@@ -51,12 +71,12 @@ class GDPixel
     {
         $this->loadColorAliases();
 
-        //is one of the color alias?
+        // is one of the color alias?
         if (array_key_exists(strtolower($color), $this->colors)) {
             $color = $this->colors[$color];
         }
 
-        //is it html hexa?
+        // is it a hexadecimal string?
         if ((strpos($color, '#')) !== false) {
             $color = str_replace('#', '', $color);
         }
@@ -67,14 +87,16 @@ class GDPixel
             );
         }
 
-        //now we should have something like 000000
+        // now we should have something like 000000
         $this->channelR = hexdec(substr($color, 0, 2));
         $this->channelG = hexdec(substr($color, 2, 2));
         $this->channelB = hexdec(substr($color, 4, 2));
     }
 
     /**
-     * Loads string aliases for common colors. The colors where picked based on ImageMagick (same shades)
+     * Loads string aliases for common colors.
+     *
+     * The colors where based on ImageMagick shades.
      */
     public function loadColorAliases()
     {

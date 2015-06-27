@@ -5,6 +5,9 @@ namespace Imanee\Filter\GD;
 use Imanee\Imanee;
 use Imanee\Model\FilterInterface;
 
+/**
+ * Removes color from images.
+ */
 class BWFilter implements FilterInterface
 {
     /**

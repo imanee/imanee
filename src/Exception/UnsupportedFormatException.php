@@ -2,7 +2,9 @@
 
 namespace Imanee\Exception;
 
-class UnsupportedFormatException extends \Exception
+use Exception;
+
+class UnsupportedFormatException extends Exception
 {
 
 }

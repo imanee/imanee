@@ -2,7 +2,9 @@
 
 namespace Imanee\Exception;
 
-class FilterNotFoundException extends \Exception
+use Exception;
+
+class FilterNotFoundException extends Exception
 {
 
 }

@@ -2,7 +2,9 @@
 
 namespace Imanee\Exception;
 
-class EmptyImageException extends \Exception
+use Exception;
+
+class EmptyImageException extends Exception
 {
 
 }

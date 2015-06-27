@@ -2,7 +2,9 @@
 
 namespace Imanee\Exception;
 
-class ImageNotFoundException extends \Exception
+use Exception;
+
+class ImageNotFoundException extends Exception
 {
 
 }

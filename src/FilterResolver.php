@@ -25,6 +25,7 @@ class FilterResolver
 
     /**
      * @param $filter_name
+     *
      * @return bool|FilterInterface
      */
     public function resolve($filter_name)

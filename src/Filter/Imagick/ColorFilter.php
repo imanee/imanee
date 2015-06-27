@@ -5,6 +5,9 @@ namespace Imanee\Filter\Imagick;
 use Imanee\Imanee;
 use Imanee\Model\FilterInterface;
 
+/**
+ * Adds color to greyscale images.
+ */
 class ColorFilter implements FilterInterface
 {
     /**
