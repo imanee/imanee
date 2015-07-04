@@ -21,7 +21,7 @@
     },
     "suggest": {
         "ext-imagick": "To allow Imanee\\ImageResource\\ImagickResource usage.",
-        "ext-gd": "To allow Imanee\\ImageResource\\GDResource usage.",
+        "ext-gd": "To allow Imanee\\ImageResource\\GDResource usage."
     },
     "autoload": {
         "psr-4": { "Imanee\\": "src/" }
