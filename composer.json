@@ -17,7 +17,8 @@
         "phpunit/phpunit": "3.7.*",
         "ext-imagick": "*",
         "ext-gd": "*",
-        "mockery/mockery": "^0.9.4"
+        "mockery/mockery": "^0.9.4",
+        "satooshi/php-coveralls": "^0.6.1"
     },
     "suggest": {
         "ext-imagick": "To allow Imanee\\ImageResource\\ImagickResource usage.",
