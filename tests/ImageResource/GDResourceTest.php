@@ -80,4 +80,45 @@ class GDResourceTest extends \PHPUnit_Framework_TestCase
         $gdResource->load($file);
         $this->assertFalse($gdResource->loadColor($color));
     }
+
+    /**
+     * @covers \Imanee\ImageResource\GDResource::output
+     * @dataProvider imageProvider
+     */
+    public function testReturnTheImageInsteadOfPuttingItInTheBuffer($imageRelativePath)
+    {
+        $file = __DIR__ . $imageRelativePath;
+        $gdResource = new GDResource();
+        $gdResource->load($file);
+
+        ob_start();
+        $image = $gdResource->output();
+        $buffer = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertNotEmpty($image);
+        $this->assertEmpty($buffer);
+    }
+
+    /**
+     * @covers \Imanee\ImageResource\GDResource::output
+     * @expectedException \Imanee\Exception\UnsupportedFormatException
+     */
+    public function testThrowErrorWhenFormatNotSupported()
+    {
+        $file = __DIR__ . '/_files/imanee.png';;
+        $gdResource = new GDResource();
+        $gdResource->load($file);
+
+        $gdResource->output('wrongFormat');
+    }
+
+    public function imageProvider()
+    {
+        return [
+            ['/_files/imanee.png'],
+            ['/_files/imanee.jpg'],
+            ['/_files/imanee.gif'],
+        ];
+    }
 }
