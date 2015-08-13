@@ -16,4 +16,8 @@ install:
     - composer install --no-interaction
 
 script:
-    - phpunit
+    - mkdir -p build/logs
+    - php vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+    
+after_script:
+    - php vendor/bin/coveralls -v
