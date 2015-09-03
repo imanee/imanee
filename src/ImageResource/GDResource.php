@@ -276,6 +276,7 @@ class GDResource extends Resource implements
     public function output($format = null)
     {
         $format = $format ?: $this->format;
+        ob_start();
         switch ($format) {
             case "jpg":
             case "jpeg":
@@ -292,10 +293,16 @@ class GDResource extends Resource implements
                 break;
 
             default:
+                ob_end_clean();
                 throw new UnsupportedFormatException(
                     sprintf("The format '%s' is not supported by this Resource.", $this->getMime())
                 );
         }
+
+        $image = ob_get_contents();
+        ob_end_clean();
+
+        return $image;
     }
 
     /**
