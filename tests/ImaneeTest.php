@@ -97,6 +97,19 @@ class ImaneeTest extends \PHPUnit_Framework_TestCase
         $this->model->resize(200, 200);
     }
 
+    public function testShouldNotResizeWhenImageIsSmallerThanBoxAndStretchIsFalse()
+    {
+        $resource = $this->getMockBuilder('Imanee\ImageResource\GDResource')
+            ->setMethods(['resize'])
+            ->getMock();
+
+        $resource->expects($this->never())
+            ->method('resize');
+
+        $this->model->setResource($resource);
+        $this->model->resize(1200, 1200, true, false);
+    }
+
     public function testShouldRotate()
     {
         $resource = $this->getMockBuilder('Imanee\ImageResource\GDResource')
@@ -142,6 +155,20 @@ class ImaneeTest extends \PHPUnit_Framework_TestCase
         $this->model->setResource($resource);
         $this->model->thumbnail(200, 200);
         $this->model->thumbnail(200, 200, true);
+    }
+
+    public function testShouldNotThumbnailWhenImageIsSmallerThanBoxAndStretchIsFalse()
+    {
+        $resource = $this->getMockBuilder('Imanee\ImageResource\GDResource')
+            ->setMethods(['thumbnail'])
+            ->getMock();
+
+        $resource->expects($this->never())
+            ->method('thumbnail');
+
+
+        $this->model->setResource($resource);
+        $this->model->thumbnail(1200, 1200, false, false);
     }
 
     public function testSetAndGetResource()
