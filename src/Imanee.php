@@ -167,12 +167,18 @@ class Imanee
      * @param bool $bestfit When set to true, will fit the image inside the provided box dimensions.
      *                      When set to false, will force resize to the specified dimensions, which
      *                      may cause the resulting image to be out of proportion.
+     * @param bool $stretch When set to false, an image smaller than the box area won't be scaled up
+     *                      to meet the desired size. Defaults to true
      *
      * @return $this
      */
-    public function resize($width, $height, $bestfit = true)
+    public function resize($width, $height, $bestfit = true, $stretch = true)
     {
-        $this->resource->resize($width, $height, $bestfit);
+        if (!$stretch and (($width >= $this->getWidth()) and ($height >= $this->getHeight()))) {
+            return $this;
+        }
+
+        $this->resource->resize($width, $height, $bestfit, $stretch);
 
         return $this;
     }
