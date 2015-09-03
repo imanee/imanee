@@ -167,12 +167,18 @@ class Imanee
      * @param bool $bestfit When set to true, will fit the image inside the provided box dimensions.
      *                      When set to false, will force resize to the specified dimensions, which
      *                      may cause the resulting image to be out of proportion.
+     * @param bool $stretch When set to false, an image smaller than the box area won't be scaled up
+     *                      to meet the desired size. Defaults to true
      *
      * @return $this
      */
-    public function resize($width, $height, $bestfit = true)
+    public function resize($width, $height, $bestfit = true, $stretch = true)
     {
-        $this->resource->resize($width, $height, $bestfit);
+        if (!$stretch and (($width >= $this->getWidth()) and ($height >= $this->getHeight()))) {
+            return $this;
+        }
+
+        $this->resource->resize($width, $height, $bestfit, $stretch);
 
         return $this;
     }
@@ -216,15 +222,21 @@ class Imanee
      * fit thumbnail with the given dimensions, cropped by the center. If crop is false, the
      * thumbnail will use the best fit for the dimensions.
      *
-     * @param int  $width  Width of the thumbnail.
-     * @param int  $height Height of the thumbnail.
-     * @param bool $crop   When set to true, the thumbnail will be cropped from the center to match
-     *                     the given size.
+     * @param int  $width   Width of the thumbnail.
+     * @param int  $height  Height of the thumbnail.
+     * @param bool $crop    When set to true, the thumbnail will be cropped from the center to match
+     *                      the given size.
+     * @param bool $stretch When set to false, an image smaller than the box area won't be scaled up
+     *                      to meet the desired size. Defaults to true
      *
      * @return $this
      */
-    public function thumbnail($width, $height, $crop = false)
+    public function thumbnail($width, $height, $crop = false, $stretch = true)
     {
+        if (!$stretch and (($width >= $this->getWidth()) and ($height >= $this->getHeight()))) {
+            return $this;
+        }
+
         $this->resource->thumbnail($width, $height, $crop);
 
         return $this;
