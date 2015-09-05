@@ -115,6 +115,34 @@ In order to create a square thumbnail, for instance, you just need to provide sa
 
 .. image:: img/thumbnail_crop.jpg
 
+Rotating images
+---------------
+
+Use the method ``rotate`` to rotate the image resource in the given degrees:
+
+.. code-block:: php
+
+    $res_jpg = __DIR__ . '/../resources/img01.jpg';
+
+    header("Content-type: image/jpg");
+    $imanee = new Imanee($res_jpg);
+
+    $imanee->rotate(30,'#4ACAA8');
+
+    echo $imanee->output();
+
+The first parameter represents the amount of degrees to rotate the image. Negative values will rotate the image anti-clockwise
+The second parameter defines the background color to use for filling the empty spaces. Dsefault is transparent.
+Allowed values are documented `in the php documentation <http://php.net/manual/en/imagickpixel.construct.php>`_
+It will render as black for jpg format (use png if you want it transparent)
+
+.. image:: img/rotated.jpg
+
+.. note::
+It will render as black for jpg format (use png if you want it transparent)
+
+
+
 Saving Images to Disk
 ---------------------
 
