@@ -161,7 +161,7 @@ class GDResource extends Resource implements
             $finalHeight = $bestFitDimensions['height'];
         }
 
-        $resized = imagecreatetruecolor($finalWidth, $finalHeight);
+        $resized = $this->createBlank($finalHeight, $finalHeight);
 
         if (imagecopyresampled(
             $resized,
@@ -203,7 +203,7 @@ class GDResource extends Resource implements
      */
     public function crop($width, $height, $coordX, $coordY)
     {
-        $cropped = imagecreatetruecolor($width, $height);
+        $cropped = $this->createBlank($width, $height);
 
         if (imagecopyresampled(
             $cropped,
@@ -247,7 +247,7 @@ class GDResource extends Resource implements
         }
 
         $this->resize($resizeDimensions['width'], $resizeDimensions['height'], false);
-        $thumb = imagecreatetruecolor($finalWidth, $finalHeight);
+        $thumb = $this->createBlank($finalWidth, $finalHeight);
 
         if (imagecopyresampled(
             $thumb,
@@ -280,6 +280,14 @@ class GDResource extends Resource implements
         switch ($format) {
             case "jpg":
             case "jpeg":
+                /**
+                 * when converting from png (with alpha) to jpeg, we end up
+                 * with a non-standard background colour (white instead of black)
+                 */
+                if ($this->getMime() === 'image/png') {
+                    $this->fixPngToJpegDefaultBackgroundColor();
+                }
+
                 imagejpeg($this->getResource(), null, 90);
                 break;
 
@@ -316,6 +324,14 @@ class GDResource extends Resource implements
         switch ($this->format) {
             case "jpg":
             case "jpeg":
+                /**
+                 * when converting from png (with alpha) to jpeg, we end up
+                 * with a non-standard background colour (white instead of black)
+                 */
+                if ($this->getMime() === 'image/png') {
+                    $this->fixPngToJpegDefaultBackgroundColor();
+                }
+
                 return imagejpeg($this->getResource(), $file, $jpeg_quality);
                 break;
 
@@ -448,5 +464,54 @@ class GDResource extends Resource implements
             new ModulateFilter(),
             new GaussianFilter()
         ];
+    }
+    /**
+     * Helper method which returns a blank GD resource.
+     * Retains alpha for PNGs
+     *
+     * @param  int $width  width required
+     * @param  int $height height required
+     * @return resource (GD)
+     */
+    private function createBlank($width, $height)
+    {
+        $blank = imagecreatetruecolor($width, $height);
+
+        /**
+         * This is not ideal when converting png to jpeg as instead of a default
+         * black background we end up with a white one.
+         * This is alleviated by additional use of imagecopyresampled() before
+         * outputting jpegs.
+         */
+        if ($this->getMime() === 'image/png') {
+            imagealphablending($blank, false);
+            imagesavealpha($blank, true);
+        }
+
+        return $blank;
+    }
+    /**
+     * Helper method responsible for fixing non default (white) background being
+     * generated during conversion from png to jpeg
+     */
+    private function fixPngToJpegDefaultBackgroundColor()
+    {
+        $black = imagecreatetruecolor($this->width, $this->height);
+
+        if (imagecopyresampled(
+                $black,
+                $this->getResource(),
+                0,
+                0,
+                0,
+                0,
+                $this->getWidth(),
+                $this->getHeight(),
+                $this->getWidth(),
+                $this->getHeight()
+            )
+        ) {
+            $this->resource = $black;
+        }
     }
 }
