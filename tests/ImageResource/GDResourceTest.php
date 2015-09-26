@@ -121,4 +121,13 @@ class GDResourceTest extends \PHPUnit_Framework_TestCase
             ['/_files/imanee.gif'],
         ];
     }
+
+    /**
+     * @expectedException Imanee\Exception\UnsupportedMethodException
+     */
+    public function testGetGifFramesShouldThrowExceptionAsUnsupported()
+    {
+        $imageResource = new GDResource();
+        $imageResource->getGifFrames();
+    }
 }

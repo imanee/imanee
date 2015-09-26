@@ -666,6 +666,33 @@ class Imanee
     {
         return $this->frames;
     }
+    /**
+     * Removes a frame from a list used for generating animated Gifs.
+     *
+     * @param  int $offset
+     * @throws \InvalidArgumentException
+     *
+     * @return Imanee
+     */
+    public function removeFrame($offset)
+    {
+        if (!isset($this->frames[$offset])) {
+            throw new \InvalidArgumentException('Offset does not exist.');
+        }
+
+        unset($this->frames[$offset]);
+
+        return $this;
+    }
+    /**
+     * Provides a new Imanee object with frames retrieved from a gif
+     *
+     * @return Imanee
+     */
+    public function getGifFrames()
+    {
+        return $this->resource->getGifFrames();
+    }
 
     /**
      * @param int $delay
