@@ -18,7 +18,8 @@
         "ext-imagick": "*",
         "ext-gd": "*",
         "mockery/mockery": "^0.9.4",
-        "satooshi/php-coveralls": "^0.6.1"
+        "satooshi/php-coveralls": "^0.6.1",
+        "raveren/kint":"^1.0"
     },
     "suggest": {
         "ext-imagick": "To allow Imanee\\ImageResource\\ImagickResource usage.",
