@@ -2,6 +2,7 @@
 [![Documentation Status](https://readthedocs.org/projects/imanee/badge/?version=latest)](https://readthedocs.org/projects/imanee/?badge=latest)
 [![Coverage Status](https://coveralls.io/repos/imanee/imanee/badge.svg?branch=master&service=github)](https://coveralls.io/github/imanee/imanee?branch=master)
 [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/imanee/imanee/blob/master/LICENSE.md)
+[![Join the chat at https://gitter.im/imanee/imanee](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/imanee/imanee?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Imanee is a simple Image Manipulation library for PHP. 
 It provides an easy flow and convenient methods for creating thumbnails, watermarks, text writing, animated gifs and more.
@@ -11,7 +12,6 @@ Check [our documentation](http://imanee.readthedocs.org) for detailed instructio
 
 ## Requirements
 
-[![Join the chat at https://gitter.im/imanee/imanee](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/imanee/imanee?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Imanee requires PHP >= 5.4 , and one of the following image extensions for PHP: **Imagick** or **GD**. It's recommended to use Imagick as it has more features, including animated gifs support (not available with GD).
 
 ## Installation
