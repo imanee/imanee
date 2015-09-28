@@ -10,6 +10,8 @@ Check [our live demos](http://imanee.io/#demos) for usage examples.
 Check [our documentation](http://imanee.readthedocs.org) for detailed instructions.
 
 ## Requirements
+
+[![Join the chat at https://gitter.im/imanee/imanee](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/imanee/imanee?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Imanee requires PHP >= 5.4 , and one of the following image extensions for PHP: **Imagick** or **GD**. It's recommended to use Imagick as it has more features, including animated gifs support (not available with GD).
 
 ## Installation
