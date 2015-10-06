@@ -396,7 +396,9 @@ class GDResource extends Resource implements
             $height = $image->getHeight();
         }
 
-        /* TODO: implement pixel per pixel transparency */
+        if ($transparency > 0) {
+            $image->getResource()->fixTransparency($transparency);
+        }
 
         return imagecopyresampled(
             $this->getResource(),
@@ -513,5 +515,46 @@ class GDResource extends Resource implements
         ) {
             $this->resource = $black;
         }
+    }
+    /**
+     * Helper method in order to preserve transparency
+     *
+     * @param int $transparency Transparency in percentage - 0 (opaque) to 100 (transparent).
+     * @return bool true on success or false on failure.
+     */
+    private function fixTransparency($transparency)
+    {
+        $transparency = 100 - $transparency;
+        $transparency /= 100;
+
+        $image = $this->getResource();
+
+        // Get image width and height
+        $width = $this->getWidth();
+        $height = $this->getHeight();
+
+        // Turn alpha blending off
+        imagealphablending($image, false);
+
+        // Loop through image pixels and modify alpha for each
+        for ($x = 0; $x < $width; $x++) {
+            for ($y = 0; $y < $height; $y++) {
+                // Get current alpha value
+                $colorxy = imagecolorat($image, $x, $y);
+                $alpha = ($colorxy >> 24) & 0xFF;
+                // Calculate new alpha
+                $alpha = 127 + 127 * $transparency * ($alpha - 127) / 127;
+                // Get the color index with new alpha
+                $alphacolorxy = imagecolorallocatealpha($image, ($colorxy >> 16) & 0xFF, ($colorxy >> 8) & 0xFF, $colorxy & 0xFF, $alpha);
+                // Set pixel with the new color + opacity
+                if (!imagesetpixel($image, $x, $y, $alphacolorxy)) {
+                    return false;
+                }
+            }
+        }
+
+        $this->setResource($image);
+
+        return true;
     }
 }
