@@ -161,7 +161,7 @@ class GDResource extends Resource implements
             $finalHeight = $bestFitDimensions['height'];
         }
 
-        $resized = $this->createBlank($finalHeight, $finalHeight);
+        $resized = $this->createBlank($finalWidth, $finalHeight);
 
         if (imagecopyresampled(
             $resized,
