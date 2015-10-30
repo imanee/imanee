@@ -362,7 +362,13 @@ class GDResource extends Resource implements
     {
         $path = pathinfo($filepath);
 
-        return $path['extension'];
+        // check if the file has the extenison and we need
+        // to lower down the extension (caused unknown extension for uppercased extension)
+        if (isset($path['extension'])) {
+            return strtolower($path['extension']);
+        } else {
+            return $this->format;
+        }
     }
 
     /**
