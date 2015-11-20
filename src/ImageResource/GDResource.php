@@ -5,6 +5,7 @@ namespace Imanee\ImageResource;
 use Imanee\Drawer;
 use Imanee\Exception\ImageNotFoundException;
 use Imanee\Exception\UnsupportedFormatException;
+use Imanee\Exception\UnsupportedMethodException;
 use Imanee\Filter\GD\BWFilter;
 use Imanee\Filter\GD\ColorFilter;
 use Imanee\Filter\GD\ModulateFilter;
@@ -513,5 +514,14 @@ class GDResource extends Resource implements
         ) {
             $this->resource = $black;
         }
+    }
+    /**
+     * @throws UnsupportedMethodEception
+     */
+    public function getGifFrames()
+    {
+        throw new UnsupportedMethodException(
+            'Method currently unsupported.'
+        );
     }
 }

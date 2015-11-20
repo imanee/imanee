@@ -461,6 +461,17 @@ class ImaneeTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(4, $this->model->getFrames());
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testRemoveFrameShouldThrowExceptionIfOffsetNotExists()
+    {
+        $this->model->addFrame('image01.jpg');
+        $this->model->addFrame('image02.jpg');
+
+        $this->model->removeFrame(2);
+    }
+
     public function testShouldAnimate()
     {
         $this->model->addFrame('image01.jpg');

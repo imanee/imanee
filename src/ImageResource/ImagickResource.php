@@ -7,6 +7,7 @@ use Imagick;
 use ImagickDraw;
 use ImagickException;
 use ImagickPixel;
+use Imanee\Exception\UnsupportedFormatException;
 use Imanee\Exception\EmptyImageException;
 use Imanee\Exception\ImageNotFoundException;
 use Imanee\Filter\Imagick\BWFilter;
@@ -82,9 +83,13 @@ class ImagickResource extends Resource implements
      */
     public $background;
 
-    public function __construct()
+    public function __construct(Imagick $resource = null)
     {
-        $this->resource = new Imagick();
+        if (!is_null($resource)) {
+            $this->resource = $resource;
+        } else {
+            $this->resource = new Imagick();
+        }
     }
 
     /**
@@ -429,5 +434,29 @@ class ImagickResource extends Resource implements
             new SepiaFilter(),
             new GaussianFilter()
         ];
+    }
+    /**
+     * Retrieves all frames from a gif image and returns an Imanee object
+     * with $frames filled with single frame Imanee objects
+     *
+     * @throws UnsupportedFormatException
+     *
+     * @return Imanee
+     */
+    public function getGifFrames()
+    {
+        if ($this->getFormat() !== 'GIF') {
+            throw new UnsupportedFormatException(
+                'Method can only be called on GIF files.'
+            );
+        }
+
+        $imanee = new Imanee(null, new ImagickResource());
+
+        foreach ($this->getResource() as $frame) {
+            $imanee->addFrame(new Imanee(null, new ImagickResource($frame->getImage())));
+        }
+
+        return $imanee;
     }
 }

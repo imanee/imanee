@@ -8,18 +8,21 @@ use Imanee\ImageResource\ImagickResource;
 class ImagickResourceTest extends \PHPUnit_Framework_TestCase
 {
     protected $test_jpg;
+    protected $animated_gif;
     protected $model;
 
     public function setup()
     {
-        $this->test_jpg = __DIR__ . '/resources/img01.jpg';
-        $this->model = new ImagickResource();
+        $this->test_jpg     = __DIR__ . '/../resources/img01.jpg';
+        $this->animated_gif = __DIR__ . '/../resources/animated.gif';
+        $this->model        = new ImagickResource();
     }
 
     public function tearDown()
     {
-        $this->test_jpg = null;
-        $this->model = null;
+        $this->test_jpg     = null;
+        $this->animated_gif = null;
+        $this->model        = null;
     }
 
     public function testShouldClone()
@@ -99,5 +102,22 @@ class ImagickResourceTest extends \PHPUnit_Framework_TestCase
         $this->model->createNew(100, 100);
 
         $this->assertFalse($this->model->isBlank());
+    }
+
+    /**
+     * @expectedException Imanee\Exception\UnsupportedFormatException
+     */
+    public function testGetGifFrameShouldThrowExceptionIfWrongFormat()
+    {
+        $this->model->load($this->test_jpg);
+        $this->model->getGifFrames();
+    }
+
+    public function testGetGifFrames()
+    {
+        $this->model->load($this->animated_gif);
+        $imanee = $this->model->getGifFrames();
+
+        $this->assertCount(4, $imanee->getFrames());
     }
 }
