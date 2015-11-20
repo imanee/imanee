@@ -363,7 +363,18 @@ class GDResource extends Resource implements
     {
         $path = pathinfo($filepath);
 
-        return $path['extension'];
+        // check if the file has the extenison and we need
+        // to lower down the extension (caused unknown extension for uppercased extension)
+        if (isset($path['extension'])) {
+            return strtolower($path['extension']);
+        } else if (is_string($this->getMime())) {
+            return str_replace("image/", "", $this->getMime());
+        } else if ($this->format != "") {
+            return $this->format;
+        } else {
+            // fallback to enable save image on empty extension. ImageMagick has no problem with this.
+            return "jpg";
+        }
     }
 
     /**
