@@ -301,14 +301,14 @@ class Imanee
      * affect.
      *
      * @param string $path         The file path to save the image.
-     * @param int    $jpeg_quality The quality for JPEG files, 1 to 100 where 100 means no
+     * @param int    $jpegQuality The quality for JPEG files, 1 to 100 where 100 means no
      *                             compression (higher quality and bigger file).
      *
      * @return $this
      */
-    public function write($path, $jpeg_quality = null)
+    public function write($path, $jpegQuality = null)
     {
-        $this->resource->write($path, $jpeg_quality);
+        $this->resource->write($path, $jpegQuality);
 
         return $this;
     }
@@ -380,7 +380,7 @@ class Imanee
      * method before.
      *
      * @param string $text           Text to be written.
-     * @param int    $place_constant One of the Imanee:IM_POS constants.
+     * @param int    $placeConstant One of the Imanee:IM_POS constants.
      * @param int    $fitWidth       If a positive value is provided, will change the font size to
      *                               fit the text in this width.
      * @param int $fontSize          The font size. Defaults to the current font size defined in the
@@ -390,7 +390,7 @@ class Imanee
      *
      * @throws UnsupportedMethodException
      */
-    public function placeText($text, $place_constant = Imanee::IM_POS_TOP_LEFT, $fitWidth = 0, $fontSize = 0)
+    public function placeText($text, $placeConstant = Imanee::IM_POS_TOP_LEFT, $fitWidth = 0, $fontSize = 0)
     {
         if (! ($this->resource instanceof ImageWritableInterface)) {
             throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
@@ -407,7 +407,7 @@ class Imanee
         list ($coordX, $coordY) = PixelMath::getPlacementCoordinates(
             $this->resource->getTextGeometry($text, $this->getDrawer()),
             $this->getSize(),
-            $place_constant
+            $placeConstant
         );
 
         $this->resource->annotate(
@@ -501,7 +501,7 @@ class Imanee
      * perform a resize before placing the image.
      *
      * @param mixed $image          Path to an image on filesystem or an Imanee Object.
-     * @param int   $place_constant One of the Imanee::IM_POS constants, defaults to
+     * @param int   $placeConstant One of the Imanee::IM_POS constants, defaults to
      *                              IM_POS_TOP_LEFT (top left corner).
      * @param int   $width          Width for the placement.
      * @param int   $height         Height for the placement.
@@ -515,7 +515,7 @@ class Imanee
      */
     public function placeImage(
         $image,
-        $place_constant = Imanee::IM_POS_TOP_LEFT,
+        $placeConstant = Imanee::IM_POS_TOP_LEFT,
         $width = null,
         $height = null,
         $transparency = 0
@@ -530,7 +530,7 @@ class Imanee
             $image = $img;
         }
 
-        if (! ($image instanceof \Imanee\Imanee)) {
+        if (! ($image instanceof Imanee)) {
             throw new UnsupportedFormatException('Object not supported. It must be an instance of Imanee');
         }
 
@@ -541,7 +541,7 @@ class Imanee
         list ($coordX, $coordY) = PixelMath::getPlacementCoordinates(
             $image->getSize(),
             ['width' => $this->getWidth(), 'height' => $this->getHeight()],
-            $place_constant
+            $placeConstant
         );
 
         $this->resource->compositeImage($image, $coordX, $coordY, 0, 0, $transparency);
@@ -553,14 +553,14 @@ class Imanee
      * Convenient method to place a watermark image on top of the current resource.
      *
      * @param mixed $image          The path to the watermark image file or an Imanee object.
-     * @param int   $place_constant One of the Imanee::IM_POS constants
+     * @param int   $placeConstant One of the Imanee::IM_POS constants
      * @param int   $transparency   Watermark transparency percentage.
      *
      * @return $this
      */
-    public function watermark($image, $place_constant = Imanee::IM_POS_BOTTOM_RIGHT, $transparency = 0)
+    public function watermark($image, $placeConstant = Imanee::IM_POS_BOTTOM_RIGHT, $transparency = 0)
     {
-        $this->placeImage($image, $place_constant, 0, 0, $transparency);
+        $this->placeImage($image, $placeConstant, 0, 0, $transparency);
 
         return $this;
     }
@@ -717,6 +717,7 @@ class Imanee
      * @param Drawer $drawer
      * @param string $format
      * @param string $background
+     * @param ImageResourceInterface $resource
      *
      * @return Imanee
      */
