@@ -15,7 +15,6 @@ use Imanee\Filter\Imagick\ColorFilter;
 use Imanee\Filter\Imagick\ModulateFilter;
 use Imanee\Filter\Imagick\SepiaFilter;
 use Imanee\Filter\Imagick\GaussianFilter;
-use Imanee\Model\FilterInterface;
 use Imanee\Model\ImageResourceInterface;
 use Imanee\Imanee;
 use Imanee\Drawer;
@@ -404,7 +403,7 @@ class ImagickResource extends Resource implements
      *
      * @throws UnsupportedFormatException
      *
-     * @return Imanee
+     * @return Imanee[]
      */
     public function getGifFrames()
     {
@@ -414,13 +413,14 @@ class ImagickResource extends Resource implements
             );
         }
 
-        $imanee = new Imanee(null, new ImagickResource());
+        $frames = [];
 
+        /** @var Imagick $frame */
         foreach ($this->getResource() as $frame) {
-            $imanee->addFrame(new Imanee(null, new ImagickResource($frame->getImage())));
+            $frames[] = new Imanee(null, new ImagickResource($frame->getImage()));
         }
 
-        return $imanee;
+        return $frames;
     }
 
     /**

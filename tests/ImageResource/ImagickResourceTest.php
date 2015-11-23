@@ -116,8 +116,7 @@ class ImagickResourceTest extends \PHPUnit_Framework_TestCase
     public function testGetGifFrames()
     {
         $this->model->load($this->animated_gif);
-        $imanee = $this->model->getGifFrames();
 
-        $this->assertCount(4, $imanee->getFrames());
+        $this->assertCount(4, $this->model->getGifFrames());
     }
 }

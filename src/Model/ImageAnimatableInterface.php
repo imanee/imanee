@@ -18,4 +18,10 @@ interface ImageAnimatableInterface
      * @return Imanee Returns a new Imanee object that can be outputted or written to disk.
      */
     public function animate(array $frames, $delay = 20);
+
+    /**
+     * Returns an array containing a collection of Imanee objects representing each frame from a GIF image
+     * @return Imanee[]
+     */
+    public function getGifFrames();
 }

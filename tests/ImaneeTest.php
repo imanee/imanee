@@ -2,6 +2,7 @@
 
 namespace Imanee\Tests;
 
+use Imanee\ImageResource\GDResource;
 use Imanee\Imanee;
 use Imanee\Exception\UnsupportedMethodException;
 
@@ -10,9 +11,17 @@ class ImaneeTest extends \PHPUnit_Framework_TestCase
     /** @var  Imanee */
     protected $model;
 
+    /** @var  string */
+    protected $test_jpg;
+
+    /** @var  string */
+    protected $animated_gif;
+
     public function setup()
     {
         $this->model = new Imanee();
+        $this->test_jpg     = __DIR__ . '/resources/img01.jpg';
+        $this->animated_gif = __DIR__ . '/resources/animated.gif';
     }
 
     public function tearDown()
@@ -459,6 +468,45 @@ class ImaneeTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $this->assertCount(4, $this->model->getFrames());
+    }
+
+    public function testGetFramesCount()
+    {
+        $this->assertEquals(0, $this->model->getFramesCount());
+
+        $this->model->addFrame('image01.jpg');
+        $this->model->addFrame('image02.jpg');
+
+        $this->assertEquals(2, $this->model->getFramesCount());
+    }
+
+    public function testShouldRemoveFrame()
+    {
+        $this->model->addFrame('image01.jpg');
+        $this->model->addFrame('image02.jpg');
+
+        $this->assertEquals(2, $this->model->getFramesCount());
+        $this->model->removeFrame(0);
+        $this->assertEquals(1, $this->model->getFramesCount());
+    }
+
+    public function testShouldLoadFramesFromGif()
+    {
+        $this->model->load($this->animated_gif);
+        $this->assertEquals(0, $this->model->getFramesCount());
+        $this->model->loadFrames();
+
+        $this->assertEquals(4, $this->model->getFramesCount());
+    }
+
+    /**
+     * @expectedException Imanee\Exception\UnsupportedMethodException
+     */
+    public function testLoadFramesShouldThrowExceptionWhenResourceIsNotAnimatable()
+    {
+        $imanee = new Imanee(null, new GDResource());
+        $imanee->load($this->test_jpg);
+        $imanee->loadFrames();
     }
 
     /**

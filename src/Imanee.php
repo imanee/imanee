@@ -666,8 +666,17 @@ class Imanee
     {
         return $this->frames;
     }
+
     /**
-     * Removes a frame from a list used for generating animated Gifs.
+     * @return int
+     */
+    public function getFramesCount()
+    {
+        return count($this->frames);
+    }
+
+    /**
+     * Removes a frame from the current frames collection.
      *
      * @param  int $offset
      * @throws \InvalidArgumentException
@@ -684,14 +693,23 @@ class Imanee
 
         return $this;
     }
+
     /**
-     * Provides a new Imanee object with frames retrieved from a gif
-     *
+     * Loads existing frames from a GIF image into the Imanee frames collection
+     * @throws UnsupportedMethodException
      * @return Imanee
      */
-    public function getGifFrames()
+    public function loadFrames()
     {
-        return $this->resource->getGifFrames();
+        if (! ($this->resource instanceof ImageAnimatableInterface)) {
+            throw new UnsupportedMethodException("This method is not supported by the ImageResource in use.");
+        }
+
+        $frames = $this->resource->getGifFrames();
+
+        foreach ($frames as $frame) {
+            $this->addFrame($frame);
+        }
     }
 
     /**
