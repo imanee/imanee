@@ -2,6 +2,7 @@
 
 namespace Imanee\Tests;
 
+use Imanee\ImageResource\GDResource;
 use Imanee\Imanee;
 use Imanee\Exception\UnsupportedMethodException;
 
@@ -10,9 +11,17 @@ class ImaneeTest extends \PHPUnit_Framework_TestCase
     /** @var  Imanee */
     protected $model;
 
+    /** @var  string */
+    protected $test_jpg;
+
+    /** @var  string */
+    protected $animated_gif;
+
     public function setup()
     {
         $this->model = new Imanee();
+        $this->test_jpg     = __DIR__ . '/resources/img01.jpg';
+        $this->animated_gif = __DIR__ . '/resources/animated.gif';
     }
 
     public function tearDown()
@@ -81,6 +90,61 @@ class ImaneeTest extends \PHPUnit_Framework_TestCase
         $this->model->setFormat('jpeg');
 
         $this->assertEquals('jpeg', $this->model->getFormat());
+    }
+
+    public function testShouldGetResourceMime()
+    {
+        $resource = $this->getMockBuilder('Imanee\ImageResource\GDResource')
+            ->setMethods(['getMime'])
+            ->getMock();
+
+        $resource->expects($this->once())
+            ->method('getMime');
+
+        $this->model->setResource($resource);
+        $this->model->getMime();
+    }
+
+    public function testShouldOutputResource()
+    {
+        $resource = $this->getMockBuilder('Imanee\ImageResource\GDResource')
+            ->setMethods(['output'])
+            ->getMock();
+
+        $resource->expects($this->once())
+            ->method('output');
+
+        $this->model->setResource($resource);
+        $this->model->output();
+    }
+
+    public function testShouldOutputWhenToStringIsCalled()
+    {
+        $resource = $this->getMockBuilder('Imanee\ImageResource\GDResource')
+            ->setMethods(['output'])
+            ->getMock();
+
+        $resource->expects($this->once())
+            ->method('output')
+            ->will($this->returnValue('string'));
+
+        $this->model->setResource($resource);
+
+        sprintf('%s', $this->model);
+    }
+
+    public function testShouldWriteResource()
+    {
+        $resource = $this->getMockBuilder('Imanee\ImageResource\GDResource')
+            ->setMethods(['write'])
+            ->getMock();
+
+        $resource->expects($this->once())
+            ->method('write')
+            ->with('file.jpg');
+
+        $this->model->setResource($resource);
+        $this->model->write('file.jpg');
     }
 
     public function testShouldResize()
@@ -260,6 +324,18 @@ class ImaneeTest extends \PHPUnit_Framework_TestCase
 
         $this->model->setResource($dummy);
         $this->model->placeText('testing');
+    }
+
+    /**
+     * @expectedException Imanee\Exception\UnsupportedMethodException
+     */
+    public function testAdjustFontSizeShouldThrowExceptionWhenNotSupported()
+    {
+        $dummy = $this->getMock('Imanee\Model\ImageResourceInterface');
+        $drawer = $this->getMock('Imanee\Drawer');
+
+        $this->model->setResource($dummy);
+        $this->model->adjustFontSize('testing', $drawer, 100);
     }
 
     public function testShouldCompositeImage()
@@ -459,6 +535,45 @@ class ImaneeTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $this->assertCount(4, $this->model->getFrames());
+    }
+
+    public function testGetFramesCount()
+    {
+        $this->assertEquals(0, $this->model->getFramesCount());
+
+        $this->model->addFrame('image01.jpg');
+        $this->model->addFrame('image02.jpg');
+
+        $this->assertEquals(2, $this->model->getFramesCount());
+    }
+
+    public function testShouldRemoveFrame()
+    {
+        $this->model->addFrame('image01.jpg');
+        $this->model->addFrame('image02.jpg');
+
+        $this->assertEquals(2, $this->model->getFramesCount());
+        $this->model->removeFrame(0);
+        $this->assertEquals(1, $this->model->getFramesCount());
+    }
+
+    public function testShouldLoadFramesFromGif()
+    {
+        $this->model->load($this->animated_gif);
+        $this->assertEquals(0, $this->model->getFramesCount());
+        $this->model->loadFrames();
+
+        $this->assertEquals(4, $this->model->getFramesCount());
+    }
+
+    /**
+     * @expectedException Imanee\Exception\UnsupportedMethodException
+     */
+    public function testLoadFramesShouldThrowExceptionWhenResourceIsNotAnimatable()
+    {
+        $imanee = new Imanee(null, new GDResource());
+        $imanee->load($this->test_jpg);
+        $imanee->loadFrames();
     }
 
     /**

@@ -15,7 +15,6 @@ use Imanee\Filter\Imagick\ColorFilter;
 use Imanee\Filter\Imagick\ModulateFilter;
 use Imanee\Filter\Imagick\SepiaFilter;
 use Imanee\Filter\Imagick\GaussianFilter;
-use Imanee\Model\FilterInterface;
 use Imanee\Model\ImageResourceInterface;
 use Imanee\Imanee;
 use Imanee\Drawer;
@@ -244,11 +243,11 @@ class ImagickResource extends Resource implements
     /**
      * {@inheritdoc}
      */
-    public function write($file, $jpeg_quality = null)
+    public function write($file, $jpegQuality = null)
     {
-        if ($jpeg_quality) {
+        if ($jpegQuality) {
             $this->resource->setImageCompression(Imagick::COMPRESSION_JPEG);
-            $this->resource->setImageCompressionQuality($jpeg_quality);
+            $this->resource->setImageCompressionQuality($jpegQuality);
         }
 
         return $this->resource->writeImages($file, true);
@@ -278,21 +277,21 @@ class ImagickResource extends Resource implements
     public function compositeImage($image, $coordX, $coordY, $width = 0, $height = 0, $transparency = 0)
     {
         if (!is_object($image)) {
-            $img = new Imagick($image);
-        } else {
-            if (! ($image instanceof Imanee)) {
-                throw new Exception('Object not supported. It must be an instance of Imanee');
-            }
-
-            $img = $image->getResource()->getResource();
+            $image = new Imagick($image);
         }
+
+        if (! ($image instanceof Imanee)) {
+            throw new Exception('Object not supported. It must be an instance of Imanee');
+        }
+
+        $img = $image->getResource()->getResource();
 
         if ($width and $height) {
             $img->resizeImage($width, $height, Imagick::FILTER_LANCZOS, 1);
         }
 
         if ($transparency > 0) {
-            $this->setOpacity($img, $transparency);
+            $img = $this->fixTransparency($img, $transparency);
         }
 
         return $this->resource->compositeImage($img, Imagick::COMPOSITE_OVER, $coordX, $coordY);
@@ -386,43 +385,6 @@ class ImagickResource extends Resource implements
     }
 
     /**
-     * Manually sets the transparency pixel per pixel.
-     *
-     * This method properly sets the opacity on a png with transparency, by iterating pixel per
-     * pixel. It's a substitute for the Imagick::setImageOpacity, since it doesn't handle well
-     * transparent backgrounds.
-     *
-     * @param Imagick  $resource     The imagick resource to set opacity
-     * @param int      $transparency The transparency percentage, 0 (opaque) to 100 (transparent).
-     *
-     * @return bool Returns true if successful.
-     */
-    public function setOpacity(Imagick $resource, $transparency)
-    {
-        $alpha = $transparency / 100;
-
-        if ($alpha >= 1) {
-            return true;
-        }
-
-        $rows = $resource->getPixelIterator();
-
-        foreach ($rows as $cols) {
-            foreach ($cols as $pixel) {
-
-                /** @var ImagickPixel $pixel */
-                $current = $pixel->getColorValue(Imagick::COLOR_ALPHA);
-
-                $pixel->setColorValue(Imagick::COLOR_ALPHA, (($current - $alpha > 0) ? ($current - $alpha) : (0)));
-
-                $rows->syncIterator();
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function loadFilters()
@@ -441,7 +403,7 @@ class ImagickResource extends Resource implements
      *
      * @throws UnsupportedFormatException
      *
-     * @return Imanee
+     * @return Imanee[]
      */
     public function getGifFrames()
     {
@@ -451,12 +413,49 @@ class ImagickResource extends Resource implements
             );
         }
 
-        $imanee = new Imanee(null, new ImagickResource());
+        $frames = [];
 
+        /** @var Imagick $frame */
         foreach ($this->getResource() as $frame) {
-            $imanee->addFrame(new Imanee(null, new ImagickResource($frame->getImage())));
+            $frames[] = new Imanee(null, new ImagickResource($frame->getImage()));
         }
 
-        return $imanee;
+        return $frames;
+    }
+
+    /**
+     * Manually sets the transparency of an Imagick object, pixel per pixel.
+     *
+     * This method properly sets the opacity on a png with transparency, by iterating pixel per
+     * pixel. It's a substitute for the Imagick::setImageOpacity, since it doesn't handle well
+     * transparent backgrounds.
+     *
+     * @param Imagick  $resource     The imagick resource to set opacity
+     * @param int      $transparency The transparency percentage, 0 (opaque) to 100 (transparent).
+     *
+     * @return Imagick|bool returns the modified image resource or bool (false) in case of failure
+     */
+    public function fixTransparency(Imagick $resource, $transparency)
+    {
+        $alpha = $transparency / 100;
+
+        if ($alpha >= 1) {
+            return true;
+        }
+
+        $rows = $resource->getPixelIterator();
+
+        foreach ($rows as $cols) {
+            foreach ($cols as $pixel) {
+                /** @var ImagickPixel $pixel */
+                $current = $pixel->getColorValue(Imagick::COLOR_ALPHA);
+
+                $pixel->setColorValue(Imagick::COLOR_ALPHA, (($current - $alpha > 0) ? ($current - $alpha) : (0)));
+
+                $rows->syncIterator();
+            }
+        }
+
+        return $resource;
     }
 }

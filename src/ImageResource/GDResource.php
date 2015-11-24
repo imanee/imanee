@@ -94,7 +94,6 @@ class GDResource extends Resource implements
         $this->imagePath = $imagePath;
 
         switch ($this->getMime()) {
-
             case "image/jpeg":
             case "image/jpg":
             case "image/pjpeg":
@@ -317,9 +316,9 @@ class GDResource extends Resource implements
     /**
      * {@inheritdoc}
      */
-    public function write($file, $jpeg_quality = null)
+    public function write($file, $jpegQuality = null)
     {
-        $jpeg_quality = $jpeg_quality ?: 80;
+        $jpegQuality = $jpegQuality ?: 80;
         $this->setFormat($this->getExtensionByFileName($file));
 
         switch ($this->format) {
@@ -333,7 +332,7 @@ class GDResource extends Resource implements
                     $this->fixPngToJpegDefaultBackgroundColor();
                 }
 
-                return imagejpeg($this->getResource(), $file, $jpeg_quality);
+                return imagejpeg($this->getResource(), $file, $jpegQuality);
                 break;
 
             case "gif":
@@ -395,7 +394,7 @@ class GDResource extends Resource implements
             $image = new Imanee($image, new GDResource());
         }
 
-        if (! ($image instanceof \Imanee\Imanee)) {
+        if (! ($image instanceof Imanee)) {
             throw new \Exception('Object not supported. It must be an instance of Imanee');
         }
 
@@ -408,13 +407,15 @@ class GDResource extends Resource implements
             $height = $image->getHeight();
         }
 
+        $img = $image->getResource()->getResource();
+
         if ($transparency > 0) {
-            $image->getResource()->fixTransparency($transparency);
+            $img = $this->fixTransparency($img, $transparency);
         }
 
         return imagecopyresampled(
             $this->getResource(),
-            $image->getResource()->getResource(),
+            $img,
             $coordX,
             $coordY,
             0,
@@ -538,34 +539,26 @@ class GDResource extends Resource implements
     }
 
      /**
-     * Helper method in order to preserve transparency
+     * Manually sets the transparency of a GD resource pixel per pixel.
      *
+     * @param resource $image
      * @param int $transparency Transparency in percentage - 0 (opaque) to 100 (transparent).
-     * @return bool true on success or false on failure.
+     * @return resource|bool returns the modified image resource or bool (false) in case of failure
      */
-    private function fixTransparency($transparency)
+    public function fixTransparency($image, $transparency)
     {
         $transparency = 100 - $transparency;
         $transparency /= 100;
-
-        $image = $this->getResource();
-
-        // Get image width and height
         $width = $this->getWidth();
         $height = $this->getHeight();
 
-        // Turn alpha blending off
         imagealphablending($image, false);
 
-        // Loop through image pixels and modify alpha for each
         for ($x = 0; $x < $width; $x++) {
             for ($y = 0; $y < $height; $y++) {
-                // Get current alpha value
                 $colorxy = imagecolorat($image, $x, $y);
                 $alpha = ($colorxy >> 24) & 0xFF;
-                // Calculate new alpha
                 $alpha = 127 + 127 * $transparency * ($alpha - 127) / 127;
-                // Get the color index with new alpha
                 $alphacolorxy = imagecolorallocatealpha(
                     $image,
                     ($colorxy >> 16) & 0xFF,
@@ -573,15 +566,13 @@ class GDResource extends Resource implements
                     $colorxy & 0xFF,
                     $alpha
                 );
-                // Set pixel with the new color + opacity
+
                 if (!imagesetpixel($image, $x, $y, $alphacolorxy)) {
                     return false;
                 }
             }
         }
 
-        $this->setResource($image);
-
-        return true;
+        return $image;
     }
 }
