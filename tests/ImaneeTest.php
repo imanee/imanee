@@ -92,6 +92,61 @@ class ImaneeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('jpeg', $this->model->getFormat());
     }
 
+    public function testShouldGetResourceMime()
+    {
+        $resource = $this->getMockBuilder('Imanee\ImageResource\GDResource')
+            ->setMethods(['getMime'])
+            ->getMock();
+
+        $resource->expects($this->once())
+            ->method('getMime');
+
+        $this->model->setResource($resource);
+        $this->model->getMime();
+    }
+
+    public function testShouldOutputResource()
+    {
+        $resource = $this->getMockBuilder('Imanee\ImageResource\GDResource')
+            ->setMethods(['output'])
+            ->getMock();
+
+        $resource->expects($this->once())
+            ->method('output');
+
+        $this->model->setResource($resource);
+        $this->model->output();
+    }
+
+    public function testShouldOutputWhenToStringIsCalled()
+    {
+        $resource = $this->getMockBuilder('Imanee\ImageResource\GDResource')
+            ->setMethods(['output'])
+            ->getMock();
+
+        $resource->expects($this->once())
+            ->method('output')
+            ->will($this->returnValue('string'));
+
+        $this->model->setResource($resource);
+
+        sprintf('%s', $this->model);
+    }
+
+    public function testShouldWriteResource()
+    {
+        $resource = $this->getMockBuilder('Imanee\ImageResource\GDResource')
+            ->setMethods(['write'])
+            ->getMock();
+
+        $resource->expects($this->once())
+            ->method('write')
+            ->with('file.jpg');
+
+        $this->model->setResource($resource);
+        $this->model->write('file.jpg');
+    }
+
     public function testShouldResize()
     {
         $resource = $this->getMockBuilder('Imanee\ImageResource\GDResource')
@@ -269,6 +324,18 @@ class ImaneeTest extends \PHPUnit_Framework_TestCase
 
         $this->model->setResource($dummy);
         $this->model->placeText('testing');
+    }
+
+    /**
+     * @expectedException Imanee\Exception\UnsupportedMethodException
+     */
+    public function testAdjustFontSizeShouldThrowExceptionWhenNotSupported()
+    {
+        $dummy = $this->getMock('Imanee\Model\ImageResourceInterface');
+        $drawer = $this->getMock('Imanee\Drawer');
+
+        $this->model->setResource($dummy);
+        $this->model->adjustFontSize('testing', $drawer, 100);
     }
 
     public function testShouldCompositeImage()
@@ -567,5 +634,20 @@ class ImaneeTest extends \PHPUnit_Framework_TestCase
             ->method('getFontSize');
 
         Imanee::textGen('Testing', $drawer, 'png', 'transparent', $resource);
+    }
+
+    public function testShouldArrayAnimate()
+    {
+        $frames = ['image01.jpg', 'image02.jpg', 'image03.jpg' ];
+
+        $mock = $this->getMoc
+        $resource = $this->getMockBuilder('Imanee\ImageResource\ImagickResource')
+            ->setMethods(['animate'])
+            ->getMock();
+
+        $resource->expects($this->once())
+            ->method('animate');
+
+        Imanee::arrayAnimate($frames);
     }
 }
