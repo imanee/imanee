@@ -635,19 +635,4 @@ class ImaneeTest extends \PHPUnit_Framework_TestCase
 
         Imanee::textGen('Testing', $drawer, 'png', 'transparent', $resource);
     }
-
-    public function testShouldArrayAnimate()
-    {
-        $frames = ['image01.jpg', 'image02.jpg', 'image03.jpg' ];
-
-        $mock = $this->getMoc
-        $resource = $this->getMockBuilder('Imanee\ImageResource\ImagickResource')
-            ->setMethods(['animate'])
-            ->getMock();
-
-        $resource->expects($this->once())
-            ->method('animate');
-
-        Imanee::arrayAnimate($frames);
-    }
 }
