@@ -21,7 +21,7 @@ use Imanee\Model\ImageFilterableInterface;
 /**
  * GD-based image manipulator.
  */
-class GDResource extends Resource implements
+class GDResource extends ImageResource implements
     ImageResourceInterface,
     ImageComposableInterface,
     ImageWritableInterface,

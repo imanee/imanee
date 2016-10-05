@@ -2,7 +2,7 @@
 
 namespace Imanee\ImageResource;
 
-abstract class Resource
+abstract class ImageResource
 {
     /**
      * Underlying resource.
