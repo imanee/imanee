@@ -27,7 +27,7 @@ use Imanee\Model\ImageFilterableInterface;
 /**
  * Imagick-based image manipulator.
  */
-class ImagickResource extends Resource implements
+class ImagickResource extends ImageResource implements
     ImageResourceInterface,
     ImageWritableInterface,
     ImageComposableInterface,
